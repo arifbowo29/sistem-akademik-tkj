@@ -243,6 +243,7 @@
       <h3 id="judulHalaman" style="font-weight: 300; color: #333; font-size: 1.5rem;">Dashboard <small class="text-muted fs-6">Utama</small></h3>
     </div>
 
+    <!-- TAMPILAN DASHBOARD -->
     <div id="view_Dashboard" class="view-section">
       <div class="welcome-alert">
         Assalamu'alaikum wr. wb. !! Selamat datang <strong id="welcomeName">User</strong> di Sistem Akademik TKJ MANUSA.
@@ -269,6 +270,7 @@
       </div>
     </div>
 
+    <!-- TAMPILAN PROFIL -->
     <div id="view_Profil" class="view-section" style="display: none;">
       <div class="row">
         <div class="col-lg-4 mb-4">
@@ -329,6 +331,7 @@
       </div>
     </div>
 
+    <!-- TAMPILAN MATERI MAPEL -->
     <div id="view_Mapel" class="view-section" style="display: none;">
       <div class="row" id="rowDaftarMapel">
         <div class="col-md-4 mb-4"><div class="card mapel-card"><div class="card-body"><h5 class="card-title fw-bold text-primary">ASJ</h5><h6 class="card-subtitle mb-2 text-muted">Administrasi Sistem Jaringan</h6><p class="card-text small text-secondary">Instalasi dan konfigurasi sistem operasi server.</p><button class="btn btn-sm btn-primary w-100 fw-bold" onclick="bukaMateriMapel('ASJ')"><i class="fas fa-folder-open"></i> Buka Materi</button></div></div></div>
@@ -372,6 +375,7 @@
       </div>
     </div>
 
+    <!-- TAMPILAN DATA SISWA -->
     <div id="view_Data_Siswa" class="view-section" style="display: none;">
       <div class="panel-container">
         <h5 class="mb-4 text-secondary border-bottom pb-2"><i class="fas fa-user-plus"></i> Tambah / Edit Data Profil Siswa</h5>
@@ -421,11 +425,28 @@
       </div>
     </div>
 
+    <!-- UPDATE: TAMPILAN ABSENSI (KLASIFIKASI PER KELAS) -->
     <div id="view_Absensi" class="view-section" style="display: none;">
       <div class="panel-container">
-        <h5 class="mb-4 text-secondary border-bottom pb-2"><i class="fas fa-calendar-check"></i> Input Kehadiran Harian Kelas</h5>
         
-        <div class="alert alert-info py-2 small">
+        <!-- Filter Kelas -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-4">
+          <h5 class="text-secondary mb-3 mb-md-0"><i class="fas fa-calendar-check"></i> Input Kehadiran Harian</h5>
+          <select id="filterKelasAbsensi" class="form-select form-select-sm w-auto fw-bold" style="min-width: 180px; border-color: #3c8dbc;" onchange="renderAbsensi()">
+            <option value="" disabled selected>-- Pilih Kelas Dulu --</option>
+            <optgroup label="Kelas X">
+              <option value="X TKJ 1">X TKJ 1</option><option value="X TKJ 2">X TKJ 2</option><option value="X TKJ 3">X TKJ 3</option><option value="X TKJ 4">X TKJ 4</option>
+            </optgroup>
+            <optgroup label="Kelas XI">
+              <option value="XI TKJ 1">XI TKJ 1</option><option value="XI TKJ 2">XI TKJ 2</option><option value="XI TKJ 3">XI TKJ 3</option><option value="XI TKJ 4">XI TKJ 4</option>
+            </optgroup>
+            <optgroup label="Kelas XII">
+              <option value="XII TKJ 1">XII TKJ 1</option><option value="XII TKJ 2">XII TKJ 2</option><option value="XII TKJ 3">XII TKJ 3</option><option value="XII TKJ 4">XII TKJ 4</option><option value="XII TKJ 5">XII TKJ 5</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="alert alert-info py-2 small" id="alertInfoAbsensi" style="display: none;">
           <i class="fas fa-info-circle"></i> Status default adalah <b>Hadir (H)</b>. Ubah hanya pada siswa yang Sakit (S), Izin (I), atau Alpa (A).
         </div>
 
@@ -441,16 +462,20 @@
                   <th>Keterangan</th>
                 </tr>
               </thead>
-              <tbody id="tabelAbsensiBody"></tbody>
+              <tbody id="tabelAbsensiBody">
+                <!-- Data akan muncul setelah memilih kelas -->
+                <tr><td colspan="5" class="text-center text-muted py-5"><i class="fas fa-hand-point-up fs-2 d-block mb-2"></i>Silakan pilih kelas terlebih dahulu pada menu di atas.</td></tr>
+              </tbody>
             </table>
           </div>
-          <button type="submit" id="btnSimpanAbsenMassal" class="btn btn-warning w-100 fw-bold text-dark mt-3 py-2">
-            <i class="fas fa-save me-1"></i> Simpan Semua Absensi
+          <button type="submit" id="btnSimpanAbsenMassal" class="btn btn-warning w-100 fw-bold text-dark mt-3 py-2" style="display: none;">
+            <i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini
           </button>
         </form>
       </div>
     </div>
 
+    <!-- TAMPILAN MANAJEMEN QUIZ GURU -->
     <div id="view_Manajemen_Quiz" class="view-section" style="display: none;">
       <div class="row">
         <div class="col-lg-5 mb-4">
@@ -495,6 +520,7 @@
       </div>
     </div>
 
+    <!-- TAMPILAN TUGAS SISWA -->
     <div id="view_Tugas" class="view-section" style="display: none;">
       <div class="panel-container">
         <h5 class="border-bottom pb-2 mb-3 text-danger"><i class="fas fa-folder-open"></i> Daftar Tugas & Quiz Dari Guru</h5>
@@ -524,9 +550,24 @@
       </div>
     </div>
 
+    <!-- UPDATE: TAMPILAN NILAI GURU (KLASIFIKASI PER MAPEL) -->
     <div id="view_Nilai" class="view-section" style="display: none;">
       <div class="panel-container" style="border-top-color: #f0ad4e;">
-        <h5 class="mb-3 text-secondary border-bottom pb-2"><i class="fas fa-star text-warning"></i> Antrean Koreksi & Penilaian Jawaban Siswa</h5>
+        
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-4">
+          <h5 class="text-secondary mb-3 mb-md-0"><i class="fas fa-star text-warning"></i> Antrean Penilaian Siswa</h5>
+          <!-- Filter Mapel -->
+          <select id="filterMapelNilai" class="form-select form-select-sm w-auto fw-bold" style="min-width: 180px; border-color: #f0ad4e;" onchange="renderPenilaian()">
+            <option value="ALL">Semua Mata Pelajaran</option>
+            <option value="ASJ">ASJ</option>
+            <option value="TLJ">TLJ</option>
+            <option value="AIJ">AIJ</option>
+            <option value="DG">DG</option>
+            <option value="PKK-1">PKK-1</option>
+            <option value="TWAN">TWAN</option>
+          </select>
+        </div>
+
         <div class="table-responsive">
           <table class="table table-hover table-bordered text-center align-middle" style="white-space: nowrap;">
             <thead class="table-dark">
@@ -538,17 +579,20 @@
       </div>
     </div>
 
+    <!-- UPDATE: TAMPILAN REKAP SISWA (KLASIFIKASI PER MAPEL) -->
     <div id="view_Rekap_Saya" class="view-section" style="display: none;">
       <div class="row">
         <div class="col-lg-8 mb-4">
           <div class="panel-container" style="border-top-color: #5cb85c;">
             <h5 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-star"></i> Lembar Hasil Nilai Tugas Kompetensi Anda</h5>
             <div class="table-responsive">
-              <table class="table table-striped table-bordered text-center align-middle" style="white-space: nowrap;">
+              <table class="table table-bordered text-center align-middle" style="white-space: nowrap;">
                 <thead class="table-success">
-                  <tr><th>Mata Pelajaran</th><th>Judul Tugas</th><th>Skor Nilai</th><th>Catatan Koreksi</th></tr>
+                  <tr><th>Judul Tugas</th><th>Skor Nilai</th><th>Catatan Koreksi</th></tr>
                 </thead>
-                <tbody id="tabelNilaiSiswaPersonal"></tbody>
+                <tbody id="tabelNilaiSiswaPersonal">
+                   <!-- Grouping Mapel akan dirender disini via JavaScript -->
+                </tbody>
               </table>
             </div>
           </div>
@@ -567,13 +611,14 @@
       </div>
     </div>
 
+    <!-- TAMPILAN FORUM -->
     <div id="view_Forum" class="view-section" style="display: none;">
       <div class="panel-container" style="border-top-color: #605ca8;">
         <h5 style="color: #605ca8;" class="border-bottom pb-2 mb-3"><i class="fas fa-comments"></i> Papan Mading & Ruang Diskusi Kelas TKJ</h5>
         <div class="chat-box" id="kotakPesanForum"></div>
         <form id="formKirimForum" onsubmit="postPesanForum(event)">
           <div class="input-group">
-            <input type="text" id="msg_forum_text" class="form-control" placeholder="Tulis pertanyaan, info, atau catatan praktikum jaringan..." required autocomplete="off">
+            <input type="text" id="msg_forum_text" class="form-control" placeholder="Tulis pesan..." required autocomplete="off">
             <button class="btn text-white fw-bold" type="submit" id="btnKirimChat" style="background-color: #605ca8;"><i class="fas fa-paper-plane"></i> Kirim</button>
           </div>
         </form>
@@ -832,11 +877,120 @@
     });
   }
 
+  // LOGIKA RENDER ABSENSI PER KELAS
+  function renderAbsensi() {
+    const tAbsen = document.getElementById('tabelAbsensiBody');
+    const btnSimpan = document.getElementById('btnSimpanAbsenMassal');
+    const alertInfo = document.getElementById('alertInfoAbsensi');
+    if(!tAbsen) return;
+
+    const selectedKelas = document.getElementById('filterKelasAbsensi').value;
+    
+    // Jika belum memilih kelas
+    if(!selectedKelas) {
+      tAbsen.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-5"><i class="fas fa-hand-point-up fs-2 d-block mb-2"></i>Silakan pilih kelas terlebih dahulu pada menu di atas.</td></tr>';
+      btnSimpan.style.display = 'none';
+      alertInfo.style.display = 'none';
+      return;
+    }
+
+    // Mengambil & mengurutkan siswa berdasarkan kelas yang dipilih
+    let dataSiswaKelas = localDB.siswa.filter(s => s.kelas === selectedKelas);
+    dataSiswaKelas.sort((a,b) => a.nama.localeCompare(b.nama));
+
+    // Jika kelas kosong
+    if(dataSiswaKelas.length === 0) {
+      tAbsen.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Belum ada siswa terdaftar di kelas <b>${selectedKelas}</b>.</td></tr>`;
+      btnSimpan.style.display = 'none';
+      alertInfo.style.display = 'none';
+      return;
+    }
+
+    // Tampilkan tombol & render tabel siswa
+    btnSimpan.style.display = 'block';
+    alertInfo.style.display = 'block';
+    tAbsen.innerHTML = dataSiswaKelas.map(s => `
+      <tr class="baris-absen" data-nis="${s.nis}" data-nama="${s.nama}" data-kelas="${s.kelas}">
+        <td class="fw-bold">${s.nis}</td>
+        <td class="text-start">${s.nama}</td>
+        <td><span class="badge bg-primary">${s.kelas}</span></td>
+        <td>
+          <div class="d-flex justify-content-center gap-2">
+            <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="h_${s.nis}" value="Hadir" checked><label class="form-check-label text-success fw-bold" for="h_${s.nis}">H</label></div>
+            <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="s_${s.nis}" value="Sakit"><label class="form-check-label text-warning fw-bold" for="s_${s.nis}">S</label></div>
+            <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="i_${s.nis}" value="Izin"><label class="form-check-label text-info fw-bold" for="i_${s.nis}">I</label></div>
+            <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="a_${s.nis}" value="Alpa"><label class="form-check-label text-danger fw-bold" for="a_${s.nis}">A</label></div>
+          </div>
+        </td>
+        <td><input type="text" class="form-control form-control-sm input-keterangan" placeholder="Opsional"></td>
+      </tr>`).join('');
+  }
+
+  // LOGIKA RENDER PENILAIAN GURU (KLASIFIKASI MAPEL)
+  function renderPenilaian() {
+    const tKoreksi = document.getElementById('tabelAntreanPenilaian');
+    if(!tKoreksi) return;
+
+    const selectedMapel = document.getElementById('filterMapelNilai').value;
+    let filteredJawaban = localDB.jawaban;
+
+    // Filter berdasarkan Dropdown Mapel
+    if(selectedMapel !== "ALL") {
+      filteredJawaban = filteredJawaban.filter(j => j.mapel === selectedMapel);
+    }
+
+    if(filteredJawaban.length === 0) {
+      tKoreksi.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-check-circle d-block fs-3 mb-2 text-success"></i>Tidak ada antrean tugas yang perlu dinilai untuk kategori ini.</td></tr>`;
+      return;
+    }
+
+    tKoreksi.innerHTML = filteredJawaban.map(j => `<tr><td>${j.nama}</td><td>${j.kelas}</td><td><b>[${j.mapel}]</b> ${j.judulTugas}</td><td><a href="${j.urlFileJawaban}" target="_blank" class="btn btn-sm btn-link"><i class="fas fa-file-alt"></i> Lihat File</a></td><td><span class="badge bg-success font-monospace fs-6">${j.nilai || 'Belum'}</span></td><td class="small text-muted">${j.catatanGuru || '-'}</td><td><button class="btn btn-sm btn-warning font-weight-bold" onclick="beriPenilaianDialog('${j.id}')"><i class="fas fa-check-square"></i> Nilai</button></td></tr>`).join('');
+  }
+
+  // LOGIKA RENDER REKAP NILAI SISWA (KLASIFIKASI MAPEL)
+  function renderRekapSiswa() {
+    const tSiswaPersonal = document.getElementById('tabelNilaiSiswaPersonal');
+    if(!tSiswaPersonal) return;
+
+    let myJawaban = localDB.jawaban.filter(j => String(j.nis) === String(nisUserAktifLog));
+
+    if(myJawaban.length === 0) {
+      tSiswaPersonal.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Belum ada tugas yang Anda kerjakan atau dinilai.</td></tr>';
+      return;
+    }
+
+    // Proses Grouping berdasarkan Mata Pelajaran
+    let mapelsUnik = [...new Set(myJawaban.map(j => j.mapel))];
+    let htmlContent = '';
+
+    mapelsUnik.forEach(mapel => {
+      // Bikin Header/Grup Pembatas Tabel
+      htmlContent += `
+        <tr class="table-secondary">
+          <td colspan="3" class="text-start fw-bold text-success"><i class="fas fa-book me-2"></i> MAPEL: ${mapel}</td>
+        </tr>
+      `;
+      // Masukkan nilai siswa pada mapel tsb di bawah headernya
+      let nilaiPerMapel = myJawaban.filter(j => j.mapel === mapel);
+      htmlContent += nilaiPerMapel.map(j => `
+        <tr class="text-center">
+          <td class="text-start ps-4">${j.judulTugas}</td>
+          <td><b class="${j.nilai ? 'text-success fs-5' : 'text-warning'}">${j.nilai || 'Menunggu Koreksi Guru'}</b></td>
+          <td><span class="small text-muted">${j.catatanGuru || '-'}</span></td>
+        </tr>
+      `).join('');
+    });
+
+    tSiswaPersonal.innerHTML = htmlContent;
+  }
+
   function refreshUI() {
+    // Info Kotak Dashboard Atas
     document.getElementById('dash_total_siswa').innerText = localDB.siswa.length;
     document.getElementById('dash_total_materi').innerText = localDB.materi.length;
     document.getElementById('dash_total_tugas').innerText = localDB.quiz.length;
 
+    // Render Data Siswa Global
     const tSiswa = document.getElementById('tabelSiswaBody');
     if(tSiswa) {
       let dataSiswaSorted = localDB.siswa.sort((a, b) => a.kelas.localeCompare(b.kelas));
@@ -844,26 +998,7 @@
         <tr><td class="fw-bold">${s.nis}</td><td class="text-start">${s.nama}</td><td><span class="badge bg-primary fs-6">${s.kelas}</span></td><td>${s.jk}</td><td class="text-start">${s.alamat}</td></tr>`).join('');
     }
 
-    const tAbsen = document.getElementById('tabelAbsensiBody');
-    if(tAbsen) {
-      let dataSiswaSorted = localDB.siswa.sort((a, b) => a.kelas.localeCompare(b.kelas));
-      tAbsen.innerHTML = dataSiswaSorted.map(s => `
-        <tr class="baris-absen" data-nis="${s.nis}" data-nama="${s.nama}" data-kelas="${s.kelas}">
-          <td class="fw-bold">${s.nis}</td>
-          <td class="text-start">${s.nama}</td>
-          <td><span class="badge bg-primary">${s.kelas}</span></td>
-          <td>
-            <div class="d-flex justify-content-center gap-2">
-              <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="h_${s.nis}" value="Hadir" checked><label class="form-check-label text-success fw-bold" for="h_${s.nis}">H</label></div>
-              <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="s_${s.nis}" value="Sakit"><label class="form-check-label text-warning fw-bold" for="s_${s.nis}">S</label></div>
-              <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="i_${s.nis}" value="Izin"><label class="form-check-label text-info fw-bold" for="i_${s.nis}">I</label></div>
-              <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="a_${s.nis}" value="Alpa"><label class="form-check-label text-danger fw-bold" for="a_${s.nis}">A</label></div>
-            </div>
-          </td>
-          <td><input type="text" class="form-control form-control-sm input-keterangan" placeholder="Opsional"></td>
-        </tr>`).join('');
-    }
-
+    // Render Manajemen Tugas (Guru)
     const tQuizGuru = document.getElementById('tabelQuizGuru');
     if(tQuizGuru) {
       tQuizGuru.innerHTML = localDB.quiz.map(q => {
@@ -894,15 +1029,11 @@
       }).join('');
     }
 
+    // Render Tugas di sisi Siswa
     const tQuizSiswa = document.getElementById('tabelQuizSiswa');
     if(tQuizSiswa) tQuizSiswa.innerHTML = localDB.quiz.map(q => `<tr><td><span class="badge bg-primary">${q.mapel}</span></td><td>${q.judul}</td><td>${q.deadline}</td><td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-dark py-0"><i class="fas fa-file-pdf"></i> Soal</a>`: '-'}</td><td><button class="btn btn-xs btn-danger fw-bold py-0" onclick="bukaFormPengerjaanTugas('${q.id}', '${q.judul}', '${q.mapel}')">Kerjakan</button></td></tr>`).join('');
 
-    const tKoreksi = document.getElementById('tabelAntreanPenilaian');
-    if(tKoreksi) tKoreksi.innerHTML = localDB.jawaban.map(j => `<tr><td>${j.nama}</td><td>${j.kelas}</td><td><b>[${j.mapel}]</b> ${j.judulTugas}</td><td><a href="${j.urlFileJawaban}" target="_blank" class="btn btn-sm btn-link"><i class="fas fa-file-alt"></i> Lihat File</a></td><td><span class="badge bg-success font-monospace fs-6">${j.nilai || 'Belum'}</span></td><td class="small text-muted">${j.catatanGuru || '-'}</td><td><button class="btn btn-sm btn-warning font-weight-bold" onclick="beriPenilaianDialog('${j.id}')"><i class="fas fa-check-square"></i> Nilai</button></td></tr>`).join('');
-
-    const tSiswaPersonal = document.getElementById('tabelNilaiSiswaPersonal');
-    if(tSiswaPersonal) tSiswaPersonal.innerHTML = localDB.jawaban.filter(j => String(j.nis) === String(nisUserAktifLog)).map(j => `<tr><td><span class="badge bg-info text-dark">${j.mapel}</span></td><td>${j.judulTugas}</td><td><b class="text-success">${j.nilai || 'Sedang Dikoreksi'}</b></td><td><span class="small text-muted">${j.catatanGuru || '-'}</span></td></tr>`).join('');
-
+    // Update Kotak Absensi di Siswa
     if(userRole === 'siswa') {
       const myAbsen = localDB.absensi.filter(a => String(a.nis) === String(nisUserAktifLog));
       document.getElementById('rekap_hadir').innerText = myAbsen.filter(a => a.status === 'Hadir').length + " Hari";
@@ -911,6 +1042,10 @@
       document.getElementById('rekap_alpa').innerText = myAbsen.filter(a => a.status === 'Alpa').length + " Hari";
     }
 
+    // Panggil fungsi-fungsi render yang baru dibuat
+    renderAbsensi();
+    renderPenilaian();
+    renderRekapSiswa();
     renderForumPesan();
   }
 
@@ -973,6 +1108,8 @@
     const btn = document.getElementById('btnSimpanAbsenMassal');
     btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
     let dataAbsensi = [];
+    
+    // Karena tabel sekarang cuma nampilin 1 kelas, yg dikirim juga otomatis cuma kelas itu saja
     document.querySelectorAll('.baris-absen').forEach(baris => {
       const nis = baris.getAttribute('data-nis');
       dataAbsensi.push({ nis: nis, nama: baris.getAttribute('data-nama'), kelas: baris.getAttribute('data-kelas'), status: document.querySelector(`input[name="status_${nis}"]:checked`).value, keterangan: baris.querySelector('.input-keterangan').value });
@@ -980,9 +1117,9 @@
 
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimAbsensiMassal', data: dataAbsensi }) })
     .then(res => res.json()).then(data => {
-      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Semua Absensi';
-      if(data.status === 'success') { alert("Presensi seluruh kelas berhasil disimpan ke database!"); document.getElementById('formAbsensiMassal').reset(); tarikDataDatabase(); }
-    }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Semua Absensi'; alert("Koneksi gagal terhubung!"); });
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini';
+      if(data.status === 'success') { alert("Presensi kelas berhasil disimpan ke database!"); document.getElementById('formAbsensiMassal').reset(); tarikDataDatabase(); }
+    }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini'; alert("Koneksi gagal terhubung!"); });
   }
 
   async function simpanQuiz(e) {
