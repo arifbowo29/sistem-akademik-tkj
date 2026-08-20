@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"> <!--[cite: 4] -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> <!--[cite: 4] -->
+  <title>Sistem Akademik TKJ Manusa</title> <!--[cite: 4] -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" /> <!--[cite: 4] -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!--[cite: 4] -->
+  
+  <style>
+    /* CSS RESET UNTUK FULLSCREEN */
+    html, body { margin: 0 !important; padding: 0 !important; width: 100vw; height: 100vh; overflow: hidden !important; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ecf0f5; } /*[cite: 4] */
+    .header-widget, .sidebar-blogger, .post-title, .footer, .blog-pager, .date-header, .post-footer, #header, #footer { display: none !important; } /*[cite: 4] */
+
+    /* CSS LOGIN SCREEN */
+    .login-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); z-index: 9999999 !important; } /*[cite: 4] */
+    .login-box { width: 100%; max-width: 420px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 40px 30px; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.4); animation: fadeIn 0.8s ease-in-out; } /*[cite: 4] */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } } /*[cite: 4] */
+    
+    /* CSS DASHBOARD SECTION */
+    #dashboardSection { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ecf0f5; z-index: 9999999 !important; overflow-y: auto; overflow-x: hidden; } /*[cite: 4] */
+    .top-navbar { background: linear-gradient(135deg, #1a2226 0%, #3c8dbc 100%); color: white; padding: 0 30px; display: flex; justify-content: space-between; align-items: center; z-index: 1030; position: fixed; top: 0; left: 0; width: 100%; height: 70px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); } /*[cite: 4] */
+    .top-navbar .brand { font-size: 1.4rem; font-weight: 800; letter-spacing: 1.5px; cursor: pointer; user-select: none; transition: all 0.3s ease; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); } /*[cite: 4] */
+    .top-navbar .brand:hover { color: #ffc107; transform: scale(1.02); } /*[cite: 4] */
+    .top-navbar .user-info { display: flex; align-items: center; gap: 15px; background: rgba(255, 255, 255, 0.1); padding: 6px 15px 6px 20px; border-radius: 30px; backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.2); } /*[cite: 4] */
+    .top-navbar .user-info span { font-weight: 600; font-size: 0.95rem; } /*[cite: 4] */
+    .top-navbar .btn-danger { border-radius: 20px; padding: 5px 18px; font-weight: bold; box-shadow: 0 2px 5px rgba(220, 53, 69, 0.4); margin-left: 0 !important; } /*[cite: 4] */
+    .sidebar { background-color: #222d32; color: #b8c7ce; width: 250px; position: fixed; top: 70px; bottom: 0; left: 0; overflow-y: auto; transition: 0.3s; box-shadow: 2px 0 5px rgba(0,0,0,0.1); } /*[cite: 4] */
+    .sidebar-menu { list-style: none; padding: 0; margin: 0; } /*[cite: 4] */
+    .sidebar-menu li { border-bottom: 1px solid #1a2226; } /*[cite: 4] */
+    .sidebar-menu a { color: #b8c7ce; text-decoration: none; padding: 15px 20px; display: block; transition: 0.2s; cursor: pointer; } /*[cite: 4] */
+    .sidebar-menu a:hover, .sidebar-menu a.active { background-color: #1e282c; color: #fff; border-left: 4px solid #3c8dbc; } /*[cite: 4] */
+    .sidebar-menu a i { margin-right: 10px; width: 20px; text-align: center; } /*[cite: 4] */
+    .main-content { margin-left: 250px; margin-top: 70px; padding: 30px; transition: 0.3s; min-height: calc(100vh - 70px); } /*[cite: 4] */
+    .info-card { background: #fff; border-radius: 6px; border: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; text-align: center; overflow: hidden; } /*[cite: 4] */
+    .info-card .card-body { padding: 30px 20px; } /*[cite: 4] */
+    .info-card .icon-box { font-size: 40px; margin-bottom: 10px; } /*[cite: 4] */
+    .info-card .number { font-size: 28px; font-weight: bold; margin-bottom: 0; } /*[cite: 4] */
+    .info-card .footer { padding: 10px; color: #fff; font-weight: 600; font-size: 14px; text-transform: uppercase; } /*[cite: 4] */
+    .clickable-card { cursor: pointer; transition: all 0.3s ease; } /*[cite: 4] */
+    .clickable-card:hover { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important; } /*[cite: 4] */
+    .clickable-card:active { transform: translateY(-2px); } /*[cite: 4] */
+    .color-green { color: #5cb85c; } .bg-green { background-color: #5cb85c; } /*[cite: 4] */
+    .color-orange { color: #f0ad4e; } .bg-orange { background-color: #f0ad4e; } /*[cite: 4] */
+    .color-red { color: #d9534f; } .bg-red { background-color: #d9534f; } /*[cite: 4] */
+    .color-blue { color: #5bc0de; } .bg-blue { background-color: #5bc0de; } /*[cite: 4] */
+    .panel-container { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-top: 4px solid #3c8dbc; margin-bottom: 20px; } /*[cite: 4] */
+    .welcome-alert { background-color: #dff0d8; border-color: #d6e9c6; color: #3c763d; border-radius: 6px; padding: 15px; margin-bottom: 25px; font-size: 1.05rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); } /*[cite: 4] */
+    .mapel-card { transition: 0.3s; border-left: 4px solid #3c8dbc; border-radius: 6px; } /*[cite: 4] */
+    .mapel-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); } /*[cite: 4] */
+    .chat-box { max-height: 400px; overflow-y: auto; padding: 15px; background: #f9f9f9; border: 1px solid #eee; border-radius: 6px; margin-bottom: 15px; } /*[cite: 4] */
+    .chat-msg { margin-bottom: 15px; padding: 10px 15px; border-radius: 6px; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); } /*[cite: 4] */
+    .profile-avatar-box { width: 120px; height: 120px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 60px; margin: 0 auto; border: 4px solid rgba(255,255,255,0.5); text-shadow: 2px 2px 4px rgba(0,0,0,0.2); } /*[cite: 4] */
+    @media (max-width: 768px) { .sidebar { left: -250px; } .main-content { margin-left: 0; } .sidebar.show { left: 0; z-index: 1000; } } /*[cite: 4] */
+  </style>
+</head>
+<body>
+
+<div id="loginSection" class="login-wrapper">
+  <div class="login-box" id="boxLoginArea">
+    <div class="text-center mb-3">
+      <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #3c8dbc, #0056b3); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);"> <!--[cite: 4] -->
+        <i class="fas fa-laptop-code"></i> <!--[cite: 4] -->
+      </div>
+    </div>
+    <h3 class="mb-2 text-center" style="color: #2c3e50; font-weight: 800;" id="authTitle">SISTEM AKADEMIK</h3> <!--[cite: 4] -->
+    <p class="text-center text-muted mb-4" id="authDesc">Silakan masuk ke akun Anda</p> <!--[cite: 4] -->
+
+    <form id="loginForm" onsubmit="prosesLogin(event)">
+      <div class="mb-3">
+        <label class="form-label fw-bold">Username</label> <!--[cite: 4] -->
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-user"></i></span> <!--[cite: 4] -->
+          <input type="text" id="username" class="form-control" required placeholder="Masukkan Username" /> <!--[cite: 4] -->
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="form-label fw-bold">Password</label> <!--[cite: 4] -->
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-lock"></i></span> <!--[cite: 4] -->
+          <input type="password" id="password" class="form-control" required placeholder="Masukkan Password" /> <!--[cite: 4] -->
+        </div>
+      </div>
+      <button type="submit" id="btnLoginSubmit" class="btn w-100 fw-bold text-white" style="background-color: #3c8dbc; padding: 10px; font-size: 1.1rem; border-radius: 6px;">Masuk</button> <!--[cite: 4] -->
+      <div class="text-center mt-3">
+        <small class="text-muted">Belum punya akun? <a href="javascript:void(0)" onclick="toggleAuthMode('register')" style="color: #3c8dbc; font-weight: bold; text-decoration: none;">Daftar di sini</a></small> <!--[cite: 4] -->
+      </div>
+    </form>
+
+    <form id="registerForm" onsubmit="prosesRegister(event)" style="display: none;"> <!--[cite: 4] -->
+      <div class="mb-3 text-center">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="regRole" id="roleSiswa" value="siswa" checked onchange="toggleRegFields()"> <!--[cite: 4] -->
+          <label class="form-check-label fw-bold" for="roleSiswa">Daftar Siswa</label> <!--[cite: 4] -->
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="regRole" id="roleGuru" value="guru" onchange="toggleRegFields()"> <!--[cite: 4] -->
+          <label class="form-check-label fw-bold" for="roleGuru">Daftar Guru</label> <!--[cite: 4] -->
+        </div>
+      </div>
+
+      <div class="row" id="fieldRegSiswaOnly">
+        <div class="col-md-6 mb-3">
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-id-card"></i></span> <!--[cite: 4] -->
+            <input type="number" id="regNis" class="form-control" placeholder="NIS" /> <!--[cite: 4] -->
+          </div>
+        </div>
+        <div class="col-md-6 mb-3">
+          <div class="input-group">
+            <span class="input-group-text"><i class="fas fa-chalkboard"></i></span> <!--[cite: 4] -->
+            <select id="regKelas" class="form-select">
+              <option value="" disabled selected>Pilih Kelas</option> <!--[cite: 4] -->
+              <optgroup label="Kelas X">
+                <option value="X TKJ 1">X TKJ 1</option><option value="X TKJ 2">X TKJ 2</option><option value="X TKJ 3">X TKJ 3</option><option value="X TKJ 4">X TKJ 4</option> <!--[cite: 4] -->
+              </optgroup>
+              <optgroup label="Kelas XI">
+                <option value="XI TKJ 1">XI TKJ 1</option><option value="XI TKJ 2">XI TKJ 2</option><option value="XI TKJ 3">XI TKJ 3</option><option value="XI TKJ 4">XI TKJ 4</option> <!--[cite: 4] -->
+              </optgroup>
+              <optgroup label="Kelas XII">
+                <option value="XII TKJ 1">XII TKJ 1</option><option value="XII TKJ 2">XII TKJ 2</option><option value="XII TKJ 3">XII TKJ 3</option><option value="XII TKJ 4">XII TKJ 4</option><option value="XII TKJ 5">XII TKJ 5</option> <!--[cite: 4] -->
+              </optgroup>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-font"></i></span> <!--[cite: 4] -->
+          <input type="text" id="regNama" class="form-control" placeholder="Nama Lengkap" required /> <!--[cite: 4] -->
+        </div>
+      </div>
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-user-tag"></i></span> <!--[cite: 4] -->
+          <input type="text" id="regUsername" class="form-control" placeholder="Buat Username" required /> <!--[cite: 4] -->
+        </div>
+      </div>
+      <div class="mb-4">
+        <div class="input-group">
+          <span class="input-group-text"><i class="fas fa-lock"></i></span> <!--[cite: 4] -->
+          <input type="password" id="regPassword" class="form-control" placeholder="Buat Password" required /> <!--[cite: 4] -->
+        </div>
+      </div>
+
+      <button type="submit" id="btnRegisterSubmit" class="btn w-100 fw-bold text-white" style="background-color: #28a745; padding: 10px; font-size: 1.1rem; border-radius: 6px;">Daftar Sekarang</button> <!--[cite: 4] -->
+      <div class="text-center mt-3">
+        <small class="text-muted">Sudah punya akun? <a href="javascript:void(0)" onclick="toggleAuthMode('login')" style="color: #3c8dbc; font-weight: bold; text-decoration: none;">Kembali ke Login</a></small> <!--[cite: 4] -->
+      </div>
+    </form>
+    <div id="alertLogin" class="mt-3"></div> <!--[cite: 4] -->
+  </div>
+</div>
+
+<div id="dashboardSection">
+  <nav class="top-navbar">
+    <div class="d-flex align-items-center">
+      <div class="brand" onclick="pilihMenu('Dashboard', 'Dashboard Utama')"><i class="fas fa-graduation-cap me-1"></i> SISTEM AKADEMIK TKJ MANUSA</div> <!--[cite: 4] -->
+    </div>
+    <div class="user-info">
+      <span id="userInfoText"><i class="fas fa-user-circle"></i> Loading...</span> <!--[cite: 4] -->
+      <button onclick="logout()" class="btn btn-sm btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</button> <!--[cite: 4] -->
+    </div>
+  </nav>
+
+  <aside class="sidebar">
+    <ul class="sidebar-menu">
+      <li><a id="nav_Dashboard" class="active" onclick="pilihMenu('Dashboard', 'Dashboard Utama')"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li> <!--[cite: 4] -->
+      <li><a id="nav_Profil" onclick="pilihMenu('Profil', 'Pengaturan Akun & Lengkapi Data Diri')"><i class="fas fa-user-cog"></i> Profil Saya</a></li> <!--[cite: 4] -->
+      <li><a id="nav_Mapel" onclick="pilihMenu('Mapel', 'Daftar Mata Pelajaran & Materi')"><i class="fas fa-book"></i> Mata Pelajaran</a></li> <!--[cite: 4] -->
+      <li class="guru-only"><a id="nav_Data_Siswa" onclick="pilihMenu('Data_Siswa', 'Manajemen Data Siswa')"><i class="fas fa-users"></i> Data Siswa</a></li> <!--[cite: 4] -->
+      <li class="guru-only"><a id="nav_Absensi" onclick="pilihMenu('Absensi', 'Input Absensi Siswa')"><i class="fas fa-calendar-check"></i> Input Absensi</a></li> <!--[cite: 4] -->
+      <li class="guru-only"><a id="nav_Manajemen_Quiz" onclick="pilihMenu('Manajemen_Quiz', 'Manajemen Quiz & Tugas')"><i class="fas fa-tasks"></i> Manajemen Quiz</a></li> <!--[cite: 4] -->
+      <li class="guru-only"><a id="nav_Nilai" onclick="pilihMenu('Nilai', 'Pusat Penilaian Tugas Siswa')"><i class="fas fa-star"></i> Input Nilai</a></li> <!--[cite: 4] -->
+      <li class="siswa-only"><a id="nav_Tugas" onclick="pilihMenu('Tugas', 'Daftar & Upload Tugas')"><i class="fas fa-file-upload"></i> Upload Tugas</a></li> <!--[cite: 4] -->
+      <li class="siswa-only"><a id="nav_Rekap_Saya" onclick="pilihMenu('Rekap_Saya', 'Rapor Nilai & Rangkuman Absensi')"><i class="fas fa-chart-line"></i> Rekap Akademik Saya</a></li> <!--[cite: 4] -->
+      <li><a id="nav_Forum" onclick="pilihMenu('Forum', 'Forum Diskusi Kelas & Mading IT')"><i class="fas fa-comments"></i> Forum Diskusi Kelas</a></li> <!--[cite: 4] -->
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
+      <h3 id="judulHalaman" style="font-weight: 300; color: #333;">Dashboard <small class="text-muted fs-5">Utama</small></h3> <!--[cite: 4] -->
+    </div>
+
+    <div id="view_Dashboard" class="view-section">
+      <div class="welcome-alert">
+        Assalamu'alaikum wr. wb. !! Selamat datang <strong id="welcomeName">User</strong> di Sistem Akademik TKJ MANUSA. <!--[cite: 4] -->
+      </div>
+      <div class="row">
+        <div class="col-md-4 col-sm-6 guru-only">
+          <div class="info-card clickable-card" onclick="pilihMenu('Data_Siswa', 'Manajemen Data Siswa')"> <!--[cite: 4] -->
+            <div class="card-body"><i class="fas fa-users color-green icon-box"></i><div class="number color-green" id="dash_total_siswa">0</div></div> <!--[cite: 4] -->
+            <div class="footer bg-green">Data Siswa Terdaftar</div> <!--[cite: 4] -->
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+          <div class="info-card clickable-card" onclick="pilihMenu('Mapel', 'Daftar Mata Pelajaran & Materi')"> <!--[cite: 4] -->
+            <div class="card-body"><i class="fas fa-book color-blue icon-box"></i><div class="number color-blue" id="dash_total_materi">0</div></div> <!--[cite: 4] -->
+            <div class="footer bg-blue">Materi Belajar Diupload</div> <!--[cite: 4] -->
+          </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+          <div class="info-card clickable-card" onclick="userRole === 'guru' ? pilihMenu('Manajemen_Quiz', 'Manajemen Quiz & Tugas') : pilihMenu('Tugas', 'Daftar & Upload Tugas')"> <!--[cite: 4] -->
+            <div class="card-body"><i class="fas fa-tasks color-red icon-box"></i><div class="number color-red" id="dash_total_tugas">0</div></div> <!--[cite: 4] -->
+            <div class="footer bg-red">Tugas / Quiz Aktif</div> <!--[cite: 4] -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view_Profil" class="view-section" style="display: none;"> <!--[cite: 4] -->
+      <div class="row">
+        <div class="col-lg-4 mb-4">
+          <div class="panel-container text-center text-white pb-4" style="background: linear-gradient(135deg, #3c8dbc 0%, #2a5298 100%); border-top: none;"> <!--[cite: 4] -->
+            <div class="mb-3 mt-3">
+              <div class="profile-avatar-box">
+                <i class="fas fa-user-graduate" id="prof_icon"></i> <!--[cite: 4] -->
+              </div>
+            </div>
+            <h4 class="fw-bold mb-1" id="prof_display_nama">Nama User</h4> <!--[cite: 4] -->
+            <span class="badge bg-warning text-dark px-3 py-2 mb-2 rounded-pill fw-bold" id="prof_display_role">ROLE</span> <!--[cite: 4] -->
+            <p class="small mb-1 text-light" id="prof_display_detail">NIS/NIP - Kelas</p> <!--[cite: 4] -->
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="panel-container">
+            <h5 class="border-bottom pb-2 mb-4 text-secondary"><i class="fas fa-user-edit text-primary"></i> Lengkapi Data Personal Anda</h5> <!--[cite: 4] -->
+            <form id="formProfil" onsubmit="simpanProfil(event)">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label text-secondary fw-semibold">Username (Login)</label> <!--[cite: 4] -->
+                  <input type="text" id="prof_username" class="form-control bg-light" disabled> <!--[cite: 4] -->
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label text-secondary fw-semibold">Nama Lengkap</label> <!--[cite: 4] -->
+                  <input type="text" id="prof_nama" class="form-control" required placeholder="Ubah nama jika ada kesalahan"> <!--[cite: 4] -->
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label text-secondary fw-semibold">No. WhatsApp / HP</label> <!--[cite: 4] -->
+                  <div class="input-group">
+                    <span class="input-group-text bg-success text-white"><i class="fab fa-whatsapp"></i></span> <!--[cite: 4] -->
+                    <input type="number" id="prof_hp" class="form-control" placeholder="Cth: 08123456789"> <!--[cite: 4] -->
+                  </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label text-secondary fw-semibold">Email Aktif</label> <!--[cite: 4] -->
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span> <!--[cite: 4] -->
+                    <input type="email" id="prof_email" class="form-control" placeholder="Cth: user@gmail.com"> <!--[cite: 4] -->
+                  </div>
+                </div>
+                <div class="col-12 mb-4">
+                  <label class="form-label text-secondary fw-semibold">Alamat Domisili</label> <!--[cite: 4] -->
+                  <textarea id="prof_alamat" class="form-control" rows="2" placeholder="Masukkan alamat lengkap rumah Anda..."></textarea> <!--[cite: 4] -->
+                </div>
+                <div class="col-12 mb-3">
+                  <div class="alert alert-light border rounded-3 border-danger border-opacity-25"> <!--[cite: 4] -->
+                    <label class="form-label text-danger fw-bold"><i class="fas fa-key"></i> Ganti Password (Opsional)</label> <!--[cite: 4] -->
+                    <input type="password" id="prof_password" class="form-control" placeholder="Biarkan kosong jika tidak ingin ganti password"> <!--[cite: 4] -->
+                    <small class="text-muted fst-italic mt-1 d-block">Penting: Harap ingat baik-baik jika Anda mengubah password login Anda.</small> <!--[cite: 4] -->
+                  </div>
+                </div>
+              </div>
+              <button type="submit" id="btnSimpanProfil" class="btn btn-primary w-100 fw-bold py-2"><i class="fas fa-save me-1"></i> Simpan Perubahan Profil</button> <!--[cite: 4] -->
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view_Mapel" class="view-section" style="display: none;"> <!--[cite: 4] -->
+      <div class="row" id="rowDaftarMapel">
+        <div class="col-md-4 mb-4"><div class="card mapel-card"><div class="card-body"><h5 class="card-title fw-bold text-primary">ASJ</h5><h6 class="card-subtitle mb-2 text-muted">Administrasi Sistem Jaringan</h6><p class="card-text small text-secondary">Instalasi dan konfigurasi sistem operasi server.</p><button class="btn btn-sm btn-primary w-100 fw-bold" onclick="bukaMateriMapel('ASJ')"><i class="fas fa-folder-open"></i> Buka Materi</button></div></div></div> <!--[cite: 4] -->
+        <div class="col-md-4 mb-4"><div class="card mapel-card" style="border-left-color: #198754;"><div class="card-body"><h5 class="card-title fw-bold text-success">TLJ</h5><h6 class="card-subtitle mb-2 text-muted">Teknologi Layanan Jaringan</h6><p class="card-text small text-secondary">Komunikasi suara dan data pada jaringan komputer.</p><button class="btn btn-sm btn-success w-100 fw-bold" onclick="bukaMateriMapel('TLJ')"><i class="fas fa-folder-open"></i> Buka Materi</button></div></div></div> <!--[cite: 4] -->
+        <div class="col-md-4 mb-4"><div class="card mapel-card" style="border-left-color: #dc3545;"><div class="card-body"><h5 class="card-title fw-bold text-danger">AIJ</h5><h6 class="card-subtitle mb-2 text-muted">Administrasi Infrastruktur Jaringan</h6><p class="card-text small text-secondary">Routing dan switching perangkat Cisco/Mikrotik.</p><button class="btn btn-sm btn-danger w-100 fw-bold" onclick="bukaMateriMapel('AIJ')"><i class="fas fa-folder-open"></i> Buka Materi</button></div></div></div> <!--[cite: 4] -->
+        <div class="col-md-4 mb-4"><div class="card mapel-card" style="border-left-color: #ffc107;"><div class="card-body"><h5 class="card-title fw-bold text-warning">DG</h5><h6 class="card-subtitle mb-2 text-muted">Desain Grafis</h6><p class="card-text small text-secondary">Dasar pembuatan desain vektor dan bitmap digital.</p><button class="btn btn-sm btn-warning text-white w-100 fw-bold" onclick="bukaMateriMapel('DG')"><i class="fas fa-folder-open"></i> Buka Materi</button></div></div></div> <!--[cite: 4] -->
+        <div class="col-md-4 mb-4"><div class="card mapel-card" style="border-left-color: #0dcaf0;"><div class="card-body"><h5 class="card-title fw-bold text-info">PKK-1</h5><h6 class="card-subtitle mb-2 text-muted">Produk Kreatif & Kewirausahaan</h6><p class="card-text small text-secondary">Peluang usaha kreatif, perakitan, dan inovasi IT.</p><button class="btn btn-sm btn-info text-white w-100 fw-bold" onclick="bukaMateriMapel('PKK-1')"><i class="fas fa-folder-open"></i> Buka Materi</button></div></div></div> <!--[cite: 4] -->
+        <div class="col-md-4 mb-4"><div class="card mapel-card" style="border-left-color: #6f42c1;"><div class="card-body"><h5 class="card-title fw-bold" style="color: #6f42c1;">TWAN</h5><h6 class="card-subtitle mb-2 text-muted">Teknologi Jaringan Berbasis Luas</h6><p class="card-text small text-secondary">Jaringan WAN, Fiber Optic, dan nirkabel outdoor.</p><button class="btn btn-sm text-white w-100 fw-bold" style="background-color: #6f42c1;" onclick="bukaMateriMapel('TWAN')"><i class="fas fa-folder-open"></i> Buka Materi</button></div></div></div> <!--[cite: 4] -->
+      </div>
+      <div id="areaDetailMateriMapel" style="display: none;"> <!--[cite: 4] -->
+        <button class="btn btn-sm btn-secondary mb-3" onclick="kembaliKeDaftarMapel()"><i class="fas fa-arrow-left"></i> Kembali ke Daftar Mapel</button> <!--[cite: 4] -->
+        <div class="row">
+          <div class="col-lg-5 mb-4 guru-only" id="panelInputMateriGuru"> <!--[cite: 4] -->
+            <div class="panel-container" style="border-top-color: #605ca8;"> <!--[cite: 4] -->
+              <h5 class="border-bottom pb-2 mb-3" style="color: #605ca8;"><i class="fas fa-edit"></i> Unggah Materi (<span id="txtCodeMapelAktif">MAPEL</span>)</h5> <!--[cite: 4] -->
+              <form id="formTambahMateri" onsubmit="simpanMateriBaru(event)">
+                <div class="mb-3">
+                  <label class="form-label text-secondary fw-semibold">Judul Materi Belajar</label> <!--[cite: 4] -->
+                  <input type="text" id="materi_judul" class="form-control" required placeholder="Cth: Dasar Konfigurasi Routing OSPF"> <!--[cite: 4] -->
+                </div>
+                <div class="mb-3">
+                  <label class="form-label text-secondary fw-semibold">Isi Ringkasan / Catatan</label> <!--[cite: 4] -->
+                  <textarea id="materi_deskripsi" class="form-control" rows="5" placeholder="Tulis ringkasan materi di sini..."></textarea> <!--[cite: 4] -->
+                </div>
+                <div class="mb-3">
+                  <label class="form-label text-secondary fw-semibold">Lampiran File (PDF/Word/PPT)</label> <!--[cite: 4] -->
+                  <input type="file" id="materi_file" class="form-control" accept=".pdf,.doc,.docx,.ppt,.pptx" /> <!--[cite: 4] -->
+                  <small class="text-muted d-block mt-1">Maks 3MB. Disinkronkan ke Google Drive.</small> <!--[cite: 4] -->
+                </div>
+                <button type="submit" id="btnUploadMateri" class="btn text-white w-100 fw-bold" style="background-color: #605ca8;"><i class="fas fa-share-square"></i> Bagikan Materi</button> <!--[cite: 4] -->
+              </form>
+            </div>
+          </div>
+          <div class="col-lg-7" id="kolomDaftarKlipingMateri">
+            <div class="panel-container">
+              <h5 class="border-bottom pb-2 mb-3 text-secondary"><i class="fas fa-book-reader"></i> Kliping Materi Belajar</h5> <!--[cite: 4] -->
+              <div id="madingMateriList" class="row"></div> <!--[cite: 4] -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view_Data_Siswa" class="view-section" style="display: none;"> <!--[cite: 4] -->
+      <div class="panel-container">
+        <h5 class="mb-4 text-secondary border-bottom pb-2"><i class="fas fa-user-plus"></i> Tambah / Edit Data Profil Siswa</h5> <!--[cite: 4] -->
+        <form id="formSiswa" onsubmit="kirimDataSiswa(event)">
+          <div class="row">
+            <div class="col-md-3 mb-3">
+              <label class="form-label text-secondary fw-semibold">NIS</label> <!--[cite: 4] -->
+              <input type="number" id="siswa_nis" class="form-control" required placeholder="Cth: 2425001" /> <!--[cite: 4] -->
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label text-secondary fw-semibold">Nama Lengkap</label> <!--[cite: 4] -->
+              <input type="text" id="siswa_nama" class="form-control" required placeholder="Masukkan Nama Siswa" /> <!--[cite: 4] -->
+            </div>
+            <div class="col-md-3 mb-3">
+              <label class="form-label text-secondary fw-semibold">Kelas</label> <!--[cite: 4] -->
+              <select id="siswa_kelas" class="form-select" required>
+                <option value="" disabled selected>-- Pilih Kelas --</option> <!--[cite: 4] -->
+                <option value="XI TKJ 1">XI TKJ 1</option><option value="XI TKJ 2">XI TKJ 2</option> <!--[cite: 4] -->
+                <option value="XII TKJ 1">XII TKJ 1</option><option value="XII TKJ 2">XII TKJ 2</option> <!--[cite: 4] -->
+              </select>
+            </div>
+            <div class="col-md-2 mb-3">
+              <label class="form-label text-secondary fw-semibold">Gender</label> <!--[cite: 4] -->
+              <select id="siswa_jk" class="form-select">
+                <option>Laki-laki</option><option>Perempuan</option> <!--[cite: 4] -->
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary fw-semibold">Alamat Rumah</label> <!--[cite: 4] -->
+            <input type="text" id="siswa_alamat" class="form-control" placeholder="Alamat lengkap siswa" /> <!--[cite: 4] -->
+          </div>
+          <button type="submit" id="btnSimpanSiswa" class="btn btn-primary fw-bold"><i class="fas fa-save me-1"></i> Simpan Siswa</button> <!--[cite: 4] -->
+        </form>
+      </div>
+
+      <div class="panel-container mt-4">
+        <h5 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-users"></i> Daftar Siswa Terdaftar</h5> <!--[cite: 4] -->
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered align-middle text-center">
+            <thead class="table-light">
+              <tr><th>NIS</th><th>Nama Lengkap</th><th>Kelas</th><th>Gender</th><th>Alamat</th></tr> <!--[cite: 4] -->
+            </thead>
+            <tbody id="tabelSiswaBody"></tbody> <!--[cite: 4] -->
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="view_Absensi" class="view-section" style="display: none;"> <!--[cite: 4] -->
+      <div class="panel-container">
+        <h5 class="mb-4 text-secondary border-bottom pb-2"><i class="fas fa-calendar-check"></i> Input Kehadiran Harian Kelas</h5> <!--[cite: 4] -->
+        
+        <div class="alert alert-info py-2 small">
+          <i class="fas fa-info-circle"></i> Status default adalah <b>Hadir (H)</b>. Ubah hanya pada siswa yang Sakit (S), Izin (I), atau Alpa (A). <!--[cite: 4] -->
+        </div>
+
+        <form id="formAbsensiMassal" onsubmit="kirimAbsensiMassal(event)">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered align-middle text-center">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 10%;">NIS</th> <!--[cite: 4] -->
+                  <th style="width: 25%;">Nama Lengkap</th> <!--[cite: 4] -->
+                  <th style="width: 15%;">Kelas</th> <!--[cite: 4] -->
+                  <th style="width: 25%; min-width: 200px;">Status Kehadiran</th> <!--[cite: 4] -->
+                  <th style="width: 25%;">Keterangan</th> <!--[cite: 4] -->
+                </tr>
+              </thead>
+              <tbody id="tabelAbsensiBody"></tbody> <!--[cite: 4] -->
+            </table>
+          </div>
+          <button type="submit" id="btnSimpanAbsenMassal" class="btn btn-warning w-100 fw-bold text-dark mt-3 py-2"> <!--[cite: 4] -->
+            <i class="fas fa-save me-1"></i> Simpan Semua Absensi <!--[cite: 4] -->
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div id="view_Manajemen_Quiz" class="view-section" style="display: none;"> <!--[cite: 4] -->
+      <div class="row">
+        <div class="col-lg-5 mb-4">
+          <div class="panel-container">
+            <h5 class="border-bottom pb-2 mb-3 text-primary"><i class="fas fa-plus-circle"></i> Publikasikan Tugas / Quiz Baru</h5> <!--[cite: 4] -->
+            <form id="formBuatQuiz" onsubmit="simpanQuiz(event)">
+              <div class="mb-3">
+                <label class="form-label text-secondary fw-semibold">Mata Pelajaran</label> <!--[cite: 4] -->
+                <select id="quiz_mapel" class="form-select">
+                  <option>ASJ</option><option>TLJ</option><option>AIJ</option><option>DG</option><option>PKK-1</option><option>TWAN</option> <!--[cite: 4] -->
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-secondary fw-semibold">Judul Penugasan</label> <!--[cite: 4] -->
+                <input type="text" id="quiz_judul" class="form-control" required placeholder="Cth: Ulangan Harian Bab 1 VoIP"> <!--[cite: 4] -->
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-secondary fw-semibold">Batas Waktu (Deadline)</label> <!--[cite: 4] -->
+                <input type="datetime-local" id="quiz_deadline" class="form-control" required> <!--[cite: 4] -->
+              </div>
+              <div class="mb-3">
+                <label class="form-label text-secondary fw-semibold">File Soal/Panduan (Word/PDF)</label> <!--[cite: 4] -->
+                <input type="file" id="quiz_file_soal" class="form-control" accept=".pdf,.doc,.docx" /> <!--[cite: 4] -->
+              </div>
+              <button type="submit" id="btnKirimQuiz" class="btn btn-primary w-100 fw-bold"><i class="fas fa-paper-plane"></i> Publikasikan Tugas</button> <!--[cite: 4] -->
+            </form>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="panel-container">
+            <h5 class="border-bottom pb-2 mb-3 text-secondary"><i class="fas fa-list"></i> Daftar Tugas Aktif</h5> <!--[cite: 4] -->
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered text-center align-middle">
+                <thead class="table-light">
+                  <tr><th>Mapel</th><th>Judul Tugas</th><th>Batas Waktu</th><th>File Soal</th><th>Aksi</th></tr> <!--[cite: 4] -->
+                </thead>
+                <tbody id="tabelQuizGuru"></tbody> <!--[cite: 4] -->
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view_Tugas" class="view-section" style="display: none;"> <!--[cite: 4] -->
+      <div class="panel-container">
+        <h5 class="border-bottom pb-2 mb-3 text-danger"><i class="fas fa-folder-open"></i> Daftar Tugas & Quiz Dari Guru</h5> <!--[cite: 4] -->
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered text-center align-middle">
+            <thead class="table-light">
+              <tr><th>Mapel</th><th>Judul Tugas</th><th>Deadline</th><th>File Soal</th><th>Aksi</th></tr> <!--[cite: 4] -->
+            </thead>
+            <tbody id="tabelQuizSiswa"></tbody> <!--[cite: 4] -->
+          </table>
+        </div>
+      </div>
+
+      <div class="panel-container mt-4" id="panelKirimJawabanSiswa" style="display: none;"> <!--[cite: 4] -->
+        <h5 class="text-primary border-bottom pb-2 mb-3"><i class="fas fa-upload"></i> Form Unggah Jawaban Tugas</h5> <!--[cite: 4] -->
+        <div class="alert alert-warning py-2 mb-3">
+          Mengerjakan Tugas: <strong id="txtTugasTerpilih">Nama Tugas</strong> (<span id="txtMapelTugasTerpilih">MAPEL</span>) <!--[cite: 4] -->
+        </div>
+        <form id="formKirimTugas" onsubmit="kirimJawabanTugas(event)">
+          <div class="mb-3">
+            <label class="form-label text-secondary fw-semibold">Upload Lampiran Hasil Pekerjaan</label> <!--[cite: 4] -->
+            <input type="file" id="fileTugas" class="form-control" required accept=".pdf,.doc,.docx,.zip,.pkt,.png,.jpg" /> <!--[cite: 4] -->
+            <small class="text-muted">Maks 3MB. Format: PDF, Word, Cisco PKT, Gambar, ZIP.</small> <!--[cite: 4] -->
+          </div>
+          <button type="submit" id="btnSubmitTugas" class="btn btn-success fw-bold"><i class="fas fa-save me-1"></i> Kirim Hasil Jawaban</button> <!--[cite: 4] -->
+        </form>
+      </div>
+    </div>
+
+    <div id="view_Nilai" class="view-section" style="display: none;"> <!--[cite: 4] -->
+      <div class="panel-container" style="border-top-color: #f0ad4e;"> <!--[cite: 4] -->
+        <h5 class="mb-3 text-secondary border-bottom pb-2"><i class="fas fa-star text-warning"></i> Antrean Koreksi & Penilaian Jawaban Siswa</h5> <!--[cite: 4] -->
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered text-center align-middle">
+            <thead class="table-dark">
+              <tr><th>Siswa</th><th>Kelas</th><th>Mapel / Tugas</th><th>File Jawaban</th><th>Skor Nilai</th><th>Catatan Guru</th><th>Aksi</th></tr> <!--[cite: 4] -->
+            </thead>
+            <tbody id="tabelAntreanPenilaian"></tbody> <!--[cite: 4] -->
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="view_Rekap_Saya" class="view-section" style="display: none;"> <!--[cite: 4] -->
+      <div class="row">
+        <div class="col-lg-8 mb-4">
+          <div class="panel-container" style="border-top-color: #5cb85c;"> <!--[cite: 4] -->
+            <h5 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-star"></i> Lembar Hasil Nilai Tugas Kompetensi Anda</h5> <!--[cite: 4] -->
+            <div class="table-responsive">
+              <table class="table table-striped table-bordered text-center align-middle">
+                <thead class="table-success">
+                  <tr><th>Mata Pelajaran</th><th>Judul Tugas</th><th>Skor Nilai</th><th>Catatan Koreksi</th></tr> <!--[cite: 4] -->
+                </thead>
+                <tbody id="tabelNilaiSiswaPersonal"></tbody> <!--[cite: 4] -->
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="panel-container" style="border-top-color: #5bc0de;"> <!--[cite: 4] -->
+            <h5 class="text-info border-bottom pb-2 mb-3"><i class="fas fa-calendar-alt"></i> Presentase Absensi Anda</h5> <!--[cite: 4] -->
+            <ul class="list-group list-group-flush fw-semibold text-secondary">
+              <li class="list-group-item d-flex justify-content-between align-items-center">Hadir <span class="badge bg-success rounded-pill" id="rekap_hadir">0 Hari</span></li> <!--[cite: 4] -->
+              <li class="list-group-item d-flex justify-content-between align-items-center">Sakit <span class="badge bg-warning text-dark rounded-pill" id="rekap_sakit">0 Hari</span></li> <!--[cite: 4] -->
+              <li class="list-group-item d-flex justify-content-between align-items-center">Izin <span class="badge bg-info rounded-pill" id="rekap_izin">0 Hari</span></li> <!--[cite: 4] -->
+              <li class="list-group-item d-flex justify-content-between align-items-center">Alpa <span class="badge bg-danger rounded-pill" id="rekap_alpa">0 Hari</span></li> <!--[cite: 4] -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view_Forum" class="view-section" style="display: none;"> <!--[cite: 4] -->
+      <div class="panel-container" style="border-top-color: #605ca8;"> <!--[cite: 4] -->
+        <h5 style="color: #605ca8;" class="border-bottom pb-2 mb-3"><i class="fas fa-comments"></i> Papan Mading & Ruang Diskusi Kelas TKJ</h5> <!--[cite: 4] -->
+        <div class="chat-box" id="kotakPesanForum"></div> <!--[cite: 4] -->
+        <form id="formKirimForum" onsubmit="postPesanForum(event)">
+          <div class="input-group">
+            <input type="text" id="msg_forum_text" class="form-control" placeholder="Tulis pertanyaan, info, atau catatan praktikum jaringan..." required autocomplete="off"> <!--[cite: 4] -->
+            <button class="btn text-white fw-bold" type="submit" id="btnKirimChat" style="background-color: #605ca8;"><i class="fas fa-paper-plane"></i> Kirim</button> <!--[cite: 4] -->
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> <!--[cite: 4] -->
+<script>
+  // =========================================================================
+  // GANTI DENGAN URL WEB APP DEPLOYMENT GOOGLE APPS SCRIPT ANDA YANG TERBARU!
+  // =========================================================================
+  const scriptUrl = "https://script.google.com/macros/s/AKfycbw_sMU4tUrnTgSs2yJEHJ0XGKF8Kci6BCplM20ADlbVczjbkAibG9hwgPzyij9ncWSdPg/exec"; //[cite: 4]
+  
+  let userAktif = null; //[cite: 4]
+  let userRole = ''; //[cite: 4]
+  let nisUserAktifLog = ''; //[cite: 4]
+  let mapelAktif = ''; //[cite: 4]
+  let selectedTugasObj = null; //[cite: 4]
+
+  let localDB = { siswa: [], materi: [], quiz: [], jawaban: [], absensi: [], forum: [] }; //[cite: 4]
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const session = localStorage.getItem("manusa_session"); //[cite: 4]
+    if(session) { //[cite: 4]
+      userAktif = JSON.parse(session); //[cite: 4]
+      userRole = userAktif.role; //[cite: 4]
+      nisUserAktifLog = userAktif.nis || ''; //[cite: 4]
+      masukDashboard(); //[cite: 4]
+    }
+  });
+
+  function toggleAuthMode(mode) {
+    if(mode === 'register') { //[cite: 4]
+      document.getElementById('loginForm').style.display = 'none'; //[cite: 4]
+      document.getElementById('registerForm').style.display = 'block'; //[cite: 4]
+      document.getElementById('authTitle').innerText = 'DAFTAR AKUN'; //[cite: 4]
+      document.getElementById('authDesc').innerText = 'Silakan isi data untuk pendaftaran'; //[cite: 4]
+    } else {
+      document.getElementById('loginForm').style.display = 'block'; //[cite: 4]
+      document.getElementById('registerForm').style.display = 'none'; //[cite: 4]
+      document.getElementById('authTitle').innerText = 'SISTEM AKADEMIK'; //[cite: 4]
+      document.getElementById('authDesc').innerText = 'Silakan masuk ke akun Anda'; //[cite: 4]
+    }
+    document.getElementById('alertLogin').innerHTML = ''; //[cite: 4]
+  }
+
+  function toggleRegFields() {
+    const isSiswa = document.getElementById('roleSiswa').checked; //[cite: 4]
+    document.getElementById('fieldRegSiswaOnly').style.display = isSiswa ? 'flex' : 'none'; //[cite: 4]
+    document.getElementById('regNis').required = isSiswa; //[cite: 4]
+    document.getElementById('regKelas').required = isSiswa; //[cite: 4]
+  }
+
+  function prosesRegister(e) {
+    e.preventDefault(); //[cite: 4]
+    const btn = document.getElementById('btnRegisterSubmit'); //[cite: 4]
+    btn.disabled = true; btn.innerText = "Mendaftarkan..."; //[cite: 4]
+
+    const role = document.querySelector('input[name="regRole"]:checked').value; //[cite: 4]
+    
+    const payload = {
+      action: 'register', //[cite: 4]
+      role: role, //[cite: 4]
+      nama: document.getElementById('regNama').value, //[cite: 4]
+      username: document.getElementById('regUsername').value, //[cite: 4]
+      password: document.getElementById('regPassword').value, //[cite: 4]
+      nis: role === 'siswa' ? document.getElementById('regNis').value : '', //[cite: 4]
+      kelas: role === 'siswa' ? document.getElementById('regKelas').value : '' //[cite: 4]
+    };
+    
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }) //[cite: 4]
+    .then(res => res.json()) //[cite: 4]
+    .then(data => {
+      btn.disabled = false; btn.innerText = "Daftar Sekarang"; //[cite: 4]
+      if(data.status === 'success') { //[cite: 4]
+        document.getElementById('alertLogin').innerHTML = `<div class="alert alert-success">${data.message}</div>`; //[cite: 4]
+        document.getElementById('registerForm').reset(); //[cite: 4]
+        setTimeout(() => toggleAuthMode('login'), 1500); //[cite: 4]
+      } else {
+        document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">${data.message}</div>`; //[cite: 4]
+      }
+    })
+    .catch(err => {
+      btn.disabled = false; btn.innerText = "Daftar Sekarang"; //[cite: 4]
+      document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">Error Server Hubungi Admin!</div>`; //[cite: 4]
+    });
+  }
+
+  function prosesLogin(e) {
+    e.preventDefault(); //[cite: 4]
+    const btn = document.getElementById('btnLoginSubmit'); //[cite: 4]
+    btn.disabled = true; btn.innerText = "Memvalidasi..."; //[cite: 4]
+
+    const u = document.getElementById('username').value; //[cite: 4]
+    const p = document.getElementById('password').value; //[cite: 4]
+    
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'login', username: u, password: p }) }) //[cite: 4]
+    .then(res => res.json()) //[cite: 4]
+    .then(data => {
+      btn.disabled = false; btn.innerText = "Masuk"; //[cite: 4]
+      if(data.status === 'success') { //[cite: 4]
+        userAktif = data.user; //[cite: 4]
+        userRole = data.user.role; //[cite: 4]
+        nisUserAktifLog = data.user.nis || ''; //[cite: 4]
+        localStorage.setItem("manusa_session", JSON.stringify(userAktif)); //[cite: 4]
+        masukDashboard(); //[cite: 4]
+      } else {
+        document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">${data.message}</div>`; //[cite: 4]
+      }
+    })
+    .catch(err => {
+      btn.disabled = false; btn.innerText = "Masuk"; //[cite: 4]
+      document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">Koneksi gagal terhubung!</div>`; //[cite: 4]
+    });
+  }
+
+  function masukDashboard() {
+    document.getElementById('loginSection').style.display = 'none'; //[cite: 4]
+    document.getElementById('dashboardSection').style.display = 'block'; //[cite: 4]
+    document.getElementById('userInfoText').innerHTML = `<i class="fas fa-user-circle"></i> ${userAktif.nama} (${userRole.toUpperCase()})`; //[cite: 4]
+    document.getElementById('welcomeName').innerText = userAktif.nama; //[cite: 4]
+    
+    if(userRole === 'guru') { //[cite: 4]
+      document.querySelectorAll('.guru-only').forEach(el => el.style.display = 'block'); //[cite: 4]
+      document.querySelectorAll('.siswa-only').forEach(el => el.style.display = 'none'); //[cite: 4]
+    } else {
+      document.querySelectorAll('.guru-only').forEach(el => el.style.display = 'none'); //[cite: 4]
+      document.querySelectorAll('.siswa-only').forEach(el => el.style.display = 'block'); //[cite: 4]
+    }
+    
+    pilihMenu('Dashboard', 'Dashboard Utama'); //[cite: 4]
+    tarikDataDatabase(); //[cite: 4]
+    loadDataProfil();  //[cite: 4]
+  }
+
+  function logout() {
+    localStorage.removeItem("manusa_session"); //[cite: 4]
+    userAktif = null; userRole = ''; nisUserAktifLog = ''; //[cite: 4]
+    document.getElementById('loginForm').reset(); //[cite: 4]
+    document.getElementById('loginSection').style.display = 'flex'; //[cite: 4]
+    document.getElementById('dashboardSection').style.display = 'none'; //[cite: 4]
+    toggleAuthMode('login'); //[cite: 4]
+  }
+
+  function pilihMenu(menuId, judulMenuText) {
+    document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active')); //[cite: 4]
+    const targetNav = document.getElementById('nav_' + menuId); //[cite: 4]
+    if(targetNav) targetNav.classList.add('active'); //[cite: 4]
+
+    document.getElementById('judulHalaman').innerHTML = `${menuId.replace('_',' ')} <small class="text-muted fs-5">${judulMenuText}</small>`; //[cite: 4]
+    
+    document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none'); //[cite: 4]
+    let viewId = 'view_' + menuId; //[cite: 4]
+    if(menuId === 'Nilai') viewId = 'view_Nilai'; //[cite: 4]
+    const targetView = document.getElementById(viewId); //[cite: 4]
+    if(targetView) targetView.style.display = 'block'; //[cite: 4]
+    
+    if(menuId === 'Mapel') kembaliKeDaftarMapel(); //[cite: 4]
+  }
+
+  function loadDataProfil() {
+    document.getElementById('prof_display_nama').innerText = userAktif.nama; //[cite: 4]
+    document.getElementById('prof_display_role').innerText = userAktif.role.toUpperCase(); //[cite: 4]
+    document.getElementById('prof_display_detail').innerText = userRole === 'siswa' ? `NIS: ${userAktif.nis} | Kelas: ${userAktif.kelas}` : 'Pengajar TKJ MANUSA'; //[cite: 4]
+    document.getElementById('prof_icon').className = userRole === 'siswa' ? 'fas fa-user-graduate' : 'fas fa-chalkboard-teacher'; //[cite: 4]
+    
+    document.getElementById('prof_username').value = userAktif.username; //[cite: 4]
+    document.getElementById('prof_nama').value = userAktif.nama; //[cite: 4]
+    document.getElementById('prof_hp').value = userAktif.hp || ''; //[cite: 4]
+    document.getElementById('prof_email').value = userAktif.email || ''; //[cite: 4]
+    document.getElementById('prof_alamat').value = userAktif.alamat || ''; //[cite: 4]
+    document.getElementById('prof_password').value = '';  //[cite: 4]
+  }
+
+  function simpanProfil(e) {
+    e.preventDefault(); //[cite: 4]
+    const btn = document.getElementById('btnSimpanProfil'); //[cite: 4]
+    btn.disabled = true; //[cite: 4]
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...'; //[cite: 4]
+
+    const payload = {
+      action: 'updateProfil', //[cite: 4]
+      username: userAktif.username,  //[cite: 4]
+      nama: document.getElementById('prof_nama').value, //[cite: 4]
+      hp: document.getElementById('prof_hp').value, //[cite: 4]
+      email: document.getElementById('prof_email').value, //[cite: 4]
+      alamat: document.getElementById('prof_alamat').value, //[cite: 4]
+      password: document.getElementById('prof_password').value //[cite: 4]
+    };
+
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }) //[cite: 4]
+    .then(res => res.json()) //[cite: 4]
+    .then(data => {
+      btn.disabled = false; //[cite: 4]
+      btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Perubahan Profil'; //[cite: 4]
+      if(data.status === 'success') { //[cite: 4]
+        alert("Profil berhasil diperbarui!"); //[cite: 4]
+        userAktif.nama = payload.nama; //[cite: 4]
+        userAktif.hp = payload.hp; //[cite: 4]
+        userAktif.email = payload.email; //[cite: 4]
+        userAktif.alamat = payload.alamat; //[cite: 4]
+        localStorage.setItem("manusa_session", JSON.stringify(userAktif)); //[cite: 4]
+        loadDataProfil();  //[cite: 4]
+        document.getElementById('welcomeName').innerText = userAktif.nama; //[cite: 4]
+        document.getElementById('userInfoText').innerHTML = `<i class="fas fa-user-circle"></i> ${userAktif.nama} (${userRole.toUpperCase()})`; //[cite: 4]
+      } else {
+        alert(data.message); //[cite: 4]
+      }
+    });
+  }
+
+  function tarikDataDatabase() {
+    fetch(`${scriptUrl}?readAll=true`) //[cite: 4]
+    .then(res => res.json()) //[cite: 4]
+    .then(data => {
+      localDB.siswa = data.siswa || []; //[cite: 4]
+      localDB.materi = data.materi || []; //[cite: 4]
+      localDB.quiz = data.quiz || []; //[cite: 4]
+      localDB.jawaban = data.jawaban || []; //[cite: 4]
+      localDB.absensi = data.absensi || []; //[cite: 4]
+      localDB.forum = data.forum || []; //[cite: 4]
+      refreshUI(); //[cite: 4]
+    });
+  }
+
+  function refreshUI() {
+    document.getElementById('dash_total_siswa').innerText = localDB.siswa.length; //[cite: 4]
+    document.getElementById('dash_total_materi').innerText = localDB.materi.length; //[cite: 4]
+    document.getElementById('dash_total_tugas').innerText = localDB.quiz.length; //[cite: 4]
+
+    const tSiswa = document.getElementById('tabelSiswaBody'); //[cite: 4]
+    if(tSiswa) { //[cite: 4]
+      let dataSiswaSorted = localDB.siswa.sort((a, b) => a.kelas.localeCompare(b.kelas)); //[cite: 4]
+      tSiswa.innerHTML = dataSiswaSorted.map(s => `
+        <tr><td class="fw-bold">${s.nis}</td><td class="text-start">${s.nama}</td><td><span class="badge bg-primary fs-6">${s.kelas}</span></td><td>${s.jk}</td><td class="text-start">${s.alamat}</td></tr>`).join(''); //[cite: 4]
+    }
+
+    const tAbsen = document.getElementById('tabelAbsensiBody'); //[cite: 4]
+    if(tAbsen) { //[cite: 4]
+      let dataSiswaSorted = localDB.siswa.sort((a, b) => a.kelas.localeCompare(b.kelas)); //[cite: 4]
+      tAbsen.innerHTML = dataSiswaSorted.map(s => `
+        <tr class="baris-absen" data-nis="${s.nis}" data-nama="${s.nama}" data-kelas="${s.kelas}">
+          <td class="fw-bold">${s.nis}</td>
+          <td class="text-start">${s.nama}</td>
+          <td><span class="badge bg-primary">${s.kelas}</span></td>
+          <td>
+            <div class="d-flex justify-content-center gap-3">
+              <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="h_${s.nis}" value="Hadir" checked><label class="form-check-label text-success fw-bold" for="h_${s.nis}">H</label></div>
+              <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="s_${s.nis}" value="Sakit"><label class="form-check-label text-warning fw-bold" for="s_${s.nis}">S</label></div>
+              <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="i_${s.nis}" value="Izin"><label class="form-check-label text-info fw-bold" for="i_${s.nis}">I</label></div>
+              <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="a_${s.nis}" value="Alpa"><label class="form-check-label text-danger fw-bold" for="a_${s.nis}">A</label></div>
+            </div>
+          </td>
+          <td><input type="text" class="form-control form-control-sm input-keterangan" placeholder="Catatan opsional"></td>
+        </tr>`).join(''); //[cite: 4]
+    }
+
+    const tQuizGuru = document.getElementById('tabelQuizGuru'); //[cite: 4]
+    if(tQuizGuru) { //[cite: 4]
+      tQuizGuru.innerHTML = localDB.quiz.map(q => { //[cite: 4]
+        const waktuSekarang = new Date(); //[cite: 4]
+        const batasWaktu = new Date(q.deadline); //[cite: 4]
+        const isTerlewat = batasWaktu < waktuSekarang; //[cite: 4]
+        const badgeStatus = isTerlewat //[cite: 4]
+          ? `<br><span class="badge bg-danger mt-1" style="font-size:0.7rem;">Terlewat</span>` //[cite: 4]
+          : `<br><span class="badge bg-success mt-1" style="font-size:0.7rem;">Aktif</span>`; //[cite: 4]
+          
+        return `<tr>
+          <td><span class="badge bg-secondary">${q.mapel}</span></td>
+          <td>${q.judul}</td>
+          <td>${q.deadline} ${badgeStatus}</td>
+          <td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-primary py-0"><i class="fas fa-download"></i> Unduh</a>`: '-'}</td>
+          <td>
+            <button class="btn btn-sm btn-success py-0 m-1" onclick="ingatkanTugasWA('${q.judul}', '${q.mapel}', '${q.deadline}')" title="Broadcast Peringatan via WA">
+              <i class="fab fa-whatsapp"></i>
+            </button>
+            <button class="btn btn-sm ${isTerlewat ? 'btn-warning' : 'btn-outline-warning'} py-0 m-1" onclick="perpanjangDeadline('${q.id}', '${q.judul}')" title="Perpanjang Deadline">
+              <i class="fas fa-clock"></i>
+            </button>
+            <button class="btn btn-sm btn-danger py-0 m-1" onclick="hapusTugas('${q.id}', '${q.judul}')" title="Hapus Tugas">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>`;
+      }).join(''); //[cite: 4]
+    }
+
+    const tQuizSiswa = document.getElementById('tabelQuizSiswa'); //[cite: 4]
+    if(tQuizSiswa) tQuizSiswa.innerHTML = localDB.quiz.map(q => `<tr><td><span class="badge bg-primary">${q.mapel}</span></td><td>${q.judul}</td><td>${q.deadline}</td><td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-dark py-0"><i class="fas fa-file-pdf"></i> Soal</a>`: '-'}</td><td><button class="btn btn-xs btn-danger fw-bold py-0" onclick="bukaFormPengerjaanTugas('${q.id}', '${q.judul}', '${q.mapel}')">Kerjakan</button></td></tr>`).join(''); //[cite: 4]
+
+    const tKoreksi = document.getElementById('tabelAntreanPenilaian'); //[cite: 4]
+    if(tKoreksi) tKoreksi.innerHTML = localDB.jawaban.map(j => `<tr><td>${j.nama}</td><td>${j.kelas}</td><td><b>[${j.mapel}]</b> ${j.judulTugas}</td><td><a href="${j.urlFileJawaban}" target="_blank" class="btn btn-sm btn-link"><i class="fas fa-file-alt"></i> Lihat File</a></td><td><span class="badge bg-success font-monospace fs-6">${j.nilai || 'Belum'}</span></td><td class="small text-muted">${j.catatanGuru || '-'}</td><td><button class="btn btn-sm btn-warning font-weight-bold" onclick="beriPenilaianDialog('${j.id}')"><i class="fas fa-check-square"></i> Nilai</button></td></tr>`).join(''); //[cite: 4]
+
+    const tSiswaPersonal = document.getElementById('tabelNilaiSiswaPersonal'); //[cite: 4]
+    if(tSiswaPersonal) tSiswaPersonal.innerHTML = localDB.jawaban.filter(j => String(j.nis) === String(nisUserAktifLog)).map(j => `<tr><td><span class="badge bg-info text-dark">${j.mapel}</span></td><td>${j.judulTugas}</td><td><b class="text-success">${j.nilai || 'Sedang Dikoreksi'}</b></td><td><span class="small text-muted">${j.catatanGuru || '-'}</span></td></tr>`).join(''); //[cite: 4]
+
+    if(userRole === 'siswa') { //[cite: 4]
+      const myAbsen = localDB.absensi.filter(a => String(a.nis) === String(nisUserAktifLog)); //[cite: 4]
+      document.getElementById('rekap_hadir').innerText = myAbsen.filter(a => a.status === 'Hadir').length + " Hari"; //[cite: 4]
+      document.getElementById('rekap_sakit').innerText = myAbsen.filter(a => a.status === 'Sakit').length + " Hari"; //[cite: 4]
+      document.getElementById('rekap_izin').innerText = myAbsen.filter(a => a.status === 'Izin').length + " Hari"; //[cite: 4]
+      document.getElementById('rekap_alpa').innerText = myAbsen.filter(a => a.status === 'Alpa').length + " Hari"; //[cite: 4]
+    }
+
+    renderForumPesan(); //[cite: 4]
+  }
+
+  function dapatkanBase64(file) {
+    return new Promise((resolve, reject) => { //[cite: 4]
+      if(!file) resolve(""); //[cite: 4]
+      const reader = new FileReader(); //[cite: 4]
+      reader.readAsDataURL(file); //[cite: 4]
+      reader.onload = () => { //[cite: 4]
+        let encoded = reader.result.toString().replace(/^data:(.*,)?/, ''); //[cite: 4]
+        if ((encoded.length % 4) > 0) encoded += '='.repeat(4 - (encoded.length % 4)); //[cite: 4]
+        resolve(encoded); //[cite: 4]
+      };
+      reader.onerror = error => reject(error); //[cite: 4]
+    });
+  }
+
+  async function simpanMateriBaru(e) {
+    e.preventDefault(); //[cite: 4]
+    const btn = document.getElementById('btnUploadMateri'); //[cite: 4]
+    btn.disabled = true; btn.innerText = "Mengunggah ke Drive..."; //[cite: 4]
+    const fileEl = document.getElementById('materi_file').files[0]; //[cite: 4]
+    let base64Data = ""; let nameFile = ""; //[cite: 4]
+    if(fileEl) { base64Data = await dapatkanBase64(fileEl); nameFile = fileEl.name; } //[cite: 4]
+
+    const payload = { action: 'tambahMateri', mapel: mapelAktif, judul: document.getElementById('materi_judul').value, deskripsi: document.getElementById('materi_deskripsi').value, fileBase64: base64Data, fileName: nameFile }; //[cite: 4]
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }) //[cite: 4]
+    .then(res => res.json()) //[cite: 4]
+    .then(data => { btn.disabled = false; btn.innerText = "Bagikan Materi"; document.getElementById('formTambahMateri').reset(); tarikDataDatabase(); }); //[cite: 4]
+  }
+
+  function bukaMateriMapel(code) {
+    mapelAktif = code; //[cite: 4]
+    document.getElementById('txtCodeMapelAktif').innerText = code; //[cite: 4]
+    document.getElementById('rowDaftarMapel').style.display = 'none'; //[cite: 4]
+    document.getElementById('areaDetailMateriMapel').style.display = 'block'; //[cite: 4]
+    const mList = document.getElementById('madingMateriList'); //[cite: 4]
+    const filteredMateri = localDB.materi.filter(m => m.mapel === code); //[cite: 4]
+    
+    if(filteredMateri.length === 0) mList.innerHTML = `<div class="col-12 text-center text-muted py-4"><i class="fas fa-info-circle mb-2 d-block fs-3"></i> Belum ada materi yang diunggah untuk mapel ini.</div>`; //[cite: 4]
+    else mList.innerHTML = filteredMateri.map(m => `<div class="col-12 mb-3"><div class="card bg-light border-0 shadow-sm"><div class="card-body"><h6 class="fw-bold text-dark mb-1"><i class="fas fa-file-alt text-primary me-2"></i>${m.judul}</h6><p class="small text-secondary mb-2" style="white-space: pre-wrap;">${m.deskripsi || ''}</p>${m.urlFileDrive ? `<a href="${m.urlFileDrive}" target="_blank" class="btn btn-xs btn-outline-secondary fw-bold py-0 text-decoration-none"><i class="fas fa-paperclip"></i> Buka File Lampiran</a>` : ''}</div></div></div>`).join(''); //[cite: 4]
+  }
+
+  function kembaliKeDaftarMapel() {
+    document.getElementById('rowDaftarMapel').style.display = 'flex'; //[cite: 4]
+    document.getElementById('areaDetailMateriMapel').style.display = 'none'; //[cite: 4]
+  }
+
+  function kirimDataSiswa(e) {
+    e.preventDefault(); //[cite: 4]
+    const btn = document.getElementById('btnSimpanSiswa'); //[cite: 4]
+    btn.disabled = true; //[cite: 4]
+
+    const payload = { action: 'kirimData', menuAktif: 'Data_Siswa', nis: document.getElementById('siswa_nis').value, nama: document.getElementById('siswa_nama').value, kelas: document.getElementById('siswa_kelas').value, jk: document.getElementById('siswa_jk').value, alamat: document.getElementById('siswa_alamat').value }; //[cite: 4]
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { btn.disabled = false; document.getElementById('formSiswa').reset(); tarikDataDatabase(); }); //[cite: 4]
+  }
+
+  function kirimAbsensiMassal(e) {
+    e.preventDefault(); //[cite: 4]
+    const btn = document.getElementById('btnSimpanAbsenMassal'); //[cite: 4]
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...'; //[cite: 4]
+    let dataAbsensi = []; //[cite: 4]
+    document.querySelectorAll('.baris-absen').forEach(baris => { //[cite: 4]
+      const nis = baris.getAttribute('data-nis'); //[cite: 4]
+      dataAbsensi.push({ nis: nis, nama: baris.getAttribute('data-nama'), kelas: baris.getAttribute('data-kelas'), status: document.querySelector(`input[name="status_${nis}"]:checked`).value, keterangan: baris.querySelector('.input-keterangan').value }); //[cite: 4]
+    });
+
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimAbsensiMassal', data: dataAbsensi }) }) //[cite: 4]
+    .then(res => res.json()).then(data => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Semua Absensi'; //[cite: 4]
+      if(data.status === 'success') { alert("Presensi seluruh kelas berhasil disimpan ke database!"); document.getElementById('formAbsensiMassal').reset(); tarikDataDatabase(); } //[cite: 4]
+    }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Semua Absensi'; alert("Koneksi gagal terhubung!"); }); //[cite: 4]
+  }
+
+  async function simpanQuiz(e) {
+    e.preventDefault(); //[cite: 4]
+    const btn = document.getElementById('btnKirimQuiz'); //[cite: 4]
+    btn.disabled = true; btn.innerText = "Mengirim..."; //[cite: 4]
+    const fileEl = document.getElementById('quiz_file_soal').files[0]; //[cite: 4]
+    let base64Data = ""; let nameFile = ""; //[cite: 4]
+    if(fileEl) { base64Data = await dapatkanBase64(fileEl); nameFile = fileEl.name; } //[cite: 4]
+
+    const payload = { action: 'simpanQuiz', mapel: document.getElementById('quiz_mapel').value, judul: document.getElementById('quiz_judul').value, deadline: document.getElementById('quiz_deadline').value, fileBase64: base64Data, fileName: nameFile }; //[cite: 4]
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { btn.disabled = false; btn.innerText = "Publikasikan Tugas"; document.getElementById('formBuatQuiz').reset(); tarikDataDatabase(); }); //[cite: 4]
+  }
+
+  function bukaFormPengerjaanTugas(id, judul, mapel) {
+    selectedTugasObj = { id: id, judul: judul, mapel: mapel }; //[cite: 4]
+    document.getElementById('txtTugasTerpilih').innerText = judul; //[cite: 4]
+    document.getElementById('txtMapelTugasTerpilih').innerText = mapel; //[cite: 4]
+    document.getElementById('panelKirimJawabanSiswa').style.display = 'block'; //[cite: 4]
+    document.getElementById('panelKirimJawabanSiswa').scrollIntoView({ behavior: 'smooth' }); //[cite: 4]
+  }
+
+  async function kirimJawabanTugas(e) {
+    e.preventDefault(); //[cite: 4]
+    if(!selectedTugasObj) return; //[cite: 4]
+    const btn = document.getElementById('btnSubmitTugas'); //[cite: 4]
+    btn.disabled = true; btn.innerText = "Mengunggah Jawaban Anda..."; //[cite: 4]
+    const fileEl = document.getElementById('fileTugas').files[0]; //[cite: 4]
+    let base64Data = ""; let nameFile = ""; //[cite: 4]
+    if(fileEl) { base64Data = await dapatkanBase64(fileEl); nameFile = fileEl.name; } //[cite: 4]
+
+    const payload = { action: 'kirimData', menuAktif: 'Tugas', nis: nisUserAktifLog, nama: userAktif.nama, kelas: userAktif.kelas || 'TKJ', mapel: selectedTugasObj.mapel, judulTugas: selectedTugasObj.judul, fileBase64: base64Data, fileName: nameFile }; //[cite: 4]
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { btn.disabled = false; btn.innerText = "Kirim Hasil Jawaban"; document.getElementById('formKirimTugas').reset(); document.getElementById('panelKirimJawabanSiswa').style.display = 'none'; selectedTugasObj = null; tarikDataDatabase(); alert("Tugas sukses diserahkan & masuk antrean koreksi Guru."); }); //[cite: 4]
+  }
+
+  function beriPenilaianDialog(idSubmis) {
+    const nilai = prompt("Masukkan Skor Angka Nilai Siswa (0 - 100):"); //[cite: 4]
+    if(nilai === null) return; //[cite: 4]
+    const catatan = prompt("Tulis Catatan / Komentar Review Pekerjaan:"); //[cite: 4]
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'beriNilai', idSubmis: idSubmis, nilai: nilai, catatan: catatan }) }).then(res => res.json()).then(data => { tarikDataDatabase(); }); //[cite: 4]
+  }
+
+  function renderForumPesan() {
+    const box = document.getElementById('kotakPesanForum'); //[cite: 4]
+    if(!box) return; //[cite: 4]
+    box.innerHTML = localDB.forum.map(f => `<div class="chat-msg"><div class="d-flex justify-content-between align-items-center mb-1"><span class="fw-bold ${f.role === 'guru' ? 'text-danger' : 'text-primary'}">${f.nama} (${f.role.toUpperCase()})</span><small class="text-muted text-end font-monospace" style="font-size:0.75rem;">${f.timestamp || ''}</small></div><div class="text-dark small">${f.pesan}</div></div>`).join(''); //[cite: 4]
+    box.scrollTop = box.scrollHeight; //[cite: 4]
+  }
+
+  function postPesanForum(e) {
+    e.preventDefault(); //[cite: 4]
+    const input = document.getElementById('msg_forum_text'); //[cite: 4]
+    const msg = input.value.trim(); //[cite: 4]
+    if(!msg) return; //[cite: 4]
+    const btn = document.getElementById('btnKirimChat'); //[cite: 4]
+    btn.disabled = true; //[cite: 4]
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimForum', nama: userAktif.nama, role: userRole, pesan: msg }) }).then(res => res.json()).then(data => { btn.disabled = false; input.value = ''; tarikDataDatabase(); }); //[cite: 4]
+  }
+
+  function hapusTugas(idTugas, judulTugas) {
+    if(confirm(`YAKIN INGIN MENGHAPUS TUGAS: "${judulTugas}"?\n\nTugas akan hilang dari daftar siswa. Pastikan tidak ada data nilai penting yang belum direkap.`)) { //[cite: 4]
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'hapusQuiz', id: idTugas }) }) //[cite: 4]
+      .then(res => res.json()) //[cite: 4]
+      .then(data => { alert("Tugas berhasil dihapus!"); tarikDataDatabase(); }) //[cite: 4]
+      .catch(err => alert("Gagal menghapus tugas. Periksa koneksi.")); //[cite: 4]
+    }
+  }
+
+  function perpanjangDeadline(idTugas, judulTugas) {
+    const newDeadline = prompt(`PERPANJANG DEADLINE UNTUK: "${judulTugas}"\n\nMasukkan format waktu (Contoh: 2024-12-31T23:59):`, "2024-12-31T23:59"); //[cite: 4]
+    if(newDeadline != null && newDeadline !== "") { //[cite: 4]
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'perpanjangQuiz', id: idTugas, deadline: newDeadline }) }) //[cite: 4]
+      .then(res => res.json()) //[cite: 4]
+      .then(data => { alert("Batas waktu berhasil diperpanjang!"); tarikDataDatabase(); }) //[cite: 4]
+      .catch(err => alert("Gagal memperpanjang deadline. Periksa koneksi.")); //[cite: 4]
+    }
+  }
+
+  // --- FITUR BARU: BROADCAST PENGINGAT WA MANUAL ---
+  function ingatkanTugasWA(judulTugas, mapel, deadline) {
+    if(confirm(`Kirim Broadcast WhatsApp pengingat tugas "${judulTugas}" ke SELURUH SISWA TKJ?`)) {
+      
+      const notifArea = document.createElement('div');
+      notifArea.innerHTML = `<div style="position:fixed; top:20px; right:20px; z-index:9999;" class="alert alert-info border-0 shadow"><i class="fas fa-spinner fa-spin me-2"></i>Mengirim Pesan WA...</div>`;
+      document.body.appendChild(notifArea);
+
+      fetch(scriptUrl, { 
+        method: 'POST', 
+        body: JSON.stringify({ action: 'ingatkanTugasWA', judul: judulTugas, mapel: mapel, deadline: deadline }) 
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.body.removeChild(notifArea);
+        if(data.status === 'success') {
+          alert("Pesan Broadcast WhatsApp pengingat berhasil dikirim ke seluruh siswa!");
+        } else {
+          alert("Gagal memproses WA.");
+        }
+      })
+      .catch(err => {
+        document.body.removeChild(notifArea);
+        alert("Gagal menghubungi server Apps Script.");
+      });
+    }
+  }
+</script>
+
+</body>
+</html>
