@@ -248,6 +248,12 @@
       <div class="welcome-alert">
         Assalamu'alaikum wr. wb. !! Selamat datang <strong id="welcomeName">User</strong> di Sistem Akademik TKJ MANUSA.
       </div>
+      
+      <!-- FITUR BARU: NOTIFIKASI TUGAS SISWA BELUM DIKERJAKAN -->
+      <div id="notifTugasSiswaBox" class="siswa-only" style="display: none;">
+        <!-- Akan diisi otomatis oleh JavaScript -->
+      </div>
+
       <div class="row">
         <div class="col-md-4 col-sm-6 guru-only">
           <div class="info-card clickable-card" onclick="pilihMenu('Data_Siswa', 'Manajemen Data Siswa')">
@@ -425,11 +431,9 @@
       </div>
     </div>
 
-    <!-- UPDATE: TAMPILAN ABSENSI (KLASIFIKASI PER KELAS) -->
+    <!-- TAMPILAN ABSENSI (KLASIFIKASI PER KELAS) -->
     <div id="view_Absensi" class="view-section" style="display: none;">
       <div class="panel-container">
-        
-        <!-- Filter Kelas -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-4">
           <h5 class="text-secondary mb-3 mb-md-0"><i class="fas fa-calendar-check"></i> Input Kehadiran Harian</h5>
           <select id="filterKelasAbsensi" class="form-select form-select-sm w-auto fw-bold" style="min-width: 180px; border-color: #3c8dbc;" onchange="renderAbsensi()">
@@ -463,7 +467,6 @@
                 </tr>
               </thead>
               <tbody id="tabelAbsensiBody">
-                <!-- Data akan muncul setelah memilih kelas -->
                 <tr><td colspan="5" class="text-center text-muted py-5"><i class="fas fa-hand-point-up fs-2 d-block mb-2"></i>Silakan pilih kelas terlebih dahulu pada menu di atas.</td></tr>
               </tbody>
             </table>
@@ -527,7 +530,7 @@
         <div class="table-responsive">
           <table class="table table-hover table-bordered text-center align-middle" style="white-space: nowrap;">
             <thead class="table-light">
-              <tr><th>Mapel</th><th>Judul Tugas</th><th>Deadline</th><th>File Soal</th><th>Aksi</th></tr>
+              <tr><th>Mapel</th><th>Judul Tugas</th><th>Batas Waktu (Deadline)</th><th>File Soal</th><th>Aksi</th></tr>
             </thead>
             <tbody id="tabelQuizSiswa"></tbody>
           </table>
@@ -550,13 +553,11 @@
       </div>
     </div>
 
-    <!-- UPDATE: TAMPILAN NILAI GURU (KLASIFIKASI PER MAPEL) -->
+    <!-- TAMPILAN NILAI GURU (KLASIFIKASI PER MAPEL) -->
     <div id="view_Nilai" class="view-section" style="display: none;">
       <div class="panel-container" style="border-top-color: #f0ad4e;">
-        
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-4">
           <h5 class="text-secondary mb-3 mb-md-0"><i class="fas fa-star text-warning"></i> Antrean Penilaian Siswa</h5>
-          <!-- Filter Mapel -->
           <select id="filterMapelNilai" class="form-select form-select-sm w-auto fw-bold" style="min-width: 180px; border-color: #f0ad4e;" onchange="renderPenilaian()">
             <option value="ALL">Semua Mata Pelajaran</option>
             <option value="ASJ">ASJ</option>
@@ -567,7 +568,6 @@
             <option value="TWAN">TWAN</option>
           </select>
         </div>
-
         <div class="table-responsive">
           <table class="table table-hover table-bordered text-center align-middle" style="white-space: nowrap;">
             <thead class="table-dark">
@@ -579,7 +579,7 @@
       </div>
     </div>
 
-    <!-- UPDATE: TAMPILAN REKAP SISWA (KLASIFIKASI PER MAPEL) -->
+    <!-- TAMPILAN REKAP SISWA (KLASIFIKASI PER MAPEL) -->
     <div id="view_Rekap_Saya" class="view-section" style="display: none;">
       <div class="row">
         <div class="col-lg-8 mb-4">
@@ -590,9 +590,7 @@
                 <thead class="table-success">
                   <tr><th>Judul Tugas</th><th>Skor Nilai</th><th>Catatan Koreksi</th></tr>
                 </thead>
-                <tbody id="tabelNilaiSiswaPersonal">
-                   <!-- Grouping Mapel akan dirender disini via JavaScript -->
-                </tbody>
+                <tbody id="tabelNilaiSiswaPersonal"></tbody>
               </table>
             </div>
           </div>
@@ -652,6 +650,26 @@
       masukDashboard();
     }
   });
+
+  // FUNGSI UNTUK MERUBAH FORMAT TANGGAL JADI CANTIK DAN JELAS
+  function formatTanggalIndo(isoString) {
+    if (!isoString) return '-';
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return isoString; // Jika bukan tanggal, kembalikan text aslinya
+
+    const namaHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"];
+    const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+
+    const hari = namaHari[date.getDay()];
+    const tanggal = String(date.getDate()).padStart(2, '0');
+    const bulan = namaBulan[date.getMonth()];
+    const tahun = date.getFullYear();
+    const jam = String(date.getHours()).padStart(2, '0');
+    const menit = String(date.getMinutes()).padStart(2, '0');
+
+    // Output: Selasa, 31 Desember 2024 - 23:59 WIB
+    return `${hari}, ${tanggal} ${bulan} ${tahun} - ${jam}:${menit} WIB`;
+  }
 
   // FUNGSI UNTUK MEMBUKA/MENUTUP MENU DI HP
   function toggleSidebar() {
@@ -998,7 +1016,7 @@
         <tr><td class="fw-bold">${s.nis}</td><td class="text-start">${s.nama}</td><td><span class="badge bg-primary fs-6">${s.kelas}</span></td><td>${s.jk}</td><td class="text-start">${s.alamat}</td></tr>`).join('');
     }
 
-    // Render Manajemen Tugas (Guru)
+    // Render Manajemen Tugas (Guru) -> PENAMBAHAN FORMAT TANGGAL
     const tQuizGuru = document.getElementById('tabelQuizGuru');
     if(tQuizGuru) {
       tQuizGuru.innerHTML = localDB.quiz.map(q => {
@@ -1008,14 +1026,17 @@
         const badgeStatus = isTerlewat 
           ? `<br><span class="badge bg-danger mt-1" style="font-size:0.7rem;">Terlewat</span>` 
           : `<br><span class="badge bg-success mt-1" style="font-size:0.7rem;">Aktif</span>`;
+        
+        // Panggil fungsi format agar lebih rapi
+        const textDeadline = formatTanggalIndo(q.deadline);
           
         return `<tr>
           <td><span class="badge bg-secondary">${q.mapel}</span></td>
           <td>${q.judul}</td>
-          <td>${q.deadline} ${badgeStatus}</td>
+          <td><span class="fw-semibold">${textDeadline}</span> ${badgeStatus}</td>
           <td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-primary py-0"><i class="fas fa-download"></i> Unduh</a>`: '-'}</td>
           <td>
-            <button class="btn btn-sm btn-success py-0 m-1" onclick="ingatkanTugasWA('${q.judul}', '${q.mapel}', '${q.deadline}')" title="Broadcast Peringatan via WA">
+            <button class="btn btn-sm btn-success py-0 m-1" onclick="ingatkanTugasWA('${q.judul}', '${q.mapel}', '${textDeadline}')" title="Broadcast Peringatan via WA">
               <i class="fab fa-whatsapp"></i>
             </button>
             <button class="btn btn-sm ${isTerlewat ? 'btn-warning' : 'btn-outline-warning'} py-0 m-1" onclick="perpanjangDeadline('${q.id}', '${q.judul}')" title="Perpanjang Deadline">
@@ -1029,17 +1050,72 @@
       }).join('');
     }
 
-    // Render Tugas di sisi Siswa
+    // Render Tugas di sisi Siswa -> PENAMBAHAN FORMAT TANGGAL
     const tQuizSiswa = document.getElementById('tabelQuizSiswa');
-    if(tQuizSiswa) tQuizSiswa.innerHTML = localDB.quiz.map(q => `<tr><td><span class="badge bg-primary">${q.mapel}</span></td><td>${q.judul}</td><td>${q.deadline}</td><td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-dark py-0"><i class="fas fa-file-pdf"></i> Soal</a>`: '-'}</td><td><button class="btn btn-xs btn-danger fw-bold py-0" onclick="bukaFormPengerjaanTugas('${q.id}', '${q.judul}', '${q.mapel}')">Kerjakan</button></td></tr>`).join('');
+    if(tQuizSiswa) {
+      tQuizSiswa.innerHTML = localDB.quiz.map(q => `
+      <tr>
+        <td><span class="badge bg-primary">${q.mapel}</span></td>
+        <td>${q.judul}</td>
+        <td><span class="fw-semibold">${formatTanggalIndo(q.deadline)}</span></td>
+        <td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-dark py-0"><i class="fas fa-file-pdf"></i> Soal</a>`: '-'}</td>
+        <td><button class="btn btn-xs btn-danger fw-bold py-0" onclick="bukaFormPengerjaanTugas('${q.id}', '${q.judul}', '${q.mapel}')">Kerjakan</button></td>
+      </tr>`).join('');
+    }
 
-    // Update Kotak Absensi di Siswa
+    // Update Kotak Absensi & LOGIKA NOTIFIKASI TUGAS di Siswa
     if(userRole === 'siswa') {
       const myAbsen = localDB.absensi.filter(a => String(a.nis) === String(nisUserAktifLog));
       document.getElementById('rekap_hadir').innerText = myAbsen.filter(a => a.status === 'Hadir').length + " Hari";
       document.getElementById('rekap_sakit').innerText = myAbsen.filter(a => a.status === 'Sakit').length + " Hari";
       document.getElementById('rekap_izin').innerText = myAbsen.filter(a => a.status === 'Izin').length + " Hari";
       document.getElementById('rekap_alpa').innerText = myAbsen.filter(a => a.status === 'Alpa').length + " Hari";
+
+      // =========================================================
+      // FITUR BARU: NOTIFIKASI TUGAS YANG BELUM DIKERJAKAN
+      // =========================================================
+      const mySubmissions = localDB.jawaban.filter(j => String(j.nis) === String(nisUserAktifLog));
+      // Kita buat daftar "judul tugas" yang sudah pernah dikerjakan oleh siswa ini
+      const mySubmittedTaskTitles = mySubmissions.map(j => j.judulTugas);
+      
+      // Filter semua Tugas/Quiz yang aktif, cari yang judulnya BELUM ADA di daftar yang sudah dikerjakan
+      const pendingTasks = localDB.quiz.filter(q => !mySubmittedTaskTitles.includes(q.judul));
+      
+      const notifBox = document.getElementById('notifTugasSiswaBox');
+      if(notifBox) {
+        if(pendingTasks.length > 0) {
+          // Jika masih ada tugas yang nunggak
+          notifBox.style.display = 'block';
+          
+          let listTugasHtml = pendingTasks.map(pt => {
+            const isTerlewat = new Date(pt.deadline) < new Date();
+            const textDeadline = formatTanggalIndo(pt.deadline);
+            return `<li class="mb-2"><b>[${pt.mapel}]</b> ${pt.judul} <br><small class="${isTerlewat ? 'text-danger fw-bold' : 'text-dark'}"><i class="fas fa-clock"></i> Batas Waktu: ${textDeadline} ${isTerlewat ? '(Terlewat)' : ''}</small></li>`;
+          }).join('');
+
+          notifBox.innerHTML = `
+            <div class="alert alert-danger shadow-sm border-danger border-start border-5 py-3 mb-4">
+              <h5 class="alert-heading fw-bold mb-2"><i class="fas fa-exclamation-triangle me-2"></i>PERHATIAN: Ada ${pendingTasks.length} Tugas Belum Dikerjakan!</h5>
+              <p class="mb-2 small">Segera selesaikan dan kumpulkan tugas di bawah ini agar Anda mendapatkan nilai dari Guru:</p>
+              <ul class="mb-3 small">
+                ${listTugasHtml}
+              </ul>
+              <button class="btn btn-sm btn-danger fw-bold shadow-sm" onclick="pilihMenu('Tugas', 'Daftar & Upload Tugas')">
+                <i class="fas fa-arrow-right me-1"></i> Pergi ke Menu Tugas Sekarang
+              </button>
+            </div>
+          `;
+        } else {
+          // Jika tugas sudah selesai semua
+          notifBox.style.display = 'block';
+          notifBox.innerHTML = `
+            <div class="alert alert-success shadow-sm border-success border-start border-5 py-3 mb-4">
+              <h5 class="alert-heading fw-bold mb-0"><i class="fas fa-check-circle me-2"></i>Luar Biasa, ${userAktif.nama}!</h5>
+              <p class="mb-0 mt-1 small">Anda sudah mengerjakan semua tugas yang diberikan oleh Guru. Pertahankan semangat belajarmu!</p>
+            </div>
+          `;
+        }
+      }
     }
 
     // Panggil fungsi-fungsi render yang baru dibuat
