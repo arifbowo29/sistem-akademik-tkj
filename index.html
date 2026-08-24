@@ -114,7 +114,7 @@
       .panel-container { padding: 15px; }
       .info-card .card-body { padding: 20px 15px; }
       
-      .cbt-options-grid { grid-template-columns: 1fr; } /* Pilihan ganda memanjang ke bawah di HP */
+      .cbt-options-grid { grid-template-columns: 1fr; } 
     }
   </style>
 </head>
@@ -1001,6 +1001,68 @@
     </div>
   </div>
 </div>
+
+<!-- ========================================================================= -->
+<!-- MODAL EDIT KUIS CBT (KHUSUS GURU) -->
+<!-- ========================================================================= -->
+<div class="modal fade" id="modalEditCBT" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title fw-bold"><i class="fas fa-edit"></i> Edit Pengaturan Kuis CBT</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="formEditTopikCBT" onsubmit="simpanEditCBT(event)">
+        <div class="modal-body">
+          <input type="hidden" id="edit_cbt_id">
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label text-secondary fw-semibold">Target Kelas</label>
+              <select id="edit_cbt_kelas" class="form-select" required>
+                <option value="" disabled>Pilih Kelas</option>
+                <optgroup label="Kelas X">
+                  <option value="X TKJ 1">X TKJ 1</option><option value="X TKJ 2">X TKJ 2</option><option value="X TKJ 3">X TKJ 3</option><option value="X TKJ 4">X TKJ 4</option>
+                </optgroup>
+                <optgroup label="Kelas XI">
+                  <option value="XI TKJ 1">XI TKJ 1</option><option value="XI TKJ 2">XI TKJ 2</option><option value="XI TKJ 3">XI TKJ 3</option><option value="XI TKJ 4">XI TKJ 4</option>
+                </optgroup>
+                <optgroup label="Kelas XII">
+                  <option value="XII TKJ 1">XII TKJ 1</option><option value="XII TKJ 2">XII TKJ 2</option><option value="XII TKJ 3">XII TKJ 3</option><option value="XII TKJ 4">XII TKJ 4</option><option value="XII TKJ 5">XII TKJ 5</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label text-secondary fw-semibold">Mapel</label>
+              <select id="edit_cbt_mapel" class="form-select" required>
+                <option value="ASJ">ASJ</option><option value="TLJ">TLJ</option><option value="AIJ">AIJ</option>
+                <option value="DG">DG</option><option value="PKK-1">PKK-1</option><option value="TWAN">TWAN</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label text-secondary fw-semibold">Judul Kuis / Ujian</label>
+            <input type="text" id="edit_cbt_judul" class="form-control" required>
+          </div>
+          <div class="row">
+            <div class="col-6 mb-3">
+              <label class="form-label text-secondary fw-semibold">Durasi (Menit)</label>
+              <input type="number" id="edit_cbt_durasi" class="form-control" required min="1">
+            </div>
+            <div class="col-6 mb-3">
+              <label class="form-label text-secondary fw-semibold">Batas Akhir (Deadline)</label>
+              <input type="datetime-local" id="edit_cbt_deadline" class="form-control" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" id="btnSimpanEditCBT" class="btn btn-info text-white fw-bold"><i class="fas fa-save"></i> Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -1930,11 +1992,72 @@
         <td>
           ${publishBtn}
           <button class="btn btn-sm btn-success fw-bold py-0 m-1" onclick="bukaPanelTambahSoal('${t.id}', '${t.judul}')" title="Tambah Soal"><i class="fas fa-plus"></i> Soal</button>
+          <button class="btn btn-sm btn-info text-white fw-bold py-0 m-1" onclick="bukaModalEditCBT('${t.id}')" title="Edit Pengaturan Kuis"><i class="fas fa-edit"></i></button>
           <button class="btn btn-sm btn-danger py-0 m-1" onclick="hapusKuisCBT('${t.id}', '${t.judul}')" title="Hapus Kuis"><i class="fas fa-trash"></i></button>
         </td>
       </tr>`;
     });
     table.innerHTML = groupedHtml;
+  }
+
+  // --- LOGIKA EDIT KUIS CBT ---
+  let modalEditCBTInstance = null;
+
+  function bukaModalEditCBT(idTopik) {
+    const topik = localDB.cbtTopik.find(t => t.id === idTopik);
+    if (!topik) return;
+    
+    document.getElementById('edit_cbt_id').value = topik.id;
+    document.getElementById('edit_cbt_kelas').value = topik.kelas || "";
+    document.getElementById('edit_cbt_mapel').value = topik.mapel;
+    document.getElementById('edit_cbt_judul').value = topik.judul;
+    document.getElementById('edit_cbt_durasi').value = topik.durasi;
+    
+    if (topik.deadline) {
+      let d = new Date(topik.deadline);
+      let month = ("0" + (d.getMonth() + 1)).slice(-2);
+      let day = ("0" + d.getDate()).slice(-2);
+      let hours = ("0" + d.getHours()).slice(-2);
+      let minutes = ("0" + d.getMinutes()).slice(-2);
+      let localDatetimeString = d.getFullYear() + "-" + month + "-" + day + "T" + hours + ":" + minutes;
+      document.getElementById('edit_cbt_deadline').value = localDatetimeString;
+    } else {
+      document.getElementById('edit_cbt_deadline').value = "";
+    }
+    
+    if (!modalEditCBTInstance) {
+      modalEditCBTInstance = new bootstrap.Modal(document.getElementById('modalEditCBT'));
+    }
+    modalEditCBTInstance.show();
+  }
+
+  function simpanEditCBT(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btnSimpanEditCBT');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    
+    const payload = {
+      action: 'editTopikCBT',
+      idTopik: document.getElementById('edit_cbt_id').value,
+      kelas: document.getElementById('edit_cbt_kelas').value,
+      mapel: document.getElementById('edit_cbt_mapel').value,
+      judul: document.getElementById('edit_cbt_judul').value,
+      durasi: document.getElementById('edit_cbt_durasi').value,
+      deadline: document.getElementById('edit_cbt_deadline').value
+    };
+
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
+    .then(r => r.json())
+    .then(d => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
+      if(modalEditCBTInstance) modalEditCBTInstance.hide();
+      alert(d.message);
+      tarikDataDatabase();
+    })
+    .catch(err => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Coba Lagi';
+      alert("Gagal terhubung ke server!");
+    });
   }
 
   // --- LOGIKA FORM BULK SOAL CBT ---
@@ -1945,9 +2068,9 @@
     aktifEditIdCBT = id;
     document.getElementById('panelTambahSoalCBT').style.display = 'block';
     document.getElementById('labelTargetKuisCBT').innerText = judul;
-    document.getElementById('containerFormSoalBulk').innerHTML = ""; // Reset form massal
+    document.getElementById('containerFormSoalBulk').innerHTML = ""; 
     cbtSoalNumberCount = 0;
-    tambahFormSoalBaru(); // Munculkan 1 form kosong otomatis saat dibuka
+    tambahFormSoalBaru(); 
     document.getElementById('panelTambahSoalCBT').scrollIntoView({ behavior: 'smooth' });
   }
 
@@ -1977,7 +2100,6 @@
   function simpanSoalCBTBulk(e) {
     e.preventDefault(); if(!aktifEditIdCBT) return;
     
-    // Tarik semua data dari elemen-elemen form yang digenerate
     let arrayDataSoal = [];
     const itemSoals = document.querySelectorAll('.soal-item');
     if(itemSoals.length === 0) { alert("Tambahkan minimal 1 soal terlebih dahulu!"); return; }
@@ -2085,7 +2207,6 @@
   function renderListCBTSiswa() {
     const grid = document.getElementById('gridKuisSiswaCBT'); if(!grid) return;
     
-    // Hanya tampilkan Kuis yang STATUS PUBLISHED dan KELAS SESUAI DENGAN KELAS SISWA (Atau untuk "Umum" / kosong)
     const kuisTersedia = localDB.cbtTopik.filter(t => t.status === 'Published' && (t.kelas === userAktif.kelas || !t.kelas || t.kelas === ""));
 
     if(kuisTersedia.length === 0) { 
@@ -2236,7 +2357,7 @@
     mainCbtId = null; playSoalArr = []; playAnswers = {}; 
     document.getElementById('cbtPlay_AreaSoal').style.pointerEvents = 'auto'; 
     document.getElementById('btnCbtSubmit').disabled = false; 
-    document.getElementById('btnCbtSubmit').innerHTML = '<i class="fas fa-check-double me-1"></i> Kumpulkan'; 
+    document.getElementById('btnCbtSubmit').innerHTML = '<i class="fas fa-check-double me-1"></i> Kumpulkan Jawaban'; 
     document.getElementById('cbtPlay_Timer').style.color = '#fff'; 
     pilihMenu('Siswa_CBT', 'Kerjakan Kuis Interaktif (CBT)');
   }
