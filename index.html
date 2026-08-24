@@ -7,7 +7,6 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- SCRIPT ONESIGNAL (PUSH NOTIFICATION PWA) - Biarkan jika ingin dipakai nanti -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -70,8 +69,32 @@
     .profile-avatar-box { width: 120px; height: 120px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 60px; margin: 0 auto; border: 4px solid rgba(255,255,255,0.5); text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
 
     /* =========================================================
-       TWEAKS UNTUK MOBILE RESPONSIVE (TAMPILAN HP)
+       CSS KHUSUS CBT (QUIZ INTERAKTIF GAMIFICATION)
        ========================================================= */
+    .cbt-container { max-width: 800px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); overflow: hidden; display: flex; flex-direction: column; min-height: 500px; }
+    .cbt-header { background: #1e3c72; color: #fff; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #f1c40f; }
+    .cbt-timer { font-size: 1.5rem; font-weight: bold; background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px; letter-spacing: 1px; }
+    .cbt-progress-bar { height: 8px; background-color: #ddd; width: 100%; }
+    .cbt-progress-fill { height: 100%; background-color: #2ecc71; width: 0%; transition: width 0.3s ease; }
+    .cbt-body { padding: 30px; flex-grow: 1; display: flex; flex-direction: column; }
+    .cbt-question-text { font-size: 1.3rem; font-weight: 600; color: #2c3e50; margin-bottom: 25px; text-align: center; }
+    
+    .cbt-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .cbt-option { border-radius: 8px; padding: 15px 20px; font-size: 1.1rem; font-weight: bold; color: white; cursor: pointer; transition: 0.2s; border: 3px solid transparent; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .cbt-opt-a { background: #e74c3c; } .cbt-opt-a:hover { background: #c0392b; transform: translateY(-2px); }
+    .cbt-opt-b { background: #3498db; } .cbt-opt-b:hover { background: #2980b9; transform: translateY(-2px); }
+    .cbt-opt-c { background: #f1c40f; color: #333; } .cbt-opt-c:hover { background: #f39c12; transform: translateY(-2px); }
+    .cbt-opt-d { background: #2ecc71; } .cbt-opt-d:hover { background: #27ae60; transform: translateY(-2px); }
+    
+    .cbt-option.selected { border: 4px solid #2c3e50; transform: scale(1.02); filter: brightness(1.1); box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+    .cbt-option-letter { background: rgba(255,255,255,0.3); border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    
+    .cbt-footer { padding: 15px 30px; background: #f8f9fa; border-top: 1px solid #eee; display: flex; justify-content: space-between; }
+    
+    .result-box { text-align: center; padding: 40px 20px; }
+    .score-circle { width: 150px; height: 150px; border-radius: 50%; background: #2ecc71; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px auto; font-size: 3rem; font-weight: bold; box-shadow: 0 10px 20px rgba(46, 204, 113, 0.4); border: 8px solid #a8e6cf; }
+    
+    /* TWEAKS UNTUK MOBILE RESPONSIVE (TAMPILAN HP) */
     .toggle-btn { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 15px; padding: 0; outline: none; }
     .sidebar-backdrop { display: none; position: fixed; top: 70px; left: 0; width: 100vw; height: calc(100vh - 70px); background: rgba(0,0,0,0.5); z-index: 1035; backdrop-filter: blur(2px); }
     .sidebar-backdrop.show { display: block; }
@@ -90,6 +113,8 @@
       
       .panel-container { padding: 15px; }
       .info-card .card-body { padding: 20px 15px; }
+      
+      .cbt-options-grid { grid-template-columns: 1fr; } /* Pilihan ganda memanjang ke bawah di HP */
     }
   </style>
 </head>
@@ -188,14 +213,11 @@
       <div class="mb-4">
         <div class="input-group">
           <span class="input-group-text"><i class="fas fa-lock"></i></span>
-          <!-- TAMBAHAN SYARAT MINIMAL 8 KARAKTER -->
           <input type="password" id="regPassword" class="form-control" placeholder="Buat Password" required minlength="8" />
-          <!-- TOMBOL MATA -->
           <button class="btn btn-outline-secondary bg-white" type="button" onclick="togglePassword('regPassword', this)" style="border-color: #dee2e6;">
             <i class="fas fa-eye text-muted"></i>
           </button>
         </div>
-        <!-- KETERANGAN SYARAT PASSWORD -->
         <small class="text-danger mt-1 d-block fw-semibold" style="font-size: 0.8rem;">
           <i class="fas fa-info-circle"></i> Password minimal 8 karakter (huruf/angka).
         </small>
@@ -213,7 +235,6 @@
 <div id="dashboardSection">
   <nav class="top-navbar">
     <div class="d-flex align-items-center">
-      <!-- TOMBOL MENU HP -->
       <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
       <div class="brand" onclick="pilihMenu('Dashboard', 'Dashboard Utama')"><i class="fas fa-graduation-cap me-1"></i> TKJ MANUSA</div>
     </div>
@@ -230,14 +251,19 @@
       <li><a id="nav_Mapel" onclick="pilihMenu('Mapel', 'Daftar Mata Pelajaran & Materi')"><i class="fas fa-book"></i> Mata Pelajaran</a></li>
       <li class="guru-only"><a id="nav_Data_Siswa" onclick="pilihMenu('Data_Siswa', 'Manajemen Data Siswa')"><i class="fas fa-users"></i> Data Siswa</a></li>
       <li class="guru-only"><a id="nav_Absensi" onclick="pilihMenu('Absensi', 'Input Absensi Siswa')"><i class="fas fa-calendar-check"></i> Input Absensi</a></li>
-      <li class="guru-only"><a id="nav_Manajemen_Quiz" onclick="pilihMenu('Manajemen_Quiz', 'Manajemen Quiz & Tugas')"><i class="fas fa-tasks"></i> Manajemen Quiz</a></li>
-      <li class="guru-only"><a id="nav_Nilai" onclick="pilihMenu('Nilai', 'Pusat Penilaian Tugas Siswa')"><i class="fas fa-star"></i> Input Nilai</a></li>
-      <li class="siswa-only"><a id="nav_Tugas" onclick="pilihMenu('Tugas', 'Daftar & Upload Tugas')"><i class="fas fa-file-upload"></i> Upload Tugas</a></li>
-      <li class="siswa-only"><a id="nav_Rekap_Saya" onclick="pilihMenu('Rekap_Saya', 'Rapor Nilai & Rangkuman Absensi')"><i class="fas fa-chart-line"></i> Rekap Akademik Saya</a></li>
-      <li><a id="nav_Forum" onclick="pilihMenu('Forum', 'Forum Diskusi Kelas & Mading IT')"><i class="fas fa-comments"></i> Forum Diskusi Kelas</a></li>
       
-      <!-- MENU BARU RUANG DISKUSI KELOMPOK -->
-      <li><a id="nav_Ruang_Kelompok" onclick="pilihMenu('Ruang_Kelompok', 'Studi Kasus & Diskusi Kelompok')"><i class="fas fa-users-cog"></i> Ruang Kelompok <span class="badge bg-danger ms-1">New</span></a></li>
+      <!-- MENU UPLOAD FILE LAMA -->
+      <li class="guru-only"><a id="nav_Manajemen_Quiz" onclick="pilihMenu('Manajemen_Quiz', 'Manajemen Quiz & Tugas (Upload File)')"><i class="fas fa-tasks"></i> Penugasan Upload File</a></li>
+      <li class="guru-only"><a id="nav_Nilai" onclick="pilihMenu('Nilai', 'Pusat Penilaian Tugas Siswa (Upload File)')"><i class="fas fa-star"></i> Input Nilai Manual</a></li>
+      <li class="siswa-only"><a id="nav_Tugas" onclick="pilihMenu('Tugas', 'Daftar & Upload Tugas File')"><i class="fas fa-file-upload"></i> Upload Tugas File</a></li>
+      <li class="siswa-only"><a id="nav_Rekap_Saya" onclick="pilihMenu('Rekap_Saya', 'Rapor Nilai & Rangkuman Absensi')"><i class="fas fa-chart-line"></i> Rekap Akademik Saya</a></li>
+      
+      <!-- MENU BARU: CBT Pilihan Ganda -->
+      <li class="guru-only"><a id="nav_Guru_CBT" onclick="pilihMenu('Guru_CBT', 'Manajemen Kuis Interaktif (CBT)')"><i class="fas fa-gamepad"></i> Kuis CBT <span class="badge bg-warning text-dark ms-1">New</span></a></li>
+      <li class="siswa-only"><a id="nav_Siswa_CBT" onclick="pilihMenu('Siswa_CBT', 'Kerjakan Kuis Interaktif (CBT)')"><i class="fas fa-gamepad"></i> Kuis CBT <span class="badge bg-warning text-dark ms-1">New</span></a></li>
+
+      <li><a id="nav_Forum" onclick="pilihMenu('Forum', 'Forum Diskusi Kelas & Mading IT')"><i class="fas fa-comments"></i> Forum Diskusi Kelas</a></li>
+      <li><a id="nav_Ruang_Kelompok" onclick="pilihMenu('Ruang_Kelompok', 'Studi Kasus & Diskusi Kelompok')"><i class="fas fa-users-cog"></i> Ruang Kelompok</a></li>
     </ul>
   </aside>
 
@@ -252,9 +278,8 @@
         Assalamu'alaikum wr. wb. !! Selamat datang <strong id="welcomeName">User</strong> di Sistem Akademik TKJ MANUSA.
       </div>
       
-      <!-- FITUR BARU: NOTIFIKASI TUGAS SISWA BELUM DIKERJAKAN -->
       <div id="notifTugasSiswaBox" class="siswa-only" style="display: none;">
-        <!-- Akan diisi otomatis oleh JavaScript -->
+        <!-- Notifikasi dari script -->
       </div>
 
       <div class="row">
@@ -434,7 +459,7 @@
       </div>
     </div>
 
-    <!-- TAMPILAN ABSENSI (KLASIFIKASI PER KELAS) -->
+    <!-- TAMPILAN ABSENSI -->
     <div id="view_Absensi" class="view-section" style="display: none;">
       <div class="panel-container">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-4">
@@ -481,12 +506,12 @@
       </div>
     </div>
 
-    <!-- TAMPILAN MANAJEMEN QUIZ GURU -->
+    <!-- TAMPILAN MANAJEMEN QUIZ GURU (UPLOAD FILE - LAMA) -->
     <div id="view_Manajemen_Quiz" class="view-section" style="display: none;">
       <div class="row">
         <div class="col-lg-5 mb-4">
           <div class="panel-container">
-            <h5 class="border-bottom pb-2 mb-3 text-primary"><i class="fas fa-plus-circle"></i> Publikasikan Tugas / Quiz Baru</h5>
+            <h5 class="border-bottom pb-2 mb-3 text-primary"><i class="fas fa-plus-circle"></i> Publikasikan Tugas (Upload File)</h5>
             <form id="formBuatQuiz" onsubmit="simpanQuiz(event)">
               <div class="mb-3">
                 <label class="form-label text-secondary fw-semibold">Mata Pelajaran</label>
@@ -512,7 +537,7 @@
         </div>
         <div class="col-lg-7">
           <div class="panel-container">
-            <h5 class="border-bottom pb-2 mb-3 text-secondary"><i class="fas fa-list"></i> Daftar Tugas Aktif</h5>
+            <h5 class="border-bottom pb-2 mb-3 text-secondary"><i class="fas fa-list"></i> Daftar Tugas Aktif (Mode Upload File)</h5>
             <div class="table-responsive">
               <table class="table table-hover table-bordered text-center align-middle" style="white-space: nowrap;">
                 <thead class="table-light">
@@ -526,10 +551,10 @@
       </div>
     </div>
 
-    <!-- TAMPILAN TUGAS SISWA -->
+    <!-- TAMPILAN TUGAS SISWA (UPLOAD FILE - LAMA) -->
     <div id="view_Tugas" class="view-section" style="display: none;">
       <div class="panel-container">
-        <h5 class="border-bottom pb-2 mb-3 text-danger"><i class="fas fa-folder-open"></i> Daftar Tugas & Quiz Dari Guru</h5>
+        <h5 class="border-bottom pb-2 mb-3 text-danger"><i class="fas fa-folder-open"></i> Daftar Tugas Dari Guru (Upload File)</h5>
         <div class="table-responsive">
           <table class="table table-hover table-bordered text-center align-middle" style="white-space: nowrap;">
             <thead class="table-light">
@@ -556,11 +581,11 @@
       </div>
     </div>
 
-    <!-- TAMPILAN NILAI GURU (KLASIFIKASI PER MAPEL) -->
+    <!-- TAMPILAN NILAI GURU (UPLOAD FILE) -->
     <div id="view_Nilai" class="view-section" style="display: none;">
       <div class="panel-container" style="border-top-color: #f0ad4e;">
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-4">
-          <h5 class="text-secondary mb-3 mb-md-0"><i class="fas fa-star text-warning"></i> Antrean Penilaian Siswa</h5>
+          <h5 class="text-secondary mb-3 mb-md-0"><i class="fas fa-star text-warning"></i> Antrean Penilaian Siswa (Manual)</h5>
           <select id="filterMapelNilai" class="form-select form-select-sm w-auto fw-bold" style="min-width: 180px; border-color: #f0ad4e;" onchange="renderPenilaian()">
             <option value="ALL">Semua Mata Pelajaran</option>
             <option value="ASJ">ASJ</option>
@@ -582,12 +607,12 @@
       </div>
     </div>
 
-    <!-- TAMPILAN REKAP SISWA (KLASIFIKASI PER MAPEL) -->
+    <!-- TAMPILAN REKAP SISWA (HASIL UPLOAD TUGAS LAMA) -->
     <div id="view_Rekap_Saya" class="view-section" style="display: none;">
       <div class="row">
         <div class="col-lg-8 mb-4">
           <div class="panel-container" style="border-top-color: #5cb85c;">
-            <h5 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-star"></i> Lembar Hasil Nilai Tugas Kompetensi Anda</h5>
+            <h5 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-star"></i> Lembar Hasil Nilai Tugas Upload Anda</h5>
             <div class="table-responsive">
               <table class="table table-bordered text-center align-middle" style="white-space: nowrap;">
                 <thead class="table-success">
@@ -626,11 +651,8 @@
       </div>
     </div>
 
-    <!-- ========================================================= -->
-    <!-- FITUR BARU: RUANG KELOMPOK (STUDI KASUS) -->
-    <!-- ========================================================= -->
+    <!-- TAMPILAN RUANG KELOMPOK (STUDI KASUS) -->
     <div id="view_Ruang_Kelompok" class="view-section" style="display: none;">
-      
       <!-- HALAMAN AWAL: DAFTAR TOPIK DISKUSI -->
       <div id="areaDaftarTopikDiskusi">
         <!-- KHUSUS GURU: FORM BUAT TOPIK -->
@@ -661,12 +683,10 @@
                 <label class="form-label text-secondary fw-semibold">Jml Kelompok</label>
                 <input type="number" id="topik_jml_kelompok" class="form-control" required min="1" max="10" value="4">
               </div>
-              <!-- TAMBAHAN: BATASAN PESERTA -->
               <div class="col-md-2 mb-3">
                 <label class="form-label text-secondary fw-semibold">Maks Anggota</label>
                 <input type="number" id="topik_maks_anggota" class="form-control" required min="1" max="15" value="5" title="Maksimal siswa per kelompok">
               </div>
-              <!-- TAMBAHAN: DEADLINE WAKTU -->
               <div class="col-md-3 mb-3">
                 <label class="form-label text-secondary fw-semibold">Batas Waktu</label>
                 <input type="datetime-local" id="topik_deadline" class="form-control" required>
@@ -724,7 +744,6 @@
                 <h5 class="text-center mb-0 text-dark fw-bold flex-grow-1" style="color: #ff851b;">
                   Ruang <span id="labelNamaKelompok" class="text-primary">Kelompok X</span>
                 </h5>
-                <!-- Tombol Refresh Chat Manual agar tidak makan kuota server -->
                 <button class="btn btn-sm btn-success shadow-sm" onclick="tarikDataDatabase()"><i class="fas fa-sync-alt"></i> Segarkan Chat</button>
               </div>
               
@@ -733,7 +752,7 @@
                 <i class="fas fa-lock me-1"></i> WAKTU DISKUSI TELAH HABIS. RUANGAN DIKUNCI (READ-ONLY).
               </div>
 
-              <!-- KOTAK CHAT (Pake display flex khusus untuk room ini biar bisa rata kanan kiri) -->
+              <!-- KOTAK CHAT -->
               <div class="chat-box bg-light d-flex flex-column" id="kotakChatKelompok" style="height: 350px;">
                 <!-- Pesan render via JS -->
               </div>
@@ -770,10 +789,152 @@
           </div>
         </div>
       </div>
+    </div>
 
+
+    <!-- ========================================================================= -->
+    <!-- FITUR BARU: MANAJEMEN CBT (UNTUK GURU) -->
+    <!-- ========================================================================= -->
+    <div id="view_Guru_CBT" class="view-section" style="display: none;">
+      <div class="row">
+        <div class="col-lg-5 mb-4">
+          <div class="panel-container" style="border-top-color: #f39c12;">
+            <h5 class="text-warning border-bottom pb-2 mb-3"><i class="fas fa-plus-circle"></i> Buat Kuis Baru (Header CBT)</h5>
+            <form id="formBuatTopikCBT" onsubmit="buatTopikCBT(event)">
+              <div class="mb-3"><label class="form-label text-secondary fw-semibold">Mata Pelajaran</label><select id="cbt_mapel" class="form-select"><option>ASJ</option><option>TLJ</option><option>AIJ</option><option>DG</option><option>PKK-1</option><option>TWAN</option></select></div>
+              <div class="mb-3"><label class="form-label text-secondary fw-semibold">Judul Kuis Interaktif</label><input type="text" id="cbt_judul" class="form-control" required placeholder="Cth: Ulangan Harian Bab 1 VoIP"></div>
+              <div class="row">
+                <div class="col-6 mb-3"><label class="form-label text-secondary fw-semibold">Durasi Kuis (Menit)</label><input type="number" id="cbt_durasi" class="form-control" required min="1" value="30"></div>
+                <div class="col-6 mb-3"><label class="form-label text-secondary fw-semibold">Batas Akhir Mengerjakan</label><input type="datetime-local" id="cbt_deadline" class="form-control" required></div>
+              </div>
+              <button type="submit" id="btnBuatCBT" class="btn btn-warning w-100 fw-bold text-dark"><i class="fas fa-save"></i> Simpan Header Kuis CBT</button>
+            </form>
+          </div>
+
+          <!-- Form Tambah Soal (Muncul setelah Guru memilih Kuis) -->
+          <div class="panel-container" id="panelTambahSoalCBT" style="display: none; border-top-color: #2ecc71;">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+              <h5 class="text-success mb-0"><i class="fas fa-list-ol"></i> Tambah Soal Pilihan Ganda</h5>
+              <button class="btn btn-sm btn-outline-danger" onclick="tutupPanelSoalCBT()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="alert alert-warning py-2 small mb-3">Menambahkan soal untuk kuis: <br><strong id="labelTargetKuisCBT">Judul Kuis</strong></div>
+            
+            <form id="formTambahSoalCBT" onsubmit="simpanSoalCBT(event)">
+              <div class="mb-3"><label class="form-label text-secondary fw-semibold">Pertanyaan</label><textarea id="soal_tanya" class="form-control" rows="3" required placeholder="Ketik pertanyaan di sini..."></textarea></div>
+              <div class="mb-2"><div class="input-group"><span class="input-group-text bg-danger text-white fw-bold" style="width:40px;">A</span><input type="text" id="soal_a" class="form-control" required placeholder="Teks Pilihan A"></div></div>
+              <div class="mb-2"><div class="input-group"><span class="input-group-text bg-primary text-white fw-bold" style="width:40px;">B</span><input type="text" id="soal_b" class="form-control" required placeholder="Teks Pilihan B"></div></div>
+              <div class="mb-2"><div class="input-group"><span class="input-group-text bg-warning text-dark fw-bold" style="width:40px;">C</span><input type="text" id="soal_c" class="form-control" required placeholder="Teks Pilihan C"></div></div>
+              <div class="mb-3"><div class="input-group"><span class="input-group-text bg-success text-white fw-bold" style="width:40px;">D</span><input type="text" id="soal_d" class="form-control" required placeholder="Teks Pilihan D"></div></div>
+              
+              <div class="mb-3">
+                <label class="form-label text-secondary fw-semibold">Kunci Jawaban Benar</label>
+                <select id="soal_kunci" class="form-select" required>
+                  <option value="" disabled selected>-- Pilih Kunci yang Benar --</option>
+                  <option value="A">Opsi A</option><option value="B">Opsi B</option>
+                  <option value="C">Opsi C</option><option value="D">Opsi D</option>
+                </select>
+              </div>
+              <button type="submit" id="btnSimpanSoalCBT" class="btn btn-success w-100 fw-bold"><i class="fas fa-plus"></i> Masukkan Soal ke Database</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="panel-container">
+            <h5 class="border-bottom pb-2 mb-3 text-secondary"><i class="fas fa-server"></i> Daftar Kuis CBT (Bank Soal)</h5>
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered text-center align-middle" style="white-space: nowrap;">
+                <thead class="table-light"><tr><th>Mapel & Judul</th><th>Durasi</th><th>Jml Soal</th><th>Aksi</th></tr></thead>
+                <tbody id="tabelListCBTGuru"></tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Panel Lihat Nilai Siswa -->
+          <div class="panel-container" id="panelNilaiCBT" style="display: none; border-top-color: #3498db;">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
+              <h5 class="text-primary mb-0"><i class="fas fa-award"></i> Rekap Nilai Kuis</h5>
+              <button class="btn btn-sm btn-outline-danger" onclick="document.getElementById('panelNilaiCBT').style.display='none'"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="alert alert-info py-2 small mb-3 text-center fw-bold" id="labelNilaiJudulKuis">Judul</div>
+            <div class="table-responsive">
+              <table class="table table-sm table-striped text-center align-middle" style="white-space: nowrap;">
+                <thead class="table-dark"><tr><th>NIS</th><th>Nama Siswa</th><th>Benar</th><th>Salah</th><th>Skor Akhir</th></tr></thead>
+                <tbody id="tabelRekapNilaiCBT"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- FITUR BARU: MENU CBT UNTUK SISWA (DAFTAR KUIS) -->
+    <!-- ========================================================================= -->
+    <div id="view_Siswa_CBT" class="view-section" style="display: none;">
+      <div class="panel-container" style="border-top-color: #2c3e50;">
+        <h5 class="text-secondary border-bottom pb-2 mb-3"><i class="fas fa-tasks"></i> Daftar Kuis CBT Tersedia</h5>
+        <div class="row" id="gridKuisSiswaCBT">
+          <!-- Render via JS -->
+        </div>
+      </div>
     </div>
 
   </main>
+</div>
+
+<!-- ========================================================================= -->
+<!-- LAYAR PENGERJAAN KUIS CBT (FULLSCREEN OVERLAY) -->
+<!-- ========================================================================= -->
+<div id="layarPengerjaanCBT" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ecf0f5; z-index: 99999999; overflow-y: auto;">
+  <div class="cbt-container my-4 shadow-lg">
+    <!-- HEADER TIMER -->
+    <div class="cbt-header">
+      <div>
+        <h5 class="mb-0 fw-bold" id="cbtPlay_Judul">Judul Kuis</h5>
+        <small class="text-light opacity-75" id="cbtPlay_Mapel">Mata Pelajaran</small>
+      </div>
+      <div class="text-center">
+        <div class="small mb-1 fw-bold opacity-75">SISA WAKTU</div>
+        <div class="cbt-timer" id="cbtPlay_Timer">00:00:00</div>
+      </div>
+    </div>
+    <div class="cbt-progress-bar"><div class="cbt-progress-fill" id="cbtPlay_Progress"></div></div>
+
+    <!-- BODY SOAL -->
+    <div class="cbt-body" id="cbtPlay_AreaSoal">
+      <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+        <span class="badge bg-secondary fs-6" id="cbtPlay_NomorLabel">Soal 1 dari 10</span>
+      </div>
+      <div class="cbt-question-text" id="cbtPlay_Pertanyaan">Memuat pertanyaan...</div>
+      
+      <!-- OPSI JAWABAN -->
+      <div class="cbt-options-grid">
+        <div class="cbt-option cbt-opt-a" id="btnOptA" onclick="pilihJawabanCBT('A')"><div class="cbt-option-letter">A</div><div id="txtOptA">Pilihan A</div></div>
+        <div class="cbt-option cbt-opt-b" id="btnOptB" onclick="pilihJawabanCBT('B')"><div class="cbt-option-letter">B</div><div id="txtOptB">Pilihan B</div></div>
+        <div class="cbt-option cbt-opt-c" id="btnOptC" onclick="pilihJawabanCBT('C')"><div class="cbt-option-letter">C</div><div id="txtOptC">Pilihan C</div></div>
+        <div class="cbt-option cbt-opt-d" id="btnOptD" onclick="pilihJawabanCBT('D')"><div class="cbt-option-letter">D</div><div id="txtOptD">Pilihan D</div></div>
+      </div>
+    </div>
+
+    <!-- AREA HASIL (Muncul setelah submit) -->
+    <div class="cbt-body result-box" id="cbtPlay_AreaHasil" style="display: none;">
+      <h3 class="fw-bold text-dark mb-4">Ujian CBT Selesai!</h3>
+      <div class="score-circle" id="cbtResult_Skor">100</div>
+      <div class="row mt-4 w-100 px-md-5">
+        <div class="col-6"><div class="p-3 bg-success bg-opacity-10 rounded border border-success"><h4 class="text-success fw-bold mb-0" id="cbtResult_Benar">0</h4><small>Jawaban Benar</small></div></div>
+        <div class="col-6"><div class="p-3 bg-danger bg-opacity-10 rounded border border-danger"><h4 class="text-danger fw-bold mb-0" id="cbtResult_Salah">0</h4><small>Jawaban Salah</small></div></div>
+      </div>
+      <button class="btn btn-primary btn-lg mt-5 fw-bold px-5" onclick="tutupLayarCBT()"><i class="fas fa-home me-2"></i> Kembali ke Dashboard</button>
+    </div>
+
+    <!-- FOOTER NAVIGASI -->
+    <div class="cbt-footer" id="cbtPlay_FooterNav">
+      <button class="btn btn-outline-secondary fw-bold px-4" id="btnCbtPrev" onclick="navigasiCBT(-1)"><i class="fas fa-chevron-left me-1"></i> Sebelumnya</button>
+      <button class="btn btn-primary fw-bold px-4" id="btnCbtNext" onclick="navigasiCBT(1)">Selanjutnya <i class="fas fa-chevron-right ms-1"></i></button>
+      <button class="btn btn-success fw-bold px-4 shadow" id="btnCbtSubmit" onclick="konfirmasiSelesaiCBT()" style="display: none;"><i class="fas fa-check-double me-1"></i> Kumpulkan Jawaban</button>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -793,9 +954,11 @@
   let aktifIdTopik = null;
   let aktifNamaKelompok = null;
 
+  // DATABASE LOKAL + CBT BARS
   let localDB = { 
     siswa: [], materi: [], quiz: [], jawaban: [], absensi: [], forum: [],
-    diskusiTopik: [], diskusiPesan: [], diskusiHasil: [], diskusiAnggota: [] 
+    diskusiTopik: [], diskusiPesan: [], diskusiHasil: [], diskusiAnggota: [],
+    cbtTopik: [], cbtSoal: [], cbtNilai: [] 
   };
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -813,18 +976,9 @@
     if (!isoString) return '-';
     const date = new Date(isoString);
     if (isNaN(date.getTime())) return isoString; 
-
     const namaHari = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"];
-    const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-
-    const hari = namaHari[date.getDay()];
-    const tanggal = String(date.getDate()).padStart(2, '0');
-    const bulan = namaBulan[date.getMonth()];
-    const tahun = date.getFullYear();
-    const jam = String(date.getHours()).padStart(2, '0');
-    const menit = String(date.getMinutes()).padStart(2, '0');
-
-    return `${hari}, ${tanggal} ${bulan} ${tahun} - ${jam}:${menit} WIB`;
+    const namaBulan = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+    return `${namaHari[date.getDay()]}, ${String(date.getDate()).padStart(2, '0')} ${namaBulan[date.getMonth()]} ${date.getFullYear()} - ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')} WIB`;
   }
 
   // FUNGSI UNTUK MEMBUKA/MENUTUP MENU DI HP
@@ -837,15 +991,12 @@
   function togglePassword(inputId, buttonEl) {
     const inputField = document.getElementById(inputId);
     const icon = buttonEl.querySelector('i');
-    
     if (inputField.type === "password") {
       inputField.type = "text"; 
-      icon.classList.remove("fa-eye");
-      icon.classList.add("fa-eye-slash"); 
+      icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash"); 
     } else {
       inputField.type = "password"; 
-      icon.classList.remove("fa-eye-slash");
-      icon.classList.add("fa-eye");
+      icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye");
     }
   }
 
@@ -977,7 +1128,6 @@
     if(targetView) targetView.style.display = 'block';
     
     if(menuId === 'Mapel') kembaliKeDaftarMapel();
-    
     if(menuId === 'Ruang_Kelompok') kembaliKeDaftarTopik();
     
     // AUTO CLOSE MENU DI HP SETELAH DIKLIK
@@ -1054,12 +1204,19 @@
       localDB.diskusiPesan = data.diskusiPesan || [];
       localDB.diskusiHasil = data.diskusiHasil || [];
       localDB.diskusiAnggota = data.diskusiAnggota || [];
+
+      localDB.cbtTopik = data.cbtTopik || [];
+      localDB.cbtSoal = data.cbtSoal || [];
+      localDB.cbtNilai = data.cbtNilai || [];
       
       refreshUI();
     });
   }
 
-  // LOGIKA RENDER ABSENSI PER KELAS
+  // =========================================================================
+  // FUNGSI RENDER DASHBOARD LAMA (TUGAS, ABSEN, MAPEL) - TETAP UTUH
+  // =========================================================================
+  
   function renderAbsensi() {
     const tAbsen = document.getElementById('tabelAbsensiBody');
     const btnSimpan = document.getElementById('btnSimpanAbsenMassal');
@@ -1067,35 +1224,23 @@
     if(!tAbsen) return;
 
     const selectedKelas = document.getElementById('filterKelasAbsensi').value;
-    
-    // Jika belum memilih kelas
     if(!selectedKelas) {
-      tAbsen.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-5"><i class="fas fa-hand-point-up fs-2 d-block mb-2"></i>Silakan pilih kelas terlebih dahulu pada menu di atas.</td></tr>';
-      btnSimpan.style.display = 'none';
-      alertInfo.style.display = 'none';
-      return;
+      tAbsen.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-5"><i class="fas fa-hand-point-up fs-2 d-block mb-2"></i>Silakan pilih kelas terlebih dahulu.</td></tr>';
+      btnSimpan.style.display = 'none'; alertInfo.style.display = 'none'; return;
     }
 
-    // Mengambil & mengurutkan siswa berdasarkan kelas yang dipilih
     let dataSiswaKelas = localDB.siswa.filter(s => s.kelas === selectedKelas);
     dataSiswaKelas.sort((a,b) => a.nama.localeCompare(b.nama));
 
-    // Jika kelas kosong
     if(dataSiswaKelas.length === 0) {
       tAbsen.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Belum ada siswa terdaftar di kelas <b>${selectedKelas}</b>.</td></tr>`;
-      btnSimpan.style.display = 'none';
-      alertInfo.style.display = 'none';
-      return;
+      btnSimpan.style.display = 'none'; alertInfo.style.display = 'none'; return;
     }
 
-    // Tampilkan tombol & render tabel siswa
-    btnSimpan.style.display = 'block';
-    alertInfo.style.display = 'block';
+    btnSimpan.style.display = 'block'; alertInfo.style.display = 'block';
     tAbsen.innerHTML = dataSiswaKelas.map(s => `
       <tr class="baris-absen" data-nis="${s.nis}" data-nama="${s.nama}" data-kelas="${s.kelas}">
-        <td class="fw-bold">${s.nis}</td>
-        <td class="text-start">${s.nama}</td>
-        <td><span class="badge bg-primary">${s.kelas}</span></td>
+        <td class="fw-bold">${s.nis}</td><td class="text-start">${s.nama}</td><td><span class="badge bg-primary">${s.kelas}</span></td>
         <td>
           <div class="d-flex justify-content-center gap-2">
             <div class="form-check form-check-inline m-0"><input class="form-check-input" type="radio" name="status_${s.nis}" id="h_${s.nis}" value="Hadir" checked><label class="form-check-label text-success fw-bold" for="h_${s.nis}">H</label></div>
@@ -1108,126 +1253,66 @@
       </tr>`).join('');
   }
 
-  // LOGIKA RENDER PENILAIAN GURU (KLASIFIKASI MAPEL)
   function renderPenilaian() {
     const tKoreksi = document.getElementById('tabelAntreanPenilaian');
     if(!tKoreksi) return;
 
     const selectedMapel = document.getElementById('filterMapelNilai').value;
     let filteredJawaban = localDB.jawaban;
-
-    // Filter berdasarkan Dropdown Mapel
-    if(selectedMapel !== "ALL") {
-      filteredJawaban = filteredJawaban.filter(j => j.mapel === selectedMapel);
-    }
+    if(selectedMapel !== "ALL") filteredJawaban = filteredJawaban.filter(j => j.mapel === selectedMapel);
 
     if(filteredJawaban.length === 0) {
-      tKoreksi.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-check-circle d-block fs-3 mb-2 text-success"></i>Tidak ada antrean tugas yang perlu dinilai untuk kategori ini.</td></tr>`;
-      return;
+      tKoreksi.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-check-circle d-block fs-3 mb-2 text-success"></i>Tidak ada antrean tugas yang perlu dinilai.</td></tr>`; return;
     }
 
     tKoreksi.innerHTML = filteredJawaban.map(j => `<tr><td>${j.nama}</td><td>${j.kelas}</td><td><b>[${j.mapel}]</b> ${j.judulTugas}</td><td><a href="${j.urlFileJawaban}" target="_blank" class="btn btn-sm btn-link"><i class="fas fa-file-alt"></i> Lihat File</a></td><td><span class="badge bg-success font-monospace fs-6">${j.nilai || 'Belum'}</span></td><td class="small text-muted">${j.catatanGuru || '-'}</td><td><button class="btn btn-sm btn-warning font-weight-bold" onclick="beriPenilaianDialog('${j.id}')"><i class="fas fa-check-square"></i> Nilai</button></td></tr>`).join('');
   }
 
-  // LOGIKA RENDER REKAP NILAI SISWA (KLASIFIKASI MAPEL)
   function renderRekapSiswa() {
     const tSiswaPersonal = document.getElementById('tabelNilaiSiswaPersonal');
     if(!tSiswaPersonal) return;
 
     let myJawaban = localDB.jawaban.filter(j => String(j.nis) === String(nisUserAktifLog));
-
     if(myJawaban.length === 0) {
-      tSiswaPersonal.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Belum ada tugas yang Anda kerjakan atau dinilai.</td></tr>';
-      return;
+      tSiswaPersonal.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Belum ada tugas yang Anda kerjakan atau dinilai.</td></tr>'; return;
     }
 
-    // Proses Grouping berdasarkan Mata Pelajaran
     let mapelsUnik = [...new Set(myJawaban.map(j => j.mapel))];
     let htmlContent = '';
-
     mapelsUnik.forEach(mapel => {
-      // Bikin Header/Grup Pembatas Tabel
-      htmlContent += `
-        <tr class="table-secondary">
-          <td colspan="3" class="text-start fw-bold text-success"><i class="fas fa-book me-2"></i> MAPEL: ${mapel}</td>
-        </tr>
-      `;
-      // Masukkan nilai siswa pada mapel tsb di bawah headernya
+      htmlContent += `<tr class="table-secondary"><td colspan="3" class="text-start fw-bold text-success"><i class="fas fa-book me-2"></i> MAPEL: ${mapel}</td></tr>`;
       let nilaiPerMapel = myJawaban.filter(j => j.mapel === mapel);
-      htmlContent += nilaiPerMapel.map(j => `
-        <tr class="text-center">
-          <td class="text-start ps-4">${j.judulTugas}</td>
-          <td><b class="${j.nilai ? 'text-success fs-5' : 'text-warning'}">${j.nilai || 'Menunggu Koreksi Guru'}</b></td>
-          <td><span class="small text-muted">${j.catatanGuru || '-'}</span></td>
-        </tr>
-      `).join('');
+      htmlContent += nilaiPerMapel.map(j => `<tr class="text-center"><td class="text-start ps-4">${j.judulTugas}</td><td><b class="${j.nilai ? 'text-success fs-5' : 'text-warning'}">${j.nilai || 'Menunggu Koreksi Guru'}</b></td><td><span class="small text-muted">${j.catatanGuru || '-'}</span></td></tr>`).join('');
     });
-
     tSiswaPersonal.innerHTML = htmlContent;
   }
 
   function refreshUI() {
-    // Info Kotak Dashboard Atas
     document.getElementById('dash_total_siswa').innerText = localDB.siswa.length;
     document.getElementById('dash_total_materi').innerText = localDB.materi.length;
     document.getElementById('dash_total_tugas').innerText = localDB.quiz.length;
 
-    // Render Data Siswa Global
     const tSiswa = document.getElementById('tabelSiswaBody');
     if(tSiswa) {
       let dataSiswaSorted = localDB.siswa.sort((a, b) => a.kelas.localeCompare(b.kelas));
-      tSiswa.innerHTML = dataSiswaSorted.map(s => `
-        <tr><td class="fw-bold">${s.nis}</td><td class="text-start">${s.nama}</td><td><span class="badge bg-primary fs-6">${s.kelas}</span></td><td>${s.jk}</td><td class="text-start">${s.alamat}</td></tr>`).join('');
+      tSiswa.innerHTML = dataSiswaSorted.map(s => `<tr><td class="fw-bold">${s.nis}</td><td class="text-start">${s.nama}</td><td><span class="badge bg-primary fs-6">${s.kelas}</span></td><td>${s.jk}</td><td class="text-start">${s.alamat}</td></tr>`).join('');
     }
 
-    // Render Manajemen Tugas (Guru) -> PENAMBAHAN FORMAT TANGGAL
     const tQuizGuru = document.getElementById('tabelQuizGuru');
     if(tQuizGuru) {
       tQuizGuru.innerHTML = localDB.quiz.map(q => {
-        const waktuSekarang = new Date();
-        const batasWaktu = new Date(q.deadline);
-        const isTerlewat = batasWaktu < waktuSekarang;
-        const badgeStatus = isTerlewat 
-          ? `<br><span class="badge bg-danger mt-1" style="font-size:0.7rem;">Terlewat</span>` 
-          : `<br><span class="badge bg-success mt-1" style="font-size:0.7rem;">Aktif</span>`;
-        
-        // Panggil fungsi format agar lebih rapi
+        const isTerlewat = new Date(q.deadline) < new Date();
+        const badgeStatus = isTerlewat ? `<br><span class="badge bg-danger mt-1" style="font-size:0.7rem;">Terlewat</span>` : `<br><span class="badge bg-success mt-1" style="font-size:0.7rem;">Aktif</span>`;
         const textDeadline = formatTanggalIndo(q.deadline);
-          
-        return `<tr>
-          <td><span class="badge bg-secondary">${q.mapel}</span></td>
-          <td>${q.judul}</td>
-          <td><span class="fw-semibold">${textDeadline}</span> ${badgeStatus}</td>
-          <td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-primary py-0"><i class="fas fa-download"></i> Unduh</a>`: '-'}</td>
-          <td>
-            <button class="btn btn-sm btn-success py-0 m-1" onclick="ingatkanTugasWA('${q.judul}', '${q.mapel}', '${textDeadline}')" title="Broadcast Peringatan via WA">
-              <i class="fab fa-whatsapp"></i>
-            </button>
-            <button class="btn btn-sm ${isTerlewat ? 'btn-warning' : 'btn-outline-warning'} py-0 m-1" onclick="perpanjangDeadline('${q.id}', '${q.judul}')" title="Perpanjang Deadline">
-              <i class="fas fa-clock"></i>
-            </button>
-            <button class="btn btn-sm btn-danger py-0 m-1" onclick="hapusTugas('${q.id}', '${q.judul}')" title="Hapus Tugas">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        </tr>`;
+        return `<tr><td><span class="badge bg-secondary">${q.mapel}</span></td><td>${q.judul}</td><td><span class="fw-semibold">${textDeadline}</span> ${badgeStatus}</td><td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-primary py-0"><i class="fas fa-download"></i> Unduh</a>`: '-'}</td><td><button class="btn btn-sm btn-success py-0 m-1" onclick="ingatkanTugasWA('${q.judul}', '${q.mapel}', '${textDeadline}')" title="Broadcast WA"><i class="fab fa-whatsapp"></i></button><button class="btn btn-sm ${isTerlewat ? 'btn-warning' : 'btn-outline-warning'} py-0 m-1" onclick="perpanjangDeadline('${q.id}', '${q.judul}')"><i class="fas fa-clock"></i></button><button class="btn btn-sm btn-danger py-0 m-1" onclick="hapusTugas('${q.id}', '${q.judul}')"><i class="fas fa-trash"></i></button></td></tr>`;
       }).join('');
     }
 
-    // Render Tugas di sisi Siswa -> PENAMBAHAN FORMAT TANGGAL
     const tQuizSiswa = document.getElementById('tabelQuizSiswa');
     if(tQuizSiswa) {
-      tQuizSiswa.innerHTML = localDB.quiz.map(q => `
-      <tr>
-        <td><span class="badge bg-primary">${q.mapel}</span></td>
-        <td>${q.judul}</td>
-        <td><span class="fw-semibold">${formatTanggalIndo(q.deadline)}</span></td>
-        <td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-dark py-0"><i class="fas fa-file-pdf"></i> Soal</a>`: '-'}</td>
-        <td><button class="btn btn-xs btn-danger fw-bold py-0" onclick="bukaFormPengerjaanTugas('${q.id}', '${q.judul}', '${q.mapel}')">Kerjakan</button></td>
-      </tr>`).join('');
+      tQuizSiswa.innerHTML = localDB.quiz.map(q => `<tr><td><span class="badge bg-primary">${q.mapel}</span></td><td>${q.judul}</td><td><span class="fw-semibold">${formatTanggalIndo(q.deadline)}</span></td><td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-dark py-0"><i class="fas fa-file-pdf"></i> Soal</a>`: '-'}</td><td><button class="btn btn-xs btn-danger fw-bold py-0" onclick="bukaFormPengerjaanTugas('${q.id}', '${q.judul}', '${q.mapel}')">Kerjakan</button></td></tr>`).join('');
     }
 
-    // Update Kotak Absensi & LOGIKA NOTIFIKASI TUGAS di Siswa
     if(userRole === 'siswa') {
       const myAbsen = localDB.absensi.filter(a => String(a.nis) === String(nisUserAktifLog));
       document.getElementById('rekap_hadir').innerText = myAbsen.filter(a => a.status === 'Hadir').length + " Hari";
@@ -1235,64 +1320,32 @@
       document.getElementById('rekap_izin').innerText = myAbsen.filter(a => a.status === 'Izin').length + " Hari";
       document.getElementById('rekap_alpa').innerText = myAbsen.filter(a => a.status === 'Alpa').length + " Hari";
 
-      // =========================================================
-      // FITUR BARU: NOTIFIKASI TUGAS YANG BELUM DIKERJAKAN
-      // =========================================================
       const mySubmissions = localDB.jawaban.filter(j => String(j.nis) === String(nisUserAktifLog));
-      // Kita buat daftar "judul tugas" yang sudah pernah dikerjakan oleh siswa ini
       const mySubmittedTaskTitles = mySubmissions.map(j => j.judulTugas);
-      
-      // Filter semua Tugas/Quiz yang aktif, cari yang judulnya BELUM ADA di daftar yang sudah dikerjakan
       const pendingTasks = localDB.quiz.filter(q => !mySubmittedTaskTitles.includes(q.judul));
       
       const notifBox = document.getElementById('notifTugasSiswaBox');
       if(notifBox) {
         if(pendingTasks.length > 0) {
-          // Jika masih ada tugas yang nunggak
           notifBox.style.display = 'block';
-          
           let listTugasHtml = pendingTasks.map(pt => {
             const isTerlewat = new Date(pt.deadline) < new Date();
-            const textDeadline = formatTanggalIndo(pt.deadline);
-            return `<li class="mb-2"><b>[${pt.mapel}]</b> ${pt.judul} <br><small class="${isTerlewat ? 'text-danger fw-bold' : 'text-dark'}"><i class="fas fa-clock"></i> Batas Waktu: ${textDeadline} ${isTerlewat ? '(Terlewat)' : ''}</small></li>`;
+            return `<li class="mb-2"><b>[${pt.mapel}]</b> ${pt.judul} <br><small class="${isTerlewat ? 'text-danger fw-bold' : 'text-dark'}"><i class="fas fa-clock"></i> Batas Waktu: ${formatTanggalIndo(pt.deadline)} ${isTerlewat ? '(Terlewat)' : ''}</small></li>`;
           }).join('');
-
-          notifBox.innerHTML = `
-            <div class="alert alert-danger shadow-sm border-danger border-start border-5 py-3 mb-4">
-              <h5 class="alert-heading fw-bold mb-2"><i class="fas fa-exclamation-triangle me-2"></i>PERHATIAN: Ada ${pendingTasks.length} Tugas Belum Dikerjakan!</h5>
-              <p class="mb-2 small">Segera selesaikan dan kumpulkan tugas di bawah ini agar Anda mendapatkan nilai dari Guru:</p>
-              <ul class="mb-3 small">
-                ${listTugasHtml}
-              </ul>
-              <button class="btn btn-sm btn-danger fw-bold shadow-sm" onclick="pilihMenu('Tugas', 'Daftar & Upload Tugas')">
-                <i class="fas fa-arrow-right me-1"></i> Pergi ke Menu Tugas Sekarang
-              </button>
-            </div>
-          `;
+          notifBox.innerHTML = `<div class="alert alert-danger shadow-sm border-danger border-start border-5 py-3 mb-4"><h5 class="alert-heading fw-bold mb-2"><i class="fas fa-exclamation-triangle me-2"></i>PERHATIAN: Ada ${pendingTasks.length} Tugas Belum Dikerjakan!</h5><p class="mb-2 small">Segera selesaikan dan kumpulkan tugas file di bawah ini:</p><ul class="mb-3 small">${listTugasHtml}</ul><button class="btn btn-sm btn-danger fw-bold shadow-sm" onclick="pilihMenu('Tugas', 'Daftar & Upload Tugas')"><i class="fas fa-arrow-right me-1"></i> Buka Menu Upload Tugas</button></div>`;
         } else {
-          // Jika tugas sudah selesai semua
           notifBox.style.display = 'block';
-          notifBox.innerHTML = `
-            <div class="alert alert-success shadow-sm border-success border-start border-5 py-3 mb-4">
-              <h5 class="alert-heading fw-bold mb-0"><i class="fas fa-check-circle me-2"></i>Luar Biasa, ${userAktif.nama}!</h5>
-              <p class="mb-0 mt-1 small">Anda sudah mengerjakan semua tugas yang diberikan oleh Guru. Pertahankan semangat belajarmu!</p>
-            </div>
-          `;
+          notifBox.innerHTML = `<div class="alert alert-success shadow-sm border-success border-start border-5 py-3 mb-4"><h5 class="alert-heading fw-bold mb-0"><i class="fas fa-check-circle me-2"></i>Luar Biasa, ${userAktif.nama}!</h5><p class="mb-0 mt-1 small">Anda sudah mengerjakan semua penugasan (Upload File) dari Guru.</p></div>`;
         }
       }
     }
 
-    // Panggil fungsi-fungsi render yang baru dibuat
-    renderAbsensi();
-    renderPenilaian();
-    renderRekapSiswa();
-    renderForumPesan();
+    renderAbsensi(); renderPenilaian(); renderRekapSiswa(); renderForumPesan();
+    renderRuangDiskusiList(); if(aktifIdTopik && aktifNamaKelompok) renderIsiChatKelompok();
     
-    // PANGGIL RENDER RUANG KELOMPOK
-    renderRuangDiskusiList();
-    if(aktifIdTopik && aktifNamaKelompok) {
-      renderIsiChatKelompok();
-    }
+    // CALL FITUR BARU CBT
+    if(userRole === 'guru') renderListCBTGuru();
+    if(userRole === 'siswa') renderListCBTSiswa();
   }
 
   function dapatkanBase64(file) {
@@ -1311,216 +1364,125 @@
 
   async function simpanMateriBaru(e) {
     e.preventDefault();
-    const btn = document.getElementById('btnUploadMateri');
-    btn.disabled = true; btn.innerText = "Mengunggah ke Drive...";
+    const btn = document.getElementById('btnUploadMateri'); btn.disabled = true; btn.innerText = "Mengunggah...";
     const fileEl = document.getElementById('materi_file').files[0];
     let base64Data = ""; let nameFile = "";
     if(fileEl) { base64Data = await dapatkanBase64(fileEl); nameFile = fileEl.name; }
 
     const payload = { action: 'tambahMateri', mapel: mapelAktif, judul: document.getElementById('materi_judul').value, deskripsi: document.getElementById('materi_deskripsi').value, fileBase64: base64Data, fileName: nameFile };
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
-    .then(res => res.json())
-    .then(data => { btn.disabled = false; btn.innerText = "Bagikan Materi"; document.getElementById('formTambahMateri').reset(); tarikDataDatabase(); });
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { btn.disabled = false; btn.innerText = "Bagikan Materi"; document.getElementById('formTambahMateri').reset(); tarikDataDatabase(); });
   }
 
   function bukaMateriMapel(code) {
-    mapelAktif = code;
-    document.getElementById('txtCodeMapelAktif').innerText = code;
+    mapelAktif = code; document.getElementById('txtCodeMapelAktif').innerText = code;
     document.getElementById('rowDaftarMapel').style.display = 'none';
     document.getElementById('areaDetailMateriMapel').style.display = 'block';
     const mList = document.getElementById('madingMateriList');
     const filteredMateri = localDB.materi.filter(m => m.mapel === code);
-    
-    if(filteredMateri.length === 0) mList.innerHTML = `<div class="col-12 text-center text-muted py-4"><i class="fas fa-info-circle mb-2 d-block fs-3"></i> Belum ada materi yang diunggah untuk mapel ini.</div>`;
-    else mList.innerHTML = filteredMateri.map(m => `<div class="col-12 mb-3"><div class="card bg-light border-0 shadow-sm"><div class="card-body"><h6 class="fw-bold text-dark mb-1"><i class="fas fa-file-alt text-primary me-2"></i>${m.judul}</h6><p class="small text-secondary mb-2" style="white-space: pre-wrap;">${m.deskripsi || ''}</p>${m.urlFileDrive ? `<a href="${m.urlFileDrive}" target="_blank" class="btn btn-xs btn-outline-secondary fw-bold py-0 text-decoration-none"><i class="fas fa-paperclip"></i> Buka File Lampiran</a>` : ''}</div></div></div>`).join('');
+    if(filteredMateri.length === 0) mList.innerHTML = `<div class="col-12 text-center text-muted py-4"><i class="fas fa-info-circle mb-2 d-block fs-3"></i> Belum ada materi.</div>`;
+    else mList.innerHTML = filteredMateri.map(m => `<div class="col-12 mb-3"><div class="card bg-light border-0 shadow-sm"><div class="card-body"><h6 class="fw-bold text-dark mb-1"><i class="fas fa-file-alt text-primary me-2"></i>${m.judul}</h6><p class="small text-secondary mb-2" style="white-space: pre-wrap;">${m.deskripsi || ''}</p>${m.urlFileDrive ? `<a href="${m.urlFileDrive}" target="_blank" class="btn btn-xs btn-outline-secondary fw-bold py-0 text-decoration-none"><i class="fas fa-paperclip"></i> Buka File</a>` : ''}</div></div></div>`).join('');
   }
 
-  function kembaliKeDaftarMapel() {
-    document.getElementById('rowDaftarMapel').style.display = 'flex';
-    document.getElementById('areaDetailMateriMapel').style.display = 'none';
-  }
+  function kembaliKeDaftarMapel() { document.getElementById('rowDaftarMapel').style.display = 'flex'; document.getElementById('areaDetailMateriMapel').style.display = 'none'; }
 
   function kirimDataSiswa(e) {
-    e.preventDefault();
-    const btn = document.getElementById('btnSimpanSiswa');
-    btn.disabled = true;
-
+    e.preventDefault(); const btn = document.getElementById('btnSimpanSiswa'); btn.disabled = true;
     const payload = { action: 'kirimData', menuAktif: 'Data_Siswa', nis: document.getElementById('siswa_nis').value, nama: document.getElementById('siswa_nama').value, kelas: document.getElementById('siswa_kelas').value, jk: document.getElementById('siswa_jk').value, alamat: document.getElementById('siswa_alamat').value };
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { btn.disabled = false; document.getElementById('formSiswa').reset(); tarikDataDatabase(); });
   }
 
   function kirimAbsensiMassal(e) {
-    e.preventDefault();
-    const btn = document.getElementById('btnSimpanAbsenMassal');
-    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    e.preventDefault(); const btn = document.getElementById('btnSimpanAbsenMassal'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
     let dataAbsensi = [];
-    
-    // Karena tabel sekarang cuma nampilin 1 kelas, yg dikirim juga otomatis cuma kelas itu saja
     document.querySelectorAll('.baris-absen').forEach(baris => {
       const nis = baris.getAttribute('data-nis');
       dataAbsensi.push({ nis: nis, nama: baris.getAttribute('data-nama'), kelas: baris.getAttribute('data-kelas'), status: document.querySelector(`input[name="status_${nis}"]:checked`).value, keterangan: baris.querySelector('.input-keterangan').value });
     });
-
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimAbsensiMassal', data: dataAbsensi }) })
-    .then(res => res.json()).then(data => {
-      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini';
-      if(data.status === 'success') { alert("Presensi kelas berhasil disimpan ke database!"); document.getElementById('formAbsensiMassal').reset(); tarikDataDatabase(); }
-    }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini'; alert("Koneksi gagal terhubung!"); });
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimAbsensiMassal', data: dataAbsensi }) }).then(res => res.json()).then(data => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini'; if(data.status === 'success') { alert("Presensi kelas berhasil disimpan ke database!"); document.getElementById('formAbsensiMassal').reset(); tarikDataDatabase(); } }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini'; alert("Koneksi gagal terhubung!"); });
   }
 
   async function simpanQuiz(e) {
-    e.preventDefault();
-    const btn = document.getElementById('btnKirimQuiz');
-    btn.disabled = true; btn.innerText = "Mengirim...";
+    e.preventDefault(); const btn = document.getElementById('btnKirimQuiz'); btn.disabled = true; btn.innerText = "Mengirim...";
     const fileEl = document.getElementById('quiz_file_soal').files[0];
     let base64Data = ""; let nameFile = "";
     if(fileEl) { base64Data = await dapatkanBase64(fileEl); nameFile = fileEl.name; }
-
     const payload = { action: 'simpanQuiz', mapel: document.getElementById('quiz_mapel').value, judul: document.getElementById('quiz_judul').value, deadline: document.getElementById('quiz_deadline').value, fileBase64: base64Data, fileName: nameFile };
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { btn.disabled = false; btn.innerText = "Publikasikan Tugas"; document.getElementById('formBuatQuiz').reset(); tarikDataDatabase(); });
   }
 
   function bukaFormPengerjaanTugas(id, judul, mapel) {
     selectedTugasObj = { id: id, judul: judul, mapel: mapel };
-    document.getElementById('txtTugasTerpilih').innerText = judul;
-    document.getElementById('txtMapelTugasTerpilih').innerText = mapel;
-    document.getElementById('panelKirimJawabanSiswa').style.display = 'block';
-    document.getElementById('panelKirimJawabanSiswa').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('txtTugasTerpilih').innerText = judul; document.getElementById('txtMapelTugasTerpilih').innerText = mapel;
+    document.getElementById('panelKirimJawabanSiswa').style.display = 'block'; document.getElementById('panelKirimJawabanSiswa').scrollIntoView({ behavior: 'smooth' });
   }
 
   async function kirimJawabanTugas(e) {
-    e.preventDefault();
-    if(!selectedTugasObj) return;
-    const btn = document.getElementById('btnSubmitTugas');
-    btn.disabled = true; btn.innerText = "Mengunggah Jawaban Anda...";
+    e.preventDefault(); if(!selectedTugasObj) return;
+    const btn = document.getElementById('btnSubmitTugas'); btn.disabled = true; btn.innerText = "Mengunggah Jawaban...";
     const fileEl = document.getElementById('fileTugas').files[0];
     let base64Data = ""; let nameFile = "";
     if(fileEl) { base64Data = await dapatkanBase64(fileEl); nameFile = fileEl.name; }
-
     const payload = { action: 'kirimData', menuAktif: 'Tugas', nis: nisUserAktifLog, nama: userAktif.nama, kelas: userAktif.kelas || 'TKJ', mapel: selectedTugasObj.mapel, judulTugas: selectedTugasObj.judul, fileBase64: base64Data, fileName: nameFile };
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { btn.disabled = false; btn.innerText = "Kirim Hasil Jawaban"; document.getElementById('formKirimTugas').reset(); document.getElementById('panelKirimJawabanSiswa').style.display = 'none'; selectedTugasObj = null; tarikDataDatabase(); alert("Tugas sukses diserahkan & masuk antrean koreksi Guru."); });
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { btn.disabled = false; btn.innerText = "Kirim Hasil Jawaban"; document.getElementById('formKirimTugas').reset(); document.getElementById('panelKirimJawabanSiswa').style.display = 'none'; selectedTugasObj = null; tarikDataDatabase(); alert("Tugas diserahkan!"); });
   }
 
   function beriPenilaianDialog(idSubmis) {
-    const nilai = prompt("Masukkan Skor Angka Nilai Siswa (0 - 100):");
-    if(nilai === null) return;
+    const nilai = prompt("Masukkan Skor Angka Nilai Siswa (0 - 100):"); if(nilai === null) return;
     const catatan = prompt("Tulis Catatan / Komentar Review Pekerjaan:");
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'beriNilai', idSubmis: idSubmis, nilai: nilai, catatan: catatan }) }).then(res => res.json()).then(data => { tarikDataDatabase(); });
   }
 
   function renderForumPesan() {
-    const box = document.getElementById('kotakPesanForum');
-    if(!box) return;
+    const box = document.getElementById('kotakPesanForum'); if(!box) return;
     box.innerHTML = localDB.forum.map(f => `<div class="chat-msg"><div class="d-flex justify-content-between align-items-center mb-1"><span class="fw-bold ${f.role === 'guru' ? 'text-danger' : 'text-primary'}">${f.nama} (${f.role.toUpperCase()})</span><small class="text-muted text-end font-monospace" style="font-size:0.75rem;">${f.timestamp || ''}</small></div><div class="text-dark small">${f.pesan}</div></div>`).join('');
     box.scrollTop = box.scrollHeight;
   }
 
   function postPesanForum(e) {
-    e.preventDefault();
-    const input = document.getElementById('msg_forum_text');
-    const msg = input.value.trim();
-    if(!msg) return;
-    const btn = document.getElementById('btnKirimChat');
-    btn.disabled = true;
+    e.preventDefault(); const input = document.getElementById('msg_forum_text'); const msg = input.value.trim(); if(!msg) return;
+    const btn = document.getElementById('btnKirimChat'); btn.disabled = true;
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimForum', nama: userAktif.nama, role: userRole, pesan: msg }) }).then(res => res.json()).then(data => { btn.disabled = false; input.value = ''; tarikDataDatabase(); });
   }
 
   function hapusTugas(idTugas, judulTugas) {
-    if(confirm(`YAKIN INGIN MENGHAPUS TUGAS: "${judulTugas}"?\n\nTugas akan hilang dari daftar siswa. Pastikan tidak ada data nilai penting yang belum direkap.`)) {
-      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'hapusQuiz', id: idTugas }) })
-      .then(res => res.json())
-      .then(data => { alert("Tugas berhasil dihapus!"); tarikDataDatabase(); })
-      .catch(err => alert("Gagal menghapus tugas. Periksa koneksi."));
+    if(confirm(`YAKIN INGIN MENGHAPUS TUGAS: "${judulTugas}"?`)) {
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'hapusQuiz', id: idTugas }) }).then(res => res.json()).then(data => { alert("Tugas dihapus!"); tarikDataDatabase(); }).catch(err => alert("Gagal menghapus tugas."));
     }
   }
 
   function perpanjangDeadline(idTugas, judulTugas) {
     const newDeadline = prompt(`PERPANJANG DEADLINE UNTUK: "${judulTugas}"\n\nMasukkan format waktu (Contoh: 2024-12-31T23:59):`, "2024-12-31T23:59");
     if(newDeadline != null && newDeadline !== "") {
-      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'perpanjangQuiz', id: idTugas, deadline: newDeadline }) })
-      .then(res => res.json())
-      .then(data => { alert("Batas waktu berhasil diperpanjang!"); tarikDataDatabase(); })
-      .catch(err => alert("Gagal memperpanjang deadline. Periksa koneksi."));
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'perpanjangQuiz', id: idTugas, deadline: newDeadline }) }).then(res => res.json()).then(data => { alert("Deadline diperpanjang!"); tarikDataDatabase(); }).catch(err => alert("Gagal perpanjang deadline."));
     }
   }
 
   function ingatkanTugasWA(judulTugas, mapel, deadline) {
     if(confirm(`Kirim Broadcast WhatsApp pengingat tugas "${judulTugas}" ke SELURUH SISWA TKJ?`)) {
-      
-      const notifArea = document.createElement('div');
-      notifArea.innerHTML = `<div style="position:fixed; top:20px; right:20px; z-index:9999;" class="alert alert-info border-0 shadow"><i class="fas fa-spinner fa-spin me-2"></i>Mengirim Pesan WA...</div>`;
-      document.body.appendChild(notifArea);
-
-      fetch(scriptUrl, { 
-        method: 'POST', 
-        body: JSON.stringify({ action: 'ingatkanTugasWA', judul: judulTugas, mapel: mapel, deadline: deadline }) 
-      })
-      .then(res => res.json())
-      .then(data => {
-        document.body.removeChild(notifArea);
-        if(data.status === 'success') {
-          alert("Pesan Broadcast WhatsApp pengingat berhasil dikirim ke seluruh siswa!");
-        } else {
-          alert("Gagal memproses WA.");
-        }
-      })
-      .catch(err => {
-        document.body.removeChild(notifArea);
-        alert("Gagal menghubungi server Apps Script.");
-      });
+      const notifArea = document.createElement('div'); notifArea.innerHTML = `<div style="position:fixed; top:20px; right:20px; z-index:9999;" class="alert alert-info border-0 shadow"><i class="fas fa-spinner fa-spin me-2"></i>Mengirim Pesan WA...</div>`; document.body.appendChild(notifArea);
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'ingatkanTugasWA', judul: judulTugas, mapel: mapel, deadline: deadline }) }).then(res => res.json()).then(data => { document.body.removeChild(notifArea); if(data.status === 'success') { alert("Broadcast WA sukses!"); } else { alert("Gagal memproses WA."); } }).catch(err => { document.body.removeChild(notifArea); alert("Gagal menghubungi server Apps Script."); });
     }
   }
 
   // =========================================================================
-  // LOGIKA FITUR BARU: RUANG KELOMPOK (STUDI KASUS)
+  // LOGIKA RUANG KELOMPOK (STUDI KASUS) - TETAP UTUH
   // =========================================================================
-
   function buatTopikDiskusi(e) {
-    e.preventDefault();
-    const btn = document.getElementById('btnBuatTopik');
-    btn.disabled = true; btn.innerText = "Memproses...";
-    
-    const payload = {
-      action: 'buatTopikDiskusi',
-      kelas: document.getElementById('topik_kelas').value,
-      judul: document.getElementById('topik_judul').value,
-      deskripsi: document.getElementById('topik_deskripsi').value,
-      jmlKelompok: document.getElementById('topik_jml_kelompok').value,
-      maksAnggota: document.getElementById('topik_maks_anggota').value,
-      deadline: document.getElementById('topik_deadline').value
-    };
-
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
-    .then(res => res.json()).then(data => {
-      btn.disabled = false; btn.innerText = "Publikasikan Ruang Diskusi";
-      document.getElementById('formBuatTopikDiskusi').reset();
-      tarikDataDatabase(); // Tarik data terbaru
-      alert("Ruang Diskusi berhasil dibuat untuk kelas " + payload.kelas);
-    }).catch(err => { btn.disabled = false; alert("Gagal koneksi ke server"); });
+    e.preventDefault(); const btn = document.getElementById('btnBuatTopik'); btn.disabled = true; btn.innerText = "Memproses...";
+    const payload = { action: 'buatTopikDiskusi', kelas: document.getElementById('topik_kelas').value, judul: document.getElementById('topik_judul').value, deskripsi: document.getElementById('topik_deskripsi').value, jmlKelompok: document.getElementById('topik_jml_kelompok').value, maksAnggota: document.getElementById('topik_maks_anggota').value, deadline: document.getElementById('topik_deadline').value };
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { btn.disabled = false; btn.innerText = "Publikasikan Ruang Diskusi"; document.getElementById('formBuatTopikDiskusi').reset(); tarikDataDatabase(); alert("Ruang Diskusi berhasil dibuat untuk kelas " + payload.kelas); }).catch(err => { btn.disabled = false; alert("Gagal koneksi"); });
   }
 
   function renderRuangDiskusiList() {
-    const listBox = document.getElementById('listTopikDiskusiCard');
-    if(!listBox) return;
-
-    // Filter Topik: Siswa hanya lihat kelasnya sendiri. Guru lihat semua.
+    const listBox = document.getElementById('listTopikDiskusiCard'); if(!listBox) return;
     let filterTopik = localDB.diskusiTopik;
-    if(userRole === 'siswa') {
-      filterTopik = localDB.diskusiTopik.filter(t => t.kelas === userAktif.kelas);
-    }
+    if(userRole === 'siswa') filterTopik = localDB.diskusiTopik.filter(t => t.kelas === userAktif.kelas);
 
-    if(filterTopik.length === 0) {
-      listBox.innerHTML = `<div class="col-12 text-center py-4 text-muted"><i class="fas fa-box-open fs-2 mb-2 d-block"></i> Belum ada Studi Kasus / Ruang Diskusi aktif.</div>`;
-      return;
-    }
-
-    // Urutkan dari yang terbaru
-    filterTopik.reverse();
-
-    listBox.innerHTML = filterTopik.map(t => {
+    if(filterTopik.length === 0) { listBox.innerHTML = `<div class="col-12 text-center py-4 text-muted"><i class="fas fa-box-open fs-2 mb-2 d-block"></i> Belum ada Studi Kasus aktif.</div>`; return; }
+    
+    listBox.innerHTML = filterTopik.slice().reverse().map(t => {
       const isExpired = new Date(t.batasWaktu) < new Date();
       const statusBadge = isExpired ? `<span class="badge bg-danger ms-2">Ditutup</span>` : `<span class="badge bg-success ms-2">Aktif</span>`;
-      
       return `
       <div class="col-md-6 mb-3">
         <div class="card shadow-sm border-0 border-start ${isExpired ? 'border-danger' : 'border-info'} border-4 h-100">
@@ -1531,7 +1493,7 @@
             <p class="small text-danger fw-semibold mb-2"><i class="fas fa-clock"></i> Limit: ${formatTanggalIndo(t.batasWaktu)}</p>
             <hr class="my-2">
             <div class="d-flex justify-content-between align-items-center">
-              <span class="small fw-semibold text-muted"><i class="fas fa-users"></i> Dibagi ${t.jmlKelompok} Kelompok</span>
+              <span class="small fw-semibold text-muted"><i class="fas fa-users"></i> ${t.jmlKelompok} Kelompok</span>
               <button class="btn btn-sm ${isExpired ? 'btn-secondary' : 'btn-info text-white'} fw-bold" onclick="bukaStudiKasus('${t.id}')">
                 Masuk Ruang <i class="fas fa-arrow-right"></i>
               </button>
@@ -1543,29 +1505,18 @@
   }
 
   function bukaStudiKasus(idTopik) {
-    const topik = localDB.diskusiTopik.find(t => t.id === idTopik);
-    if(!topik) return;
+    const topik = localDB.diskusiTopik.find(t => t.id === idTopik); if(!topik) return;
+    document.getElementById('areaDaftarTopikDiskusi').style.display = 'none'; document.getElementById('areaPilihKelompok').style.display = 'block';
+    document.getElementById('viewTopikJudul').innerText = topik.judul; document.getElementById('viewTopikDeskripsi').innerText = topik.deskripsi; document.getElementById('viewTopikDeadline').innerText = formatTanggalIndo(topik.batasWaktu); document.getElementById('viewTopikMaks').innerText = topik.maksAnggota || '-';
 
-    document.getElementById('areaDaftarTopikDiskusi').style.display = 'none';
-    document.getElementById('areaPilihKelompok').style.display = 'block';
-    
-    document.getElementById('viewTopikJudul').innerText = topik.judul;
-    document.getElementById('viewTopikDeskripsi').innerText = topik.deskripsi;
-    document.getElementById('viewTopikDeadline').innerText = formatTanggalIndo(topik.batasWaktu);
-    document.getElementById('viewTopikMaks').innerText = topik.maksAnggota || '-';
-
-    // Cek apakah siswa ini SUDAH PERNAH bergabung di kelompok mana untuk topik ini
     let myJoinedGroup = null;
     if (userRole === 'siswa') {
       const cekAnggota = localDB.diskusiAnggota.find(a => a.idTopik === idTopik && String(a.nis) === String(nisUserAktifLog));
       if (cekAnggota) myJoinedGroup = cekAnggota.kelompok;
     }
 
-    // Render Tombol Kelompok 1, 2, 3, dst
-    const gridBtn = document.getElementById('gridTombolKelompok');
-    let btns = '';
-    const jml = parseInt(topik.jmlKelompok) || 4;
-    const maxMember = parseInt(topik.maksAnggota) || 99;
+    const gridBtn = document.getElementById('gridTombolKelompok'); let btns = '';
+    const jml = parseInt(topik.jmlKelompok) || 4; const maxMember = parseInt(topik.maksAnggota) || 99;
 
     for(let i=1; i<=jml; i++) {
       let namaKel = 'Kelompok ' + i;
@@ -1573,208 +1524,366 @@
       let isFull = countMembers >= maxMember;
 
       if(userRole === 'guru') {
-        // GURU: Bebas masuk mana saja
         btns += `<div><button class="btn btn-outline-primary fw-bold px-4 py-3 shadow-sm text-center" style="min-width: 140px;" onclick="masukKelompokTerdaftar('${topik.id}', '${namaKel}')"><i class="fas fa-users d-block mb-1 fs-4"></i> ${namaKel}<br><small class="fw-normal">(${countMembers}/${maxMember})</small></button></div>`;
       } else {
-        // SISWA: Aturan Ketat Diberlakukan
-        if (myJoinedGroup === namaKel) {
-          // Tombol kelompok miliknya
-          btns += `<div><button class="btn btn-success fw-bold px-4 py-3 shadow-sm text-center" style="min-width: 140px;" onclick="masukKelompokTerdaftar('${topik.id}', '${namaKel}')"><i class="fas fa-door-open d-block mb-1 fs-4"></i> Masuk ${namaKel}<br><small class="text-white">Tim Anda</small></button></div>`;
-        } else if (myJoinedGroup !== null) {
-          // Tombol kelompok lain terkunci karena dia sudah ada tim
-          btns += `<div><button class="btn btn-secondary fw-bold px-4 py-3 shadow-sm text-center opacity-50" style="min-width: 140px;" disabled><i class="fas fa-lock d-block mb-1 fs-4"></i> ${namaKel}<br><small>Terkunci</small></button></div>`;
-        } else if (isFull) {
-          // Belum punya tim, tapi kelompok ini penuh
-          btns += `<div><button class="btn btn-danger fw-bold px-4 py-3 shadow-sm text-center opacity-75" style="min-width: 140px;" disabled><i class="fas fa-ban d-block mb-1 fs-4"></i> ${namaKel}<br><small>Penuh (${countMembers}/${maxMember})</small></button></div>`;
-        } else {
-          // Belum punya tim, dan kelompok ini masih kosong -> Tombol Gabung
-          btns += `<div><button class="btn btn-outline-success fw-bold px-4 py-3 shadow-sm text-center" style="min-width: 140px;" onclick="gabungKelompokBaru('${topik.id}', '${namaKel}')"><i class="fas fa-sign-in-alt d-block mb-1 fs-4"></i> Gabung ${namaKel}<br><small>(${countMembers}/${maxMember})</small></button></div>`;
-        }
+        if (myJoinedGroup === namaKel) btns += `<div><button class="btn btn-success fw-bold px-4 py-3 shadow-sm text-center" style="min-width: 140px;" onclick="masukKelompokTerdaftar('${topik.id}', '${namaKel}')"><i class="fas fa-door-open d-block mb-1 fs-4"></i> Masuk ${namaKel}<br><small class="text-white">Tim Anda</small></button></div>`;
+        else if (myJoinedGroup !== null) btns += `<div><button class="btn btn-secondary fw-bold px-4 py-3 shadow-sm text-center opacity-50" style="min-width: 140px;" disabled><i class="fas fa-lock d-block mb-1 fs-4"></i> ${namaKel}<br><small>Terkunci</small></button></div>`;
+        else if (isFull) btns += `<div><button class="btn btn-danger fw-bold px-4 py-3 shadow-sm text-center opacity-75" style="min-width: 140px;" disabled><i class="fas fa-ban d-block mb-1 fs-4"></i> ${namaKel}<br><small>Penuh</small></button></div>`;
+        else btns += `<div><button class="btn btn-outline-success fw-bold px-4 py-3 shadow-sm text-center" style="min-width: 140px;" onclick="gabungKelompokBaru('${topik.id}', '${namaKel}')"><i class="fas fa-sign-in-alt d-block mb-1 fs-4"></i> Gabung ${namaKel}<br><small>(${countMembers}/${maxMember})</small></button></div>`;
       }
     }
     gridBtn.innerHTML = btns;
   }
 
-  function kembaliKeDaftarTopik() {
-    aktifIdTopik = null; aktifNamaKelompok = null;
-    document.getElementById('areaChatKelompok').style.display = 'none';
-    document.getElementById('areaPilihKelompok').style.display = 'none';
-    document.getElementById('areaDaftarTopikDiskusi').style.display = 'block';
-  }
+  function kembaliKeDaftarTopik() { aktifIdTopik = null; aktifNamaKelompok = null; document.getElementById('areaChatKelompok').style.display = 'none'; document.getElementById('areaPilihKelompok').style.display = 'none'; document.getElementById('areaDaftarTopikDiskusi').style.display = 'block'; }
 
-  // Fungsi API Gabung Baru (Mengikat Akun)
   function gabungKelompokBaru(idTopik, namaKelompok) {
-    if(confirm(`Yakin ingin bergabung dengan ${namaKelompok}?\n\nPeringatan: Sekali bergabung, Anda TIDAK BISA pindah ke kelompok lain di studi kasus ini.`)) {
-      // Loading visual
-      document.getElementById('gridTombolKelompok').innerHTML = `<div class="w-100 text-center py-5"><i class="fas fa-spinner fa-spin fs-2 text-primary mb-3 d-block"></i>Mendaftarkan akun Anda ke kelompok...</div>`;
-      
-      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ 
-        action: 'joinKelompok', idTopik: idTopik, kelompok: namaKelompok, nis: nisUserAktifLog, nama: userAktif.nama 
-      })}).then(res => res.json()).then(data => {
-        if(data.status === 'success') {
-          // Tambahkan sementara ke localDB agar ga usah nunggu fetch readAll
-          localDB.diskusiAnggota.push({ idTopik: idTopik, kelompok: namaKelompok, nis: nisUserAktifLog, nama: userAktif.nama });
-          masukKelompokTerdaftar(idTopik, namaKelompok);
-        } else {
-          alert(data.message);
-          bukaStudiKasus(idTopik); // render ulang tombol
-        }
+    if(confirm(`Yakin ingin bergabung dengan ${namaKelompok}?`)) {
+      document.getElementById('gridTombolKelompok').innerHTML = `<div class="w-100 text-center py-5"><i class="fas fa-spinner fa-spin fs-2 text-primary mb-3 d-block"></i>Mendaftarkan akun...</div>`;
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'joinKelompok', idTopik: idTopik, kelompok: namaKelompok, nis: nisUserAktifLog, nama: userAktif.nama })}).then(res => res.json()).then(data => {
+        if(data.status === 'success') { localDB.diskusiAnggota.push({ idTopik: idTopik, kelompok: namaKelompok, nis: nisUserAktifLog, nama: userAktif.nama }); masukKelompokTerdaftar(idTopik, namaKelompok); } else { alert(data.message); bukaStudiKasus(idTopik); }
       }).catch(err => { alert("Gagal koneksi."); bukaStudiKasus(idTopik); });
     }
   }
 
-  // NAVIGASI: MASUK KE CHAT ROOM KELOMPOK SPESIFIK
   function masukKelompokTerdaftar(idTopik, namaKelompok) {
-    aktifIdTopik = idTopik;
-    aktifNamaKelompok = namaKelompok;
-    
-    document.getElementById('areaPilihKelompok').style.display = 'none';
-    document.getElementById('areaChatKelompok').style.display = 'block';
-    document.getElementById('labelNamaKelompok').innerText = namaKelompok;
-    
-    // Clear Input Box
-    document.getElementById('inputKesimpulanKelompok').value = '';
-    document.getElementById('statusKesimpulanBox').style.display = 'none';
-
-    renderIsiChatKelompok();
+    aktifIdTopik = idTopik; aktifNamaKelompok = namaKelompok; document.getElementById('areaPilihKelompok').style.display = 'none'; document.getElementById('areaChatKelompok').style.display = 'block'; document.getElementById('labelNamaKelompok').innerText = namaKelompok; document.getElementById('inputKesimpulanKelompok').value = ''; document.getElementById('statusKesimpulanBox').style.display = 'none'; renderIsiChatKelompok();
   }
 
-  function kembaliKePilihKelompok() {
-    aktifIdTopik = null; aktifNamaKelompok = null;
-    document.getElementById('areaChatKelompok').style.display = 'none';
-    document.getElementById('areaPilihKelompok').style.display = 'block';
-  }
+  function kembaliKePilihKelompok() { aktifIdTopik = null; aktifNamaKelompok = null; document.getElementById('areaChatKelompok').style.display = 'none'; document.getElementById('areaPilihKelompok').style.display = 'block'; }
 
-  // RENDER CHAT DAN KESIMPULAN DALAM KELOMPOK AKTIF
   function renderIsiChatKelompok() {
     if(!aktifIdTopik || !aktifNamaKelompok) return;
-    const topik = localDB.diskusiTopik.find(t => t.id === aktifIdTopik);
-    const box = document.getElementById('kotakChatKelompok');
+    const topik = localDB.diskusiTopik.find(t => t.id === aktifIdTopik); const box = document.getElementById('kotakChatKelompok');
     
-    // 1. RENDER DAFTAR ANGGOTA DI PANEL KANAN
-    const listUI = document.getElementById('listAnggotaKelompokUI');
-    const members = localDB.diskusiAnggota.filter(a => a.idTopik === aktifIdTopik && a.kelompok === aktifNamaKelompok);
-    if(members.length === 0) {
-      listUI.innerHTML = `<li class="list-group-item text-muted fst-italic py-1 px-0 border-0">Belum ada anggota.</li>`;
-    } else {
-      listUI.innerHTML = members.map(m => `<li class="list-group-item py-1 px-0 border-0 text-dark fw-semibold"><i class="fas fa-user-check text-success me-2"></i>${m.nama}</li>`).join('');
-    }
+    const listUI = document.getElementById('listAnggotaKelompokUI'); const members = localDB.diskusiAnggota.filter(a => a.idTopik === aktifIdTopik && a.kelompok === aktifNamaKelompok);
+    if(members.length === 0) listUI.innerHTML = `<li class="list-group-item text-muted fst-italic py-1 px-0 border-0">Belum ada anggota.</li>`;
+    else listUI.innerHTML = members.map(m => `<li class="list-group-item py-1 px-0 border-0 text-dark fw-semibold"><i class="fas fa-user-check text-success me-2"></i>${m.nama}</li>`).join('');
 
-    // 2. CEK AUTO-LOCK DEADLINE 
     const isExpired = new Date(topik.batasWaktu) < new Date();
-    const inputChat = document.getElementById('msg_kelompok_text');
-    const btnChat = document.getElementById('btnKirimChatKel');
-    const inputKesimpulan = document.getElementById('inputKesimpulanKelompok');
-    const btnKesimpulan = document.getElementById('btnKirimKesimpulan');
-    const alertLock = document.getElementById('alertDiskusiTerkunci');
+    const inputChat = document.getElementById('msg_kelompok_text'); const btnChat = document.getElementById('btnKirimChatKel'); const inputKesimpulan = document.getElementById('inputKesimpulanKelompok'); const btnKesimpulan = document.getElementById('btnKirimKesimpulan'); const alertLock = document.getElementById('alertDiskusiTerkunci');
 
-    if (isExpired) {
-      alertLock.style.display = 'block';
-      inputChat.disabled = true; inputChat.placeholder = "Waktu diskusi telah berakhir."; btnChat.disabled = true;
-      btnKesimpulan.disabled = true; inputKesimpulan.setAttribute('readonly', true);
-    } else {
-      alertLock.style.display = 'none';
-      inputChat.disabled = false; inputChat.placeholder = "Ketik diskusi/pendapatmu di sini..."; btnChat.disabled = false;
-      btnKesimpulan.disabled = false; if(userRole !== 'guru') inputKesimpulan.removeAttribute('readonly');
-    }
+    if (isExpired) { alertLock.style.display = 'block'; inputChat.disabled = true; inputChat.placeholder = "Waktu diskusi telah berakhir."; btnChat.disabled = true; btnKesimpulan.disabled = true; inputKesimpulan.setAttribute('readonly', true); } 
+    else { alertLock.style.display = 'none'; inputChat.disabled = false; inputChat.placeholder = "Ketik diskusi/pendapatmu di sini..."; btnChat.disabled = false; btnKesimpulan.disabled = false; if(userRole !== 'guru') inputKesimpulan.removeAttribute('readonly'); }
 
-    // 3. RENDER PESAN CHAT
     const pesanGrupIni = localDB.diskusiPesan.filter(p => p.idTopik === aktifIdTopik && p.kelompok === aktifNamaKelompok);
-    
-    if(pesanGrupIni.length === 0) {
-      box.innerHTML = `<div class="text-center text-muted my-auto pt-5"><i class="fas fa-comments fs-2 d-block mb-2 text-black-50"></i>Belum ada obrolan di kelompok ini. Mulailah berdiskusi!</div>`;
-    } else {
+    if(pesanGrupIni.length === 0) { box.innerHTML = `<div class="text-center text-muted my-auto pt-5"><i class="fas fa-comments fs-2 d-block mb-2 text-black-50"></i>Belum ada obrolan di kelompok ini. Mulailah berdiskusi!</div>`; } 
+    else {
       box.innerHTML = pesanGrupIni.map(p => {
-        let isMe = (p.nama === userAktif.nama);
-        let msgStyle = isMe ? 'align-self-end ms-auto bg-success bg-opacity-10' : (p.role === 'guru' ? 'bg-danger bg-opacity-10 border-start border-danger border-4' : 'bg-white border');
-        let nameTag = isMe ? 'Anda' : p.nama;
-        if(p.role === 'guru') nameTag += ' (GURU)';
-        
-        return `<div class="mb-2 p-2 rounded shadow-sm w-75 ${msgStyle}">
-          <div class="fw-bold mb-1" style="font-size: 0.8rem; color: ${isMe ? '#198754' : '#333'}">${nameTag}</div>
-          <div class="text-dark" style="font-size: 0.95rem;">${p.pesan}</div>
-        </div>`;
+        let isMe = (p.nama === userAktif.nama); let msgStyle = isMe ? 'align-self-end ms-auto bg-success bg-opacity-10' : (p.role === 'guru' ? 'bg-danger bg-opacity-10 border-start border-danger border-4' : 'bg-white border'); let nameTag = isMe ? 'Anda' : p.nama; if(p.role === 'guru') nameTag += ' (GURU)';
+        return `<div class="mb-2 p-2 rounded shadow-sm w-75 ${msgStyle}"><div class="fw-bold mb-1" style="font-size: 0.8rem; color: ${isMe ? '#198754' : '#333'}">${nameTag}</div><div class="text-dark" style="font-size: 0.95rem;">${p.pesan}</div></div>`;
       }).join('');
-      // Scroll to bottom
       box.scrollTop = box.scrollHeight;
     }
 
-    // 4. TAMPILKAN KESIMPULAN JIKA SUDAH ADA
-    const hasilGrupIni = localDB.diskusiHasil.filter(h => h.idTopik === aktifIdTopik && h.kelompok === aktifNamaKelompok);
-    const statusBox = document.getElementById('statusKesimpulanBox');
-    
+    const hasilGrupIni = localDB.diskusiHasil.filter(h => h.idTopik === aktifIdTopik && h.kelompok === aktifNamaKelompok); const statusBox = document.getElementById('statusKesimpulanBox');
     if(hasilGrupIni.length > 0) {
-      const lastHasil = hasilGrupIni[hasilGrupIni.length - 1];
-      inputKesimpulan.value = lastHasil.kesimpulan;
-      statusBox.style.display = 'block';
-      statusBox.innerHTML = `<span class="badge bg-success"><i class="fas fa-check"></i> Disubmit oleh: ${lastHasil.nama}</span>`;
-      
-      // Kunci text area jika guru atau deadline habis
-      if(userRole === 'guru' || isExpired) {
-        inputKesimpulan.setAttribute('readonly', true);
-      }
+      const lastHasil = hasilGrupIni[hasilGrupIni.length - 1]; inputKesimpulan.value = lastHasil.kesimpulan; statusBox.style.display = 'block'; statusBox.innerHTML = `<span class="badge bg-success"><i class="fas fa-check"></i> Disubmit oleh: ${lastHasil.nama}</span>`;
+      if(userRole === 'guru' || isExpired) inputKesimpulan.setAttribute('readonly', true);
     } else {
-      inputKesimpulan.value = '';
-      statusBox.style.display = 'none';
-      if(userRole !== 'guru' && !isExpired) {
-        inputKesimpulan.removeAttribute('readonly');
-      }
+      inputKesimpulan.value = ''; statusBox.style.display = 'none'; if(userRole !== 'guru' && !isExpired) inputKesimpulan.removeAttribute('readonly');
     }
   }
 
-  // KIRIM CHAT REALTIME (Ke Server via App Script)
   function kirimPesanKelompok(e) {
-    e.preventDefault();
-    if(!aktifIdTopik || !aktifNamaKelompok) return;
-
-    const inputMsg = document.getElementById('msg_kelompok_text');
-    const msg = inputMsg.value.trim();
-    if(!msg) return;
-
-    const btn = document.getElementById('btnKirimChatKel');
-    btn.disabled = true;
-
-    // Optimistic UI Update (Munculkan langsung di layar agar terasa Realtime)
-    localDB.diskusiPesan.push({
-      idTopik: aktifIdTopik, kelompok: aktifNamaKelompok, nis: nisUserAktifLog, 
-      nama: userAktif.nama, role: userRole, pesan: msg, waktu: new Date().toISOString()
-    });
-    renderIsiChatKelompok();
-    inputMsg.value = '';
-
-    // Kirim diam-diam ke Background
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ 
-      action: 'kirimPesanKelompok', idTopik: aktifIdTopik, kelompok: aktifNamaKelompok,
-      nis: nisUserAktifLog, nama: userAktif.nama, role: userRole, pesan: msg 
-    })}).then(res => res.json()).then(data => {
-      btn.disabled = false;
-      tarikDataDatabase(); 
-    }).catch(err => { btn.disabled = false; });
+    e.preventDefault(); if(!aktifIdTopik || !aktifNamaKelompok) return;
+    const inputMsg = document.getElementById('msg_kelompok_text'); const msg = inputMsg.value.trim(); if(!msg) return; const btn = document.getElementById('btnKirimChatKel'); btn.disabled = true;
+    localDB.diskusiPesan.push({ idTopik: aktifIdTopik, kelompok: aktifNamaKelompok, nis: nisUserAktifLog, nama: userAktif.nama, role: userRole, pesan: msg, waktu: new Date().toISOString() });
+    renderIsiChatKelompok(); inputMsg.value = '';
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimPesanKelompok', idTopik: aktifIdTopik, kelompok: aktifNamaKelompok, nis: nisUserAktifLog, nama: userAktif.nama, role: userRole, pesan: msg })}).then(res => res.json()).then(data => { btn.disabled = false; tarikDataDatabase(); }).catch(err => { btn.disabled = false; });
   }
 
-  // KIRIM KESIMPULAN (FINAL HASIL DISKUSI)
   function kirimKesimpulanAkhir(e) {
-    e.preventDefault();
-    if(userRole === 'guru') { alert("Hanya siswa yang berhak mengirim kesimpulan diskusi."); return; }
+    e.preventDefault(); if(userRole === 'guru') { alert("Hanya siswa yang berhak mengirim kesimpulan diskusi."); return; }
     if(!aktifIdTopik || !aktifNamaKelompok) return;
-
-    const textarea = document.getElementById('inputKesimpulanKelompok');
-    const kesimpulanText = textarea.value.trim();
-    if(!kesimpulanText) { alert("Kesimpulan tidak boleh kosong!"); return; }
-
-    const btn = document.getElementById('btnKirimKesimpulan');
-    btn.disabled = true; btn.innerText = "Menyimpan...";
-
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ 
-      action: 'kirimKesimpulan', idTopik: aktifIdTopik, kelompok: aktifNamaKelompok,
-      kesimpulan: kesimpulanText, nama: userAktif.nama 
-    })}).then(res => res.json()).then(data => {
-      btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-square"></i> Kirim / Update Kesimpulan';
-      alert("Kesimpulan Kelompok berhasil disimpan/diperbarui!");
-      tarikDataDatabase(); 
-    }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-square"></i> Coba Lagi'; });
+    const textarea = document.getElementById('inputKesimpulanKelompok'); const kesimpulanText = textarea.value.trim(); if(!kesimpulanText) { alert("Kesimpulan tidak boleh kosong!"); return; }
+    const btn = document.getElementById('btnKirimKesimpulan'); btn.disabled = true; btn.innerText = "Menyimpan...";
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimKesimpulan', idTopik: aktifIdTopik, kelompok: aktifNamaKelompok, kesimpulan: kesimpulanText, nama: userAktif.nama })}).then(res => res.json()).then(data => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-square"></i> Kirim / Update Kesimpulan'; alert("Kesimpulan Kelompok berhasil disimpan/diperbarui!"); tarikDataDatabase(); }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-square"></i> Coba Lagi'; });
   }
 
+
+  // =========================================================================
+  // LOGIKA BARU: KUIS INTERAKTIF CBT (UNTUK GURU)
+  // =========================================================================
+  
+  function buatTopikCBT(e) {
+    e.preventDefault(); const b = document.getElementById('btnBuatCBT'); b.disabled = true; b.innerText = "Menyimpan...";
+    const p = { action: 'buatTopikCBT', mapel: document.getElementById('cbt_mapel').value, judul: document.getElementById('cbt_judul').value, durasi: document.getElementById('cbt_durasi').value, deadline: document.getElementById('cbt_deadline').value };
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(p) }).then(r => r.json()).then(d => { b.disabled = false; b.innerHTML = '<i class="fas fa-save"></i> Simpan Header Kuis CBT'; document.getElementById('formBuatTopikCBT').reset(); alert("Kuis berhasil dibuat!"); tarikDataDatabase(); });
+  }
+
+  function renderListCBTGuru() {
+    const table = document.getElementById('tabelListCBTGuru'); if(!table) return;
+    if(localDB.cbtTopik.length === 0) { table.innerHTML = `<tr><td colspan="4" class="text-muted py-4">Belum ada Kuis dibuat.</td></tr>`; return; }
+    
+    table.innerHTML = localDB.cbtTopik.slice().reverse().map(t => {
+      let jmlSoal = localDB.cbtSoal.filter(s => s.idTopik === t.id).length;
+      return `<tr>
+        <td class="text-start"><b>[${t.mapel}]</b><br>${t.judul}</td>
+        <td><i class="fas fa-stopwatch text-warning"></i> ${t.durasi} Menit</td>
+        <td><span class="badge bg-secondary fs-6">${jmlSoal} Soal</span></td>
+        <td>
+          <button class="btn btn-sm btn-success fw-bold m-1" onclick="bukaPanelTambahSoal('${t.id}', '${t.judul}')"><i class="fas fa-plus"></i> Soal</button>
+          <button class="btn btn-sm btn-info text-white fw-bold m-1" onclick="lihatNilaiCBT('${t.id}', '${t.judul}')"><i class="fas fa-eye"></i> Nilai</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  let aktifEditIdCBT = null;
+  function bukaPanelTambahSoal(id, judul) {
+    aktifEditIdCBT = id;
+    document.getElementById('panelTambahSoalCBT').style.display = 'block';
+    document.getElementById('labelTargetKuisCBT').innerText = judul;
+    document.getElementById('panelTambahSoalCBT').scrollIntoView({ behavior: 'smooth' });
+  }
+  function tutupPanelSoalCBT() { document.getElementById('panelTambahSoalCBT').style.display = 'none'; aktifEditIdCBT = null; }
+
+  function simpanSoalCBT(e) {
+    e.preventDefault(); if(!aktifEditIdCBT) return;
+    const b = document.getElementById('btnSimpanSoalCBT'); b.disabled = true; b.innerText = "Mengirim...";
+    const p = { action: 'simpanSoalCBT', idTopik: aktifEditIdCBT, pertanyaan: document.getElementById('soal_tanya').value, opsiA: document.getElementById('soal_a').value, opsiB: document.getElementById('soal_b').value, opsiC: document.getElementById('soal_c').value, opsiD: document.getElementById('soal_d').value, kunci: document.getElementById('soal_kunci').value };
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(p) }).then(r => r.json()).then(d => {
+      b.disabled = false; b.innerHTML = '<i class="fas fa-plus"></i> Masukkan Soal ke Database';
+      document.getElementById('formTambahSoalCBT').reset(); alert("Soal berhasil ditambah!"); tarikDataDatabase();
+    });
+  }
+
+  function lihatNilaiCBT(id, judul) {
+    document.getElementById('panelNilaiCBT').style.display = 'block';
+    document.getElementById('labelNilaiJudulKuis').innerText = judul;
+    const tabel = document.getElementById('tabelRekapNilaiCBT');
+    const nilaiSiswa = localDB.cbtNilai.filter(n => n.idTopik === id);
+    if(nilaiSiswa.length === 0) { tabel.innerHTML = `<tr><td colspan="5" class="text-muted py-3">Belum ada siswa yang mengerjakan kuis ini.</td></tr>`; return; }
+    
+    // Sortir dari nilai tertinggi
+    nilaiSiswa.sort((a,b) => b.skor - a.skor);
+    tabel.innerHTML = nilaiSiswa.map(n => `<tr><td>${n.nis}</td><td class="text-start fw-bold">${n.nama}</td><td class="text-success">${n.benar}</td><td class="text-danger">${n.salah}</td><td><span class="badge ${n.skor >= 70 ? 'bg-success' : 'bg-danger'} fs-6">${n.skor}</span></td></tr>`).join('');
+    document.getElementById('panelNilaiCBT').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // =========================================================================
+  // LOGIKA BARU: ENGINE KUIS INTERAKTIF (UNTUK SISWA)
+  // =========================================================================
+  
+  function renderListCBTSiswa() {
+    const grid = document.getElementById('gridKuisSiswaCBT'); if(!grid) return;
+    if(localDB.cbtTopik.length === 0) { grid.innerHTML = `<div class="col-12 text-center text-muted py-5">Belum ada Kuis CBT yang tersedia saat ini.</div>`; return; }
+
+    grid.innerHTML = localDB.cbtTopik.slice().reverse().map(t => {
+      const sudahKerjakan = localDB.cbtNilai.find(n => n.idTopik === t.id && String(n.nis) === String(nisUserAktifLog));
+      const jmlSoal = localDB.cbtSoal.filter(s => s.idTopik === t.id).length;
+      const isExpired = new Date(t.deadline) < new Date();
+      
+      let actionBtn = "";
+      if (sudahKerjakan) {
+        actionBtn = `<div class="alert alert-success m-0 p-2 text-center fw-bold border-0 shadow-sm"><i class="fas fa-check-circle me-1"></i> Skor Anda: ${sudahKerjakan.skor}</div>`;
+      } else if (isExpired) {
+        actionBtn = `<button class="btn btn-secondary w-100 fw-bold" disabled><i class="fas fa-lock me-1"></i> Ditutup (Waktu Habis)</button>`;
+      } else if (jmlSoal === 0) {
+         actionBtn = `<button class="btn btn-secondary w-100 fw-bold" disabled>Menunggu Soal dari Guru</button>`;
+      } else {
+        actionBtn = `<button class="btn btn-primary w-100 fw-bold shadow-sm" onclick="mulaiKuisCBT('${t.id}')"><i class="fas fa-play me-1"></i> Mulai Kerjakan</button>`;
+      }
+
+      return `
+      <div class="col-md-4 mb-4">
+        <div class="card shadow-sm border-0 h-100 border-top border-primary border-4 rounded-3">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between mb-2"><span class="badge bg-dark">${t.mapel}</span><span class="badge bg-light text-dark border"><i class="fas fa-stopwatch text-warning"></i> ${t.durasi} Min</span></div>
+            <h5 class="fw-bold text-dark mb-2">${t.judul}</h5>
+            <p class="small text-muted mb-3"><i class="fas fa-list-ul"></i> Terdiri dari ${jmlSoal} soal pilihan ganda.</p>
+            <div class="mt-auto">${actionBtn}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // VARIABEL STATE UJIAN
+  let mainCbtId = null;
+  let playSoalArr = [];
+  let playIndex = 0;
+  let playAnswers = {}; // Format: { 0: 'A', 1: 'C' }
+  let playTimer = null;
+  let playSecondsRemain = 0;
+
+  function mulaiKuisCBT(idTopik) {
+    const kuis = localDB.cbtTopik.find(t => t.id === idTopik);
+    const soalKuisIni = localDB.cbtSoal.filter(s => s.idTopik === idTopik);
+    if(soalKuisIni.length === 0) { alert("Belum ada soal!"); return; }
+
+    const y = confirm(`PERHATIAN!\n\nAnda akan memulai kuis: ${kuis.judul}.\nWaktu pengerjaan: ${kuis.durasi} Menit.\n\nJika waktu habis, jawaban akan dikumpulkan otomatis. Apakah Anda siap?`);
+    if(!y) return;
+
+    // Reset State
+    mainCbtId = kuis.id;
+    playSoalArr = soalKuisIni; 
+    playIndex = 0;
+    playAnswers = {};
+    playSecondsRemain = parseInt(kuis.durasi) * 60;
+
+    // Sembunyikan Dashboard, Munculkan Layar Kuis
+    document.getElementById('dashboardSection').style.display = 'none';
+    const layarCbt = document.getElementById('layarPengerjaanCBT');
+    layarCbt.style.display = 'block';
+    
+    // Set Header UI
+    document.getElementById('cbtPlay_Judul').innerText = kuis.judul;
+    document.getElementById('cbtPlay_Mapel').innerText = kuis.mapel;
+    
+    document.getElementById('cbtPlay_AreaSoal').style.display = 'flex';
+    document.getElementById('cbtPlay_FooterNav').style.display = 'flex';
+    document.getElementById('cbtPlay_AreaHasil').style.display = 'none';
+
+    // Start UI
+    renderSoalCBT();
+    startTimerCBT();
+  }
+
+  function formatTime(sec) {
+    const h = Math.floor(sec / 3600); const m = Math.floor((sec % 3600) / 60); const s = sec % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+
+  function startTimerCBT() {
+    const elTimer = document.getElementById('cbtPlay_Timer');
+    elTimer.innerText = formatTime(playSecondsRemain);
+    if(playTimer) clearInterval(playTimer);
+
+    playTimer = setInterval(() => {
+      playSecondsRemain--;
+      if(playSecondsRemain <= 0) {
+        clearInterval(playTimer);
+        elTimer.innerText = "00:00:00";
+        alert("WAKTU HABIS! Jawaban Anda akan dikumpulkan secara otomatis.");
+        prosesHitungNilai();
+      } else {
+        elTimer.innerText = formatTime(playSecondsRemain);
+        if(playSecondsRemain <= 60) elTimer.style.color = '#e74c3c'; // Merah jika sisa < 1 menit
+      }
+    }, 1000);
+  }
+
+  function renderSoalCBT() {
+    const s = playSoalArr[playIndex];
+    document.getElementById('cbtPlay_NomorLabel').innerText = `Soal ${playIndex + 1} dari ${playSoalArr.length}`;
+    document.getElementById('cbtPlay_Pertanyaan').innerText = s.pertanyaan;
+    
+    document.getElementById('txtOptA').innerText = s.opsiA;
+    document.getElementById('txtOptB').innerText = s.opsiB;
+    document.getElementById('txtOptC').innerText = s.opsiC;
+    document.getElementById('txtOptD').innerText = s.opsiD;
+
+    // Reset style selected pada semua tombol opsi
+    ['A','B','C','D'].forEach(huruf => { document.getElementById('btnOpt' + huruf).classList.remove('selected'); });
+    // Terapkan selected jika sudah dijawab sebelumnya
+    if(playAnswers[playIndex]) {
+      document.getElementById('btnOpt' + playAnswers[playIndex]).classList.add('selected');
+    }
+
+    // Update Progress Bar
+    const prog = ((playIndex + 1) / playSoalArr.length) * 100;
+    document.getElementById('cbtPlay_Progress').style.width = prog + "%";
+
+    // Navigasi Tombol Prev / Next / Submit
+    document.getElementById('btnCbtPrev').disabled = (playIndex === 0);
+    
+    if(playIndex === playSoalArr.length - 1) {
+      document.getElementById('btnCbtNext').style.display = 'none';
+      document.getElementById('btnCbtSubmit').style.display = 'block';
+    } else {
+      document.getElementById('btnCbtNext').style.display = 'block';
+      document.getElementById('btnCbtSubmit').style.display = 'none';
+    }
+  }
+
+  function pilihJawabanCBT(huruf) {
+    playAnswers[playIndex] = huruf;
+    renderSoalCBT();
+    // Otomatis next soal setelah milih, kasih delay dikit biar mulus
+    if(playIndex < playSoalArr.length - 1) {
+      setTimeout(() => navigasiCBT(1), 400);
+    }
+  }
+
+  function navigasiCBT(arah) {
+    playIndex += arah;
+    if(playIndex < 0) playIndex = 0;
+    if(playIndex >= playSoalArr.length) playIndex = playSoalArr.length - 1;
+    renderSoalCBT();
+  }
+
+  function konfirmasiSelesaiCBT() {
+    // Cek ada yg kosong ga
+    let belumDijawab = 0;
+    for(let i=0; i<playSoalArr.length; i++) { if(!playAnswers[i]) belumDijawab++; }
+    
+    let msg = "Apakah Anda yakin ingin mengumpulkan jawaban sekarang?";
+    if(belumDijawab > 0) msg = `PERINGATAN: Ada ${belumDijawab} soal yang BELUM ANDA JAWAB!\n\nYakin ingin tetap mengumpulkan?`;
+    
+    if(confirm(msg)) {
+      if(playTimer) clearInterval(playTimer);
+      prosesHitungNilai();
+    }
+  }
+
+  function prosesHitungNilai() {
+    // Kunci tombol saat proses
+    document.getElementById('btnCbtSubmit').disabled = true;
+    document.getElementById('btnCbtSubmit').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    document.getElementById('cbtPlay_AreaSoal').style.pointerEvents = 'none';
+
+    let jmlBenar = 0; let jmlSalah = 0;
+    for(let i=0; i<playSoalArr.length; i++) {
+      let kunciServer = String(playSoalArr[i].kunci).trim().toUpperCase();
+      let jawabSiswa = String(playAnswers[i] || "").trim().toUpperCase();
+      if(jawabSiswa === kunciServer) jmlBenar++; else jmlSalah++;
+    }
+    
+    // Perhitungan Nilai: (Benar / Total) * 100, dibulatkan
+    let totalSoal = playSoalArr.length;
+    let skorAkhir = Math.round((jmlBenar / totalSoal) * 100);
+
+    // Kirim Ke Backend Google Sheets
+    const payload = {
+      action: 'simpanNilaiCBT', idTopik: mainCbtId, nis: nisUserAktifLog, nama: userAktif.nama,
+      benar: jmlBenar, salah: jmlSalah, skor: skorAkhir
+    };
+
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
+    .then(r => r.json()).then(d => {
+      // Tampilkan Hasil di Layar
+      document.getElementById('cbtPlay_AreaSoal').style.display = 'none';
+      document.getElementById('cbtPlay_FooterNav').style.display = 'none';
+      
+      document.getElementById('cbtResult_Skor').innerText = skorAkhir;
+      document.getElementById('cbtResult_Benar').innerText = jmlBenar;
+      document.getElementById('cbtResult_Salah').innerText = jmlSalah;
+      document.getElementById('cbtPlay_AreaHasil').style.display = 'block';
+      
+      // Update Database Lokal agar tombol berubah hijau
+      tarikDataDatabase(); 
+    }).catch(e => {
+      alert("Terjadi kesalahan pengiriman nilai. Hubungi Admin! Skor kamu: " + skorAkhir);
+      tutupLayarCBT(); // Tetap tutup walau error
+    });
+  }
+
+  function tutupLayarCBT() {
+    document.getElementById('layarPengerjaanCBT').style.display = 'none';
+    document.getElementById('dashboardSection').style.display = 'block';
+    
+    // Reset state agar fresh saat dipakai lagi
+    mainCbtId = null; playSoalArr = []; playAnswers = {};
+    document.getElementById('cbtPlay_AreaSoal').style.pointerEvents = 'auto';
+    document.getElementById('btnCbtSubmit').disabled = false;
+    document.getElementById('btnCbtSubmit').innerHTML = '<i class="fas fa-check-double me-1"></i> Kumpulkan Jawaban';
+    document.getElementById('cbtPlay_Timer').style.color = '#fff';
+    
+    // Refresh Sidebar Data
+    pilihMenu('Siswa_CBT', 'Kerjakan Kuis Pilihan Ganda');
+  }
 </script>
 
 </body>
