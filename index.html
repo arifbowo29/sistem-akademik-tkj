@@ -188,11 +188,14 @@
       <div class="mb-4">
         <div class="input-group">
           <span class="input-group-text"><i class="fas fa-lock"></i></span>
+          <!-- TAMBAHAN SYARAT MINIMAL 8 KARAKTER -->
           <input type="password" id="regPassword" class="form-control" placeholder="Buat Password" required minlength="8" />
+          <!-- TOMBOL MATA -->
           <button class="btn btn-outline-secondary bg-white" type="button" onclick="togglePassword('regPassword', this)" style="border-color: #dee2e6;">
             <i class="fas fa-eye text-muted"></i>
           </button>
         </div>
+        <!-- KETERANGAN SYARAT PASSWORD -->
         <small class="text-danger mt-1 d-block fw-semibold" style="font-size: 0.8rem;">
           <i class="fas fa-info-circle"></i> Password minimal 8 karakter (huruf/angka).
         </small>
@@ -210,6 +213,7 @@
 <div id="dashboardSection">
   <nav class="top-navbar">
     <div class="d-flex align-items-center">
+      <!-- TOMBOL MENU HP -->
       <button class="toggle-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
       <div class="brand" onclick="pilihMenu('Dashboard', 'Dashboard Utama')"><i class="fas fa-graduation-cap me-1"></i> TKJ MANUSA</div>
     </div>
@@ -230,7 +234,7 @@
       <li class="guru-only"><a id="nav_Nilai" onclick="pilihMenu('Nilai', 'Pusat Penilaian Tugas Siswa')"><i class="fas fa-star"></i> Input Nilai</a></li>
       <li class="siswa-only"><a id="nav_Tugas" onclick="pilihMenu('Tugas', 'Daftar & Upload Tugas')"><i class="fas fa-file-upload"></i> Upload Tugas</a></li>
       <li class="siswa-only"><a id="nav_Rekap_Saya" onclick="pilihMenu('Rekap_Saya', 'Rapor Nilai & Rangkuman Absensi')"><i class="fas fa-chart-line"></i> Rekap Akademik Saya</a></li>
-      <li><a id="nav_Forum" onclick="pilihMenu('Forum', 'Forum Diskusi Kelas & Mading IT')"><i class="fas fa-comments"></i> Forum Kelas Umum</a></li>
+      <li><a id="nav_Forum" onclick="pilihMenu('Forum', 'Forum Diskusi Kelas & Mading IT')"><i class="fas fa-comments"></i> Forum Diskusi Kelas</a></li>
       
       <!-- MENU BARU RUANG DISKUSI KELOMPOK -->
       <li><a id="nav_Ruang_Kelompok" onclick="pilihMenu('Ruang_Kelompok', 'Studi Kasus & Diskusi Kelompok')"><i class="fas fa-users-cog"></i> Ruang Kelompok <span class="badge bg-danger ms-1">New</span></a></li>
@@ -608,7 +612,7 @@
       </div>
     </div>
 
-    <!-- TAMPILAN FORUM KELAS UMUM -->
+    <!-- TAMPILAN FORUM -->
     <div id="view_Forum" class="view-section" style="display: none;">
       <div class="panel-container" style="border-top-color: #605ca8;">
         <h5 style="color: #605ca8;" class="border-bottom pb-2 mb-3"><i class="fas fa-comments"></i> Papan Mading & Ruang Diskusi Kelas TKJ</h5>
@@ -649,7 +653,7 @@
                   </optgroup>
                 </select>
               </div>
-              <div class="col-md-7 mb-3">
+              <div class="col-md-5 mb-3">
                 <label class="form-label text-secondary fw-semibold">Judul Studi Kasus / Project</label>
                 <input type="text" id="topik_judul" class="form-control" required placeholder="Cth: Troubleshoot Jaringan LAN Terputus">
               </div>
@@ -657,9 +661,19 @@
                 <label class="form-label text-secondary fw-semibold">Jml Kelompok</label>
                 <input type="number" id="topik_jml_kelompok" class="form-control" required min="1" max="10" value="4">
               </div>
-              <div class="col-12 mb-3">
+              <!-- TAMBAHAN: BATASAN PESERTA -->
+              <div class="col-md-2 mb-3">
+                <label class="form-label text-secondary fw-semibold">Maks Anggota</label>
+                <input type="number" id="topik_maks_anggota" class="form-control" required min="1" max="15" value="5" title="Maksimal siswa per kelompok">
+              </div>
+              <!-- TAMBAHAN: DEADLINE WAKTU -->
+              <div class="col-md-3 mb-3">
+                <label class="form-label text-secondary fw-semibold">Batas Waktu</label>
+                <input type="datetime-local" id="topik_deadline" class="form-control" required>
+              </div>
+              <div class="col-md-9 mb-3">
                 <label class="form-label text-secondary fw-semibold">Deskripsi Kasus & Instruksi Untuk Siswa</label>
-                <textarea id="topik_deskripsi" class="form-control" rows="3" required placeholder="Jelaskan masalah yang harus dipecahkan oleh kelompok..."></textarea>
+                <input type="text" id="topik_deskripsi" class="form-control" required placeholder="Jelaskan masalah yang harus dipecahkan oleh kelompok...">
               </div>
             </div>
             <button type="submit" id="btnBuatTopik" class="btn text-white fw-bold px-4" style="background-color: #e83e8c;">Publikasikan Ruang Diskusi</button>
@@ -681,8 +695,18 @@
           <button class="btn btn-sm btn-secondary mb-3" onclick="kembaliKeDaftarTopik()"><i class="fas fa-arrow-left"></i> Kembali</button>
           <div class="alert alert-info">
             <h5 id="viewTopikJudul" class="fw-bold mb-1">Judul Studi Kasus</h5>
-            <p id="viewTopikDeskripsi" class="mb-0 small">Deskripsi kasus...</p>
+            <p id="viewTopikDeskripsi" class="mb-2 small text-dark">Deskripsi kasus...</p>
+            <div class="d-flex align-items-center gap-3">
+              <span class="badge bg-warning text-dark"><i class="fas fa-clock"></i> Deadline: <span id="viewTopikDeadline"></span></span>
+              <span class="badge bg-light text-dark border"><i class="fas fa-users"></i> Maks <span id="viewTopikMaks"></span> Siswa / Kelompok</span>
+            </div>
           </div>
+          
+          <!-- INFO UNTUK GURU -->
+          <div class="alert alert-warning py-2 mb-3 guru-only" style="display: none;">
+            <i class="fas fa-user-secret"></i> <b>Mode Guru:</b> Anda dapat memasuki dan memantau kelompok mana saja tanpa mengurangi kuota anggota kelompok.
+          </div>
+
           <h6 class="mb-3 text-secondary fw-bold">Pilih Ruang Kelompok Anda:</h6>
           <div id="gridTombolKelompok" class="d-flex flex-wrap gap-2">
             <!-- Render Tombol Kelompok via JS -->
@@ -704,6 +728,11 @@
                 <button class="btn btn-sm btn-success shadow-sm" onclick="tarikDataDatabase()"><i class="fas fa-sync-alt"></i> Segarkan Chat</button>
               </div>
               
+              <!-- Indikator Kunci Otomatis (Jika Deadline Lewat) -->
+              <div id="alertDiskusiTerkunci" class="alert alert-danger py-2 mb-2 small text-center fw-bold" style="display:none;">
+                <i class="fas fa-lock me-1"></i> WAKTU DISKUSI TELAH HABIS. RUANGAN DIKUNCI (READ-ONLY).
+              </div>
+
               <!-- KOTAK CHAT (Pake display flex khusus untuk room ini biar bisa rata kanan kiri) -->
               <div class="chat-box bg-light d-flex flex-column" id="kotakChatKelompok" style="height: 350px;">
                 <!-- Pesan render via JS -->
@@ -719,14 +748,22 @@
           </div>
           
           <div class="col-lg-4">
+            <!-- PANEL DAFTAR ANGGOTA (Ide Baru) -->
+            <div class="panel-container bg-white shadow-sm mb-3" style="border-top: 4px solid #17a2b8; padding: 15px;">
+              <h6 class="border-bottom pb-2 mb-2 text-info fw-bold"><i class="fas fa-users text-info"></i> Anggota Kelompok</h6>
+              <ul class="list-group list-group-flush small" id="listAnggotaKelompokUI">
+                <!-- Dirender via JS -->
+              </ul>
+            </div>
+
             <div class="panel-container bg-light border-0 shadow-sm" style="border-top: 4px solid #28a745;">
-              <h5 class="border-bottom pb-2 mb-3 text-success"><i class="fas fa-clipboard-check"></i> Kesimpulan Kelompok</h5>
-              <div class="alert alert-warning py-2 small">
+              <h6 class="border-bottom pb-2 mb-3 text-success fw-bold"><i class="fas fa-clipboard-check"></i> Kesimpulan Kelompok</h6>
+              <div class="alert alert-warning py-2 mb-2 small">
                 <i class="fas fa-info-circle"></i> Hasil rumusan akhir kelompok. <b>Hanya diisi jika diskusi sudah selesai.</b>
               </div>
               <form id="formKesimpulanKelompok" onsubmit="kirimKesimpulanAkhir(event)">
-                <textarea id="inputKesimpulanKelompok" class="form-control mb-3" rows="8" placeholder="Tuliskan jawaban final atau kesimpulan dari diskusi kelompok ini di sini..."></textarea>
-                <div id="statusKesimpulanBox" class="mb-2 text-center" style="display:none;"></div>
+                <textarea id="inputKesimpulanKelompok" class="form-control mb-3" rows="6" placeholder="Tuliskan jawaban final atau kesimpulan dari diskusi kelompok ini di sini..."></textarea>
+                <div id="statusKesimpulanBox" class="mb-2 text-center" style="display:none; font-size: 0.8rem;"></div>
                 <button type="submit" id="btnKirimKesimpulan" class="btn btn-success w-100 fw-bold siswa-only"><i class="fas fa-check-square"></i> Kirim / Update Kesimpulan</button>
               </form>
             </div>
@@ -751,15 +788,14 @@
   let nisUserAktifLog = '';
   let mapelAktif = '';
   let selectedTugasObj = null;
-  
+
   // STATE UNTUK RUANG KELOMPOK
   let aktifIdTopik = null;
   let aktifNamaKelompok = null;
 
-  // Penambahan tempat penyimpanan database untuk fitur Ruang Diskusi
   let localDB = { 
     siswa: [], materi: [], quiz: [], jawaban: [], absensi: [], forum: [],
-    diskusiTopik: [], diskusiPesan: [], diskusiHasil: []
+    diskusiTopik: [], diskusiPesan: [], diskusiHasil: [], diskusiAnggota: [] 
   };
 
   document.addEventListener("DOMContentLoaded", function() {
@@ -942,7 +978,6 @@
     
     if(menuId === 'Mapel') kembaliKeDaftarMapel();
     
-    // Reset status diskusi kelompok jika berpindah menu
     if(menuId === 'Ruang_Kelompok') kembaliKeDaftarTopik();
     
     // AUTO CLOSE MENU DI HP SETELAH DIKLIK
@@ -1015,10 +1050,10 @@
       localDB.absensi = data.absensi || [];
       localDB.forum = data.forum || [];
       
-      // DATA BARU RUANG KELOMPOK DARI GOOGLE APPS SCRIPT
       localDB.diskusiTopik = data.diskusiTopik || [];
       localDB.diskusiPesan = data.diskusiPesan || [];
       localDB.diskusiHasil = data.diskusiHasil || [];
+      localDB.diskusiAnggota = data.diskusiAnggota || [];
       
       refreshUI();
     });
@@ -1247,7 +1282,7 @@
       }
     }
 
-    // Panggil fungsi-fungsi render
+    // Panggil fungsi-fungsi render yang baru dibuat
     renderAbsensi();
     renderPenilaian();
     renderRekapSiswa();
@@ -1440,7 +1475,6 @@
   // LOGIKA FITUR BARU: RUANG KELOMPOK (STUDI KASUS)
   // =========================================================================
 
-  // GURU: BUAT TOPIK BARU
   function buatTopikDiskusi(e) {
     e.preventDefault();
     const btn = document.getElementById('btnBuatTopik');
@@ -1451,7 +1485,9 @@
       kelas: document.getElementById('topik_kelas').value,
       judul: document.getElementById('topik_judul').value,
       deskripsi: document.getElementById('topik_deskripsi').value,
-      jmlKelompok: document.getElementById('topik_jml_kelompok').value
+      jmlKelompok: document.getElementById('topik_jml_kelompok').value,
+      maksAnggota: document.getElementById('topik_maks_anggota').value,
+      deadline: document.getElementById('topik_deadline').value
     };
 
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
@@ -1463,7 +1499,6 @@
     }).catch(err => { btn.disabled = false; alert("Gagal koneksi ke server"); });
   }
 
-  // RENDER DAFTAR TOPIK (Di Menu Utama Ruang Kelompok)
   function renderRuangDiskusiList() {
     const listBox = document.getElementById('listTopikDiskusiCard');
     if(!listBox) return;
@@ -1482,27 +1517,31 @@
     // Urutkan dari yang terbaru
     filterTopik.reverse();
 
-    listBox.innerHTML = filterTopik.map(t => `
+    listBox.innerHTML = filterTopik.map(t => {
+      const isExpired = new Date(t.batasWaktu) < new Date();
+      const statusBadge = isExpired ? `<span class="badge bg-danger ms-2">Ditutup</span>` : `<span class="badge bg-success ms-2">Aktif</span>`;
+      
+      return `
       <div class="col-md-6 mb-3">
-        <div class="card shadow-sm border-0 border-start border-info border-4 h-100">
+        <div class="card shadow-sm border-0 border-start ${isExpired ? 'border-danger' : 'border-info'} border-4 h-100">
           <div class="card-body">
             <span class="badge bg-info text-dark mb-2 float-end">Kelas: ${t.kelas}</span>
-            <h5 class="card-title fw-bold text-dark">${t.judul}</h5>
+            <h5 class="card-title fw-bold text-dark">${t.judul} ${statusBadge}</h5>
             <p class="card-text small text-secondary text-truncate" style="max-height: 40px;">${t.deskripsi}</p>
+            <p class="small text-danger fw-semibold mb-2"><i class="fas fa-clock"></i> Limit: ${formatTanggalIndo(t.batasWaktu)}</p>
             <hr class="my-2">
             <div class="d-flex justify-content-between align-items-center">
               <span class="small fw-semibold text-muted"><i class="fas fa-users"></i> Dibagi ${t.jmlKelompok} Kelompok</span>
-              <button class="btn btn-sm btn-info text-white fw-bold" onclick="bukaStudiKasus('${t.id}')">
+              <button class="btn btn-sm ${isExpired ? 'btn-secondary' : 'btn-info text-white'} fw-bold" onclick="bukaStudiKasus('${t.id}')">
                 Masuk Ruang <i class="fas fa-arrow-right"></i>
               </button>
             </div>
           </div>
         </div>
       </div>
-    `).join('');
+    `}).join('');
   }
 
-  // NAVIGASI: PILIH TOPIK -> TAMPILKAN PILIHAN KELOMPOK
   function bukaStudiKasus(idTopik) {
     const topik = localDB.diskusiTopik.find(t => t.id === idTopik);
     if(!topik) return;
@@ -1512,13 +1551,46 @@
     
     document.getElementById('viewTopikJudul').innerText = topik.judul;
     document.getElementById('viewTopikDeskripsi').innerText = topik.deskripsi;
+    document.getElementById('viewTopikDeadline').innerText = formatTanggalIndo(topik.batasWaktu);
+    document.getElementById('viewTopikMaks').innerText = topik.maksAnggota || '-';
+
+    // Cek apakah siswa ini SUDAH PERNAH bergabung di kelompok mana untuk topik ini
+    let myJoinedGroup = null;
+    if (userRole === 'siswa') {
+      const cekAnggota = localDB.diskusiAnggota.find(a => a.idTopik === idTopik && String(a.nis) === String(nisUserAktifLog));
+      if (cekAnggota) myJoinedGroup = cekAnggota.kelompok;
+    }
 
     // Render Tombol Kelompok 1, 2, 3, dst
     const gridBtn = document.getElementById('gridTombolKelompok');
     let btns = '';
     const jml = parseInt(topik.jmlKelompok) || 4;
+    const maxMember = parseInt(topik.maksAnggota) || 99;
+
     for(let i=1; i<=jml; i++) {
-      btns += `<button class="btn btn-outline-primary fw-bold px-4 py-2" onclick="masukKelompok('${topik.id}', 'Kelompok ${i}')"><i class="fas fa-users me-1"></i> Kelompok ${i}</button>`;
+      let namaKel = 'Kelompok ' + i;
+      let countMembers = localDB.diskusiAnggota.filter(a => a.idTopik === idTopik && a.kelompok === namaKel).length;
+      let isFull = countMembers >= maxMember;
+
+      if(userRole === 'guru') {
+        // GURU: Bebas masuk mana saja
+        btns += `<div><button class="btn btn-outline-primary fw-bold px-4 py-3 shadow-sm text-center" style="min-width: 140px;" onclick="masukKelompokTerdaftar('${topik.id}', '${namaKel}')"><i class="fas fa-users d-block mb-1 fs-4"></i> ${namaKel}<br><small class="fw-normal">(${countMembers}/${maxMember})</small></button></div>`;
+      } else {
+        // SISWA: Aturan Ketat Diberlakukan
+        if (myJoinedGroup === namaKel) {
+          // Tombol kelompok miliknya
+          btns += `<div><button class="btn btn-success fw-bold px-4 py-3 shadow-sm text-center" style="min-width: 140px;" onclick="masukKelompokTerdaftar('${topik.id}', '${namaKel}')"><i class="fas fa-door-open d-block mb-1 fs-4"></i> Masuk ${namaKel}<br><small class="text-white">Tim Anda</small></button></div>`;
+        } else if (myJoinedGroup !== null) {
+          // Tombol kelompok lain terkunci karena dia sudah ada tim
+          btns += `<div><button class="btn btn-secondary fw-bold px-4 py-3 shadow-sm text-center opacity-50" style="min-width: 140px;" disabled><i class="fas fa-lock d-block mb-1 fs-4"></i> ${namaKel}<br><small>Terkunci</small></button></div>`;
+        } else if (isFull) {
+          // Belum punya tim, tapi kelompok ini penuh
+          btns += `<div><button class="btn btn-danger fw-bold px-4 py-3 shadow-sm text-center opacity-75" style="min-width: 140px;" disabled><i class="fas fa-ban d-block mb-1 fs-4"></i> ${namaKel}<br><small>Penuh (${countMembers}/${maxMember})</small></button></div>`;
+        } else {
+          // Belum punya tim, dan kelompok ini masih kosong -> Tombol Gabung
+          btns += `<div><button class="btn btn-outline-success fw-bold px-4 py-3 shadow-sm text-center" style="min-width: 140px;" onclick="gabungKelompokBaru('${topik.id}', '${namaKel}')"><i class="fas fa-sign-in-alt d-block mb-1 fs-4"></i> Gabung ${namaKel}<br><small>(${countMembers}/${maxMember})</small></button></div>`;
+        }
+      }
     }
     gridBtn.innerHTML = btns;
   }
@@ -1530,8 +1602,29 @@
     document.getElementById('areaDaftarTopikDiskusi').style.display = 'block';
   }
 
+  // Fungsi API Gabung Baru (Mengikat Akun)
+  function gabungKelompokBaru(idTopik, namaKelompok) {
+    if(confirm(`Yakin ingin bergabung dengan ${namaKelompok}?\n\nPeringatan: Sekali bergabung, Anda TIDAK BISA pindah ke kelompok lain di studi kasus ini.`)) {
+      // Loading visual
+      document.getElementById('gridTombolKelompok').innerHTML = `<div class="w-100 text-center py-5"><i class="fas fa-spinner fa-spin fs-2 text-primary mb-3 d-block"></i>Mendaftarkan akun Anda ke kelompok...</div>`;
+      
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ 
+        action: 'joinKelompok', idTopik: idTopik, kelompok: namaKelompok, nis: nisUserAktifLog, nama: userAktif.nama 
+      })}).then(res => res.json()).then(data => {
+        if(data.status === 'success') {
+          // Tambahkan sementara ke localDB agar ga usah nunggu fetch readAll
+          localDB.diskusiAnggota.push({ idTopik: idTopik, kelompok: namaKelompok, nis: nisUserAktifLog, nama: userAktif.nama });
+          masukKelompokTerdaftar(idTopik, namaKelompok);
+        } else {
+          alert(data.message);
+          bukaStudiKasus(idTopik); // render ulang tombol
+        }
+      }).catch(err => { alert("Gagal koneksi."); bukaStudiKasus(idTopik); });
+    }
+  }
+
   // NAVIGASI: MASUK KE CHAT ROOM KELOMPOK SPESIFIK
-  function masukKelompok(idTopik, namaKelompok) {
+  function masukKelompokTerdaftar(idTopik, namaKelompok) {
     aktifIdTopik = idTopik;
     aktifNamaKelompok = namaKelompok;
     
@@ -1555,18 +1648,44 @@
   // RENDER CHAT DAN KESIMPULAN DALAM KELOMPOK AKTIF
   function renderIsiChatKelompok() {
     if(!aktifIdTopik || !aktifNamaKelompok) return;
-    
+    const topik = localDB.diskusiTopik.find(t => t.id === aktifIdTopik);
     const box = document.getElementById('kotakChatKelompok');
-    // Filter pesan hanya untuk topik ini & kelompok ini
+    
+    // 1. RENDER DAFTAR ANGGOTA DI PANEL KANAN
+    const listUI = document.getElementById('listAnggotaKelompokUI');
+    const members = localDB.diskusiAnggota.filter(a => a.idTopik === aktifIdTopik && a.kelompok === aktifNamaKelompok);
+    if(members.length === 0) {
+      listUI.innerHTML = `<li class="list-group-item text-muted fst-italic py-1 px-0 border-0">Belum ada anggota.</li>`;
+    } else {
+      listUI.innerHTML = members.map(m => `<li class="list-group-item py-1 px-0 border-0 text-dark fw-semibold"><i class="fas fa-user-check text-success me-2"></i>${m.nama}</li>`).join('');
+    }
+
+    // 2. CEK AUTO-LOCK DEADLINE 
+    const isExpired = new Date(topik.batasWaktu) < new Date();
+    const inputChat = document.getElementById('msg_kelompok_text');
+    const btnChat = document.getElementById('btnKirimChatKel');
+    const inputKesimpulan = document.getElementById('inputKesimpulanKelompok');
+    const btnKesimpulan = document.getElementById('btnKirimKesimpulan');
+    const alertLock = document.getElementById('alertDiskusiTerkunci');
+
+    if (isExpired) {
+      alertLock.style.display = 'block';
+      inputChat.disabled = true; inputChat.placeholder = "Waktu diskusi telah berakhir."; btnChat.disabled = true;
+      btnKesimpulan.disabled = true; inputKesimpulan.setAttribute('readonly', true);
+    } else {
+      alertLock.style.display = 'none';
+      inputChat.disabled = false; inputChat.placeholder = "Ketik diskusi/pendapatmu di sini..."; btnChat.disabled = false;
+      btnKesimpulan.disabled = false; if(userRole !== 'guru') inputKesimpulan.removeAttribute('readonly');
+    }
+
+    // 3. RENDER PESAN CHAT
     const pesanGrupIni = localDB.diskusiPesan.filter(p => p.idTopik === aktifIdTopik && p.kelompok === aktifNamaKelompok);
     
     if(pesanGrupIni.length === 0) {
       box.innerHTML = `<div class="text-center text-muted my-auto pt-5"><i class="fas fa-comments fs-2 d-block mb-2 text-black-50"></i>Belum ada obrolan di kelompok ini. Mulailah berdiskusi!</div>`;
     } else {
-      // Menggunakan class bawaan Bootstrap untuk styling tanpa merusak css `.chat-msg` pada forum umum
       box.innerHTML = pesanGrupIni.map(p => {
         let isMe = (p.nama === userAktif.nama);
-        // Desain chat menggunakan utilitas bootstrap agar align beda-beda (kanan untuk diri sendiri, kiri untuk orang lain)
         let msgStyle = isMe ? 'align-self-end ms-auto bg-success bg-opacity-10' : (p.role === 'guru' ? 'bg-danger bg-opacity-10 border-start border-danger border-4' : 'bg-white border');
         let nameTag = isMe ? 'Anda' : p.nama;
         if(p.role === 'guru') nameTag += ' (GURU)';
@@ -1580,26 +1699,26 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    // TAMPILKAN KESIMPULAN JIKA SUDAH ADA (Cek di DB)
+    // 4. TAMPILKAN KESIMPULAN JIKA SUDAH ADA
     const hasilGrupIni = localDB.diskusiHasil.filter(h => h.idTopik === aktifIdTopik && h.kelompok === aktifNamaKelompok);
-    const textareaHasil = document.getElementById('inputKesimpulanKelompok');
     const statusBox = document.getElementById('statusKesimpulanBox');
     
     if(hasilGrupIni.length > 0) {
-      // Ambil yang paling terakhir dikirim (index terakhir)
       const lastHasil = hasilGrupIni[hasilGrupIni.length - 1];
-      textareaHasil.value = lastHasil.kesimpulan;
+      inputKesimpulan.value = lastHasil.kesimpulan;
       statusBox.style.display = 'block';
-      statusBox.innerHTML = `<span class="badge bg-success"><i class="fas fa-check"></i> Telah disubmit oleh ${lastHasil.nama}</span>`;
+      statusBox.innerHTML = `<span class="badge bg-success"><i class="fas fa-check"></i> Disubmit oleh: ${lastHasil.nama}</span>`;
       
-      // Jika Guru yang melihat, buat textarea readonly
-      if(userRole === 'guru') {
-        textareaHasil.setAttribute('readonly', true);
+      // Kunci text area jika guru atau deadline habis
+      if(userRole === 'guru' || isExpired) {
+        inputKesimpulan.setAttribute('readonly', true);
       }
     } else {
-      textareaHasil.value = '';
+      inputKesimpulan.value = '';
       statusBox.style.display = 'none';
-      textareaHasil.removeAttribute('readonly');
+      if(userRole !== 'guru' && !isExpired) {
+        inputKesimpulan.removeAttribute('readonly');
+      }
     }
   }
 
@@ -1629,7 +1748,6 @@
       nis: nisUserAktifLog, nama: userAktif.nama, role: userRole, pesan: msg 
     })}).then(res => res.json()).then(data => {
       btn.disabled = false;
-      // Opsional: tarik data diam-diam untuk singkronisasi teman kelompok
       tarikDataDatabase(); 
     }).catch(err => { btn.disabled = false; });
   }
