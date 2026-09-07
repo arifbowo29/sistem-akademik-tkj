@@ -7,6 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -409,7 +410,7 @@
       </div>
     </div>
 
-    <!-- TAMPILAN DATA SISWA (UPDATED WITH FILTER, SEARCH, EDIT, DELETE) -->
+    <!-- TAMPILAN DATA SISWA -->
     <div id="view_Data_Siswa" class="view-section" style="display: none;">
       <div class="panel-container">
         <h5 class="mb-4 text-secondary border-bottom pb-2"><i class="fas fa-user-plus"></i> Tambah / Edit Data Profil Siswa</h5>
@@ -418,7 +419,6 @@
             <div class="col-md-3 mb-3">
               <label class="form-label text-secondary fw-semibold">NIS</label>
               <input type="number" id="siswa_nis" class="form-control" required placeholder="Cth: 2425001" />
-              <small class="text-danger" style="font-size: 0.75rem;">*Gunakan NIS yang sama untuk mengedit data</small>
             </div>
             <div class="col-md-4 mb-3">
               <label class="form-label text-secondary fw-semibold">Nama Lengkap</label>
@@ -428,21 +428,14 @@
               <label class="form-label text-secondary fw-semibold">Kelas</label>
               <select id="siswa_kelas" class="form-select" required>
                 <option value="" disabled selected>-- Pilih Kelas --</option>
-                <optgroup label="Kelas X">
-                  <option value="X TKJ 1">X TKJ 1</option><option value="X TKJ 2">X TKJ 2</option><option value="X TKJ 3">X TKJ 3</option><option value="X TKJ 4">X TKJ 4</option>
-                </optgroup>
-                <optgroup label="Kelas XI">
-                  <option value="XI TKJ 1">XI TKJ 1</option><option value="XI TKJ 2">XI TKJ 2</option><option value="XI TKJ 3">XI TKJ 3</option><option value="XI TKJ 4">XI TKJ 4</option>
-                </optgroup>
-                <optgroup label="Kelas XII">
-                  <option value="XII TKJ 1">XII TKJ 1</option><option value="XII TKJ 2">XII TKJ 2</option><option value="XII TKJ 3">XII TKJ 3</option><option value="XII TKJ 4">XII TKJ 4</option><option value="XII TKJ 5">XII TKJ 5</option>
-                </optgroup>
+                <option value="XI TKJ 1">XI TKJ 1</option><option value="XI TKJ 2">XI TKJ 2</option>
+                <option value="XII TKJ 1">XII TKJ 1</option><option value="XII TKJ 2">XII TKJ 2</option>
               </select>
             </div>
             <div class="col-md-2 mb-3">
               <label class="form-label text-secondary fw-semibold">Gender</label>
               <select id="siswa_jk" class="form-select">
-                <option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option>
+                <option>Laki-laki</option><option>Perempuan</option>
               </select>
             </div>
           </div>
@@ -450,49 +443,18 @@
             <label class="form-label text-secondary fw-semibold">Alamat Rumah</label>
             <input type="text" id="siswa_alamat" class="form-control" placeholder="Alamat lengkap siswa" />
           </div>
-          <button type="submit" id="btnSimpanSiswa" class="btn btn-primary fw-bold"><i class="fas fa-save me-1"></i> Simpan Data Siswa</button>
-          <button type="button" class="btn btn-secondary fw-bold ms-2" onclick="document.getElementById('formSiswa').reset(); document.getElementById('btnSimpanSiswa').innerHTML='<i class=\'fas fa-save me-1\'></i> Simpan Data Siswa'; document.getElementById('btnSimpanSiswa').classList.replace('btn-warning', 'btn-primary'); document.getElementById('btnSimpanSiswa').classList.remove('text-dark');"><i class="fas fa-undo"></i> Reset Form</button>
+          <button type="submit" id="btnSimpanSiswa" class="btn btn-primary fw-bold"><i class="fas fa-save me-1"></i> Simpan Siswa</button>
         </form>
       </div>
 
       <div class="panel-container mt-4">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-3">
-          <h5 class="text-success mb-3 mb-md-0"><i class="fas fa-users"></i> Direktori Data Siswa</h5>
-          <div class="d-flex gap-2">
-            <!-- FILTER KELAS -->
-            <select id="filterListKelasSiswa" class="form-select border-success" onchange="renderTabelSiswa()">
-              <option value="ALL">Tampilkan Semua Kelas</option>
-              <optgroup label="Kelas X">
-                <option value="X TKJ 1">X TKJ 1</option><option value="X TKJ 2">X TKJ 2</option><option value="X TKJ 3">X TKJ 3</option><option value="X TKJ 4">X TKJ 4</option>
-              </optgroup>
-              <optgroup label="Kelas XI">
-                <option value="XI TKJ 1">XI TKJ 1</option><option value="XI TKJ 2">XI TKJ 2</option><option value="XI TKJ 3">XI TKJ 3</option><option value="XI TKJ 4">XI TKJ 4</option>
-              </optgroup>
-              <optgroup label="Kelas XII">
-                <option value="XII TKJ 1">XII TKJ 1</option><option value="XII TKJ 2">XII TKJ 2</option><option value="XII TKJ 3">XII TKJ 3</option><option value="XII TKJ 4">XII TKJ 4</option><option value="XII TKJ 5">XII TKJ 5</option>
-              </optgroup>
-            </select>
-            <!-- PENCARIAN -->
-            <div class="input-group" style="min-width: 250px;">
-              <span class="input-group-text bg-success text-white"><i class="fas fa-search"></i></span>
-              <input type="text" id="cariDataSiswa" class="form-control" placeholder="Cari Nama/NIS..." onkeyup="renderTabelSiswa()">
-            </div>
-          </div>
-        </div>
-        
-        <div class="d-flex justify-content-between align-items-center mb-2 small fw-bold text-secondary">
-          <span id="labelInfoTabelSiswa">Menampilkan: Semua Siswa</span>
-          <span class="badge bg-primary" id="badgeTotalSiswaView">Total: 0 Siswa</span>
-        </div>
-
+        <h5 class="text-success border-bottom pb-2 mb-3"><i class="fas fa-users"></i> Daftar Siswa Terdaftar</h5>
         <div class="table-responsive">
           <table class="table table-hover table-bordered align-middle text-center" style="white-space: nowrap;">
             <thead class="table-light">
-              <tr><th>NIS</th><th>Nama Lengkap</th><th>Kelas</th><th>Gender</th><th>Alamat</th><th>Aksi</th></tr>
+              <tr><th>NIS</th><th>Nama Lengkap</th><th>Kelas</th><th>Gender</th><th>Alamat</th></tr>
             </thead>
-            <tbody id="tabelSiswaBody">
-              <!-- Render by JS -->
-            </tbody>
+            <tbody id="tabelSiswaBody"></tbody>
           </table>
         </div>
       </div>
@@ -1029,7 +991,17 @@
         <div class="col-6"><div class="p-3 bg-success bg-opacity-10 rounded border border-success"><h4 class="text-success fw-bold mb-0" id="cbtResult_Benar">0</h4><small>Jawaban Benar</small></div></div>
         <div class="col-6"><div class="p-3 bg-danger bg-opacity-10 rounded border border-danger"><h4 class="text-danger fw-bold mb-0" id="cbtResult_Salah">0</h4><small>Jawaban Salah</small></div></div>
       </div>
-      <button class="btn btn-primary btn-lg mt-5 fw-bold px-5" onclick="tutupLayarCBT()"><i class="fas fa-home me-2"></i> Kembali ke Dashboard</button>
+      
+      <!-- Tombol Aksi -->
+      <div class="d-flex justify-content-center gap-3 mt-5 mb-4">
+        <button class="btn btn-danger fw-bold px-4" onclick="downloadHasilPDF()"><i class="fas fa-file-pdf me-2"></i> Download PDF</button>
+        <button class="btn btn-primary fw-bold px-4" onclick="tutupLayarCBT()"><i class="fas fa-home me-2"></i> Kembali</button>
+      </div>
+
+      <!-- Area Evaluasi Detail (Akan di-render via JS & untuk cetak PDF) -->
+      <div id="areaEvaluasiDetail" class="text-start bg-white p-4 rounded shadow-sm border" style="display:none; color: #000;">
+        <!-- Konten di-generate via JS -->
+      </div>
     </div>
 
     <!-- FOOTER NAVIGASI -->
@@ -1375,99 +1347,10 @@
     });
   }
 
-  // --- FUNGSI RENDER TABEL DATA SISWA (DENGAN FILTER & SEARCH) ---
-  function renderTabelSiswa() {
-    const tbody = document.getElementById('tabelSiswaBody');
-    if(!tbody) return;
-
-    const fKelas = document.getElementById('filterListKelasSiswa').value;
-    const fCari = document.getElementById('cariDataSiswa').value.toLowerCase();
-
-    let filtered = localDB.siswa;
-
-    // 1. Filter Berdasarkan Kelas
-    if (fKelas !== "ALL") {
-      filtered = filtered.filter(s => s.kelas === fKelas);
-      document.getElementById('labelInfoTabelSiswa').innerText = `Menampilkan Siswa Kelas: ${fKelas}`;
-    } else {
-      document.getElementById('labelInfoTabelSiswa').innerText = `Menampilkan: Semua Siswa`;
-    }
-
-    // 2. Filter Berdasarkan Pencarian (Nama/NIS)
-    if (fCari !== "") {
-      filtered = filtered.filter(s => 
-        String(s.nama).toLowerCase().includes(fCari) || 
-        String(s.nis).toLowerCase().includes(fCari)
-      );
-    }
-
-    document.getElementById('badgeTotalSiswaView').innerText = `Total: ${filtered.length} Siswa`;
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4"><i class="fas fa-folder-open fs-2 mb-2 d-block opacity-50"></i> Data siswa tidak ditemukan di kriteria ini.</td></tr>';
-      return;
-    }
-
-    // 3. Sorting berdasar Kelas lalu Nama Abjad
-    filtered.sort((a, b) => {
-      let cmpKelas = String(a.kelas).localeCompare(String(b.kelas));
-      if (cmpKelas === 0) return String(a.nama).localeCompare(String(b.nama));
-      return cmpKelas;
-    });
-
-    tbody.innerHTML = filtered.map(s => `
-      <tr>
-        <td class="fw-bold text-secondary">${s.nis}</td>
-        <td class="text-start fw-semibold text-dark">${s.nama}</td>
-        <td><span class="badge bg-primary fs-6">${s.kelas}</span></td>
-        <td>${s.jk || '-'}</td>
-        <td class="text-start text-truncate" style="max-width: 150px;">${s.alamat || '-'}</td>
-        <td>
-          <button class="btn btn-sm btn-info text-white fw-bold py-0" onclick="editDataSiswa('${s.nis}')" title="Edit Data"><i class="fas fa-edit"></i> Edit</button>
-          <button class="btn btn-sm btn-danger fw-bold py-0" onclick="hapusDataSiswa('${s.nis}', '${s.nama}')" title="Hapus Data"><i class="fas fa-trash"></i></button>
-        </td>
-      </tr>
-    `).join('');
-  }
-
-  // --- FUNGSI MENGISI FORM EDIT DARI TABEL ---
-  function editDataSiswa(nis) {
-    const s = localDB.siswa.find(x => String(x.nis) === String(nis));
-    if(!s) return;
-    document.getElementById('siswa_nis').value = s.nis;
-    document.getElementById('siswa_nama').value = s.nama;
-    document.getElementById('siswa_kelas').value = s.kelas;
-    document.getElementById('siswa_jk').value = s.jk;
-    document.getElementById('siswa_alamat').value = s.alamat;
-    
-    const btnSimpan = document.getElementById('btnSimpanSiswa');
-    btnSimpan.innerHTML = '<i class="fas fa-save me-1"></i> Update Perubahan Data';
-    btnSimpan.classList.replace('btn-primary', 'btn-warning');
-    btnSimpan.classList.add('text-dark');
-    
-    // Auto scroll ke atas (ke arah form)
-    document.getElementById('formSiswa').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  // --- FUNGSI HAPUS SISWA ---
-  function hapusDataSiswa(nis, nama) {
-    if(confirm(`AWAS! Anda yakin ingin menghapus siswa bernama:\n${nama} (NIS: ${nis})?\n\n*Perhatian: Ini juga akan menghapus data login/akun siswa tersebut dari sistem.`)) {
-      
-      const payload = { action: 'hapusDataSiswaAdmin', nis: nis };
-      fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
-      .then(res => res.json())
-      .then(data => {
-        if(data.status === 'success') {
-          alert(`Data ${nama} berhasil dihapus permanen!`);
-          tarikDataDatabase(); 
-        } else {
-          alert(data.message);
-        }
-      })
-      .catch(err => alert("Gagal koneksi ke server."));
-    }
-  }
-
+  // =========================================================================
+  // FUNGSI RENDER DASHBOARD LAMA (TUGAS, ABSEN, MAPEL) - TETAP UTUH
+  // =========================================================================
+  
   function renderAbsensi() {
     const tAbsen = document.getElementById('tabelAbsensiBody');
     const btnSimpan = document.getElementById('btnSimpanAbsenMassal');
@@ -1552,7 +1435,11 @@
     document.getElementById('dash_total_materi').innerText = localDB.materi.length;
     document.getElementById('dash_total_tugas').innerText = localDB.quiz.length;
 
-    renderTabelSiswa(); 
+    const tSiswa = document.getElementById('tabelSiswaBody');
+    if(tSiswa) {
+      let dataSiswaSorted = localDB.siswa.sort((a, b) => a.kelas.localeCompare(b.kelas));
+      tSiswa.innerHTML = dataSiswaSorted.map(s => `<tr><td class="fw-bold">${s.nis}</td><td class="text-start">${s.nama}</td><td><span class="badge bg-primary fs-6">${s.kelas}</span></td><td>${s.jk}</td><td class="text-start">${s.alamat}</td></tr>`).join('');
+    }
 
     const tQuizGuru = document.getElementById('tabelQuizGuru');
     if(tQuizGuru) {
@@ -1682,8 +1569,6 @@
   function kirimDataSiswa(e) {
     e.preventDefault(); 
     const btn = document.getElementById('btnSimpanSiswa'); btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-    
     const payload = { 
       action: 'kirimData', 
       menuAktif: 'Data_Siswa', 
@@ -1693,16 +1578,10 @@
       jk: document.getElementById('siswa_jk').value, 
       alamat: document.getElementById('siswa_alamat').value 
     };
-    
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
     .then(res => res.json())
     .then(data => { 
-      btn.disabled = false; 
-      document.getElementById('formSiswa').reset(); 
-      btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Data Siswa';
-      btn.classList.replace('btn-warning', 'btn-primary'); 
-      btn.classList.remove('text-dark');
-      tarikDataDatabase(); 
+      btn.disabled = false; document.getElementById('formSiswa').reset(); tarikDataDatabase(); 
     });
   }
 
@@ -2462,13 +2341,78 @@
     document.getElementById('cbtPlay_AreaSoal').style.pointerEvents = 'none';
     
     let jmlBenar = 0; let jmlSalah = 0;
+    let waktuSelesai = new Date().toLocaleDateString('id-ID');
+    
+    // --- BUILDER HTML UNTUK FORMAT PDF FR.IA.05C ---
+    let htmlEvaluasi = `
+      <div id="dokumenCetakPDF" style="font-family: Arial, sans-serif; padding: 20px; font-size: 14px;">
+        <h4 class="text-center fw-bold mb-4">FR.IA.05C. DPT - LEMBAR JAWABAN PILIHAN GANDA</h4>
+        
+        <table class="table table-sm table-borderless mb-4" style="width: 100%;">
+          <tr><td style="width: 150px;">Nama Asesi</td><td>: <b>${userAktif.nama}</b></td></tr>
+          <tr><td>Tanggal Ujian</td><td>: <b>${waktuSelesai}</b></td></tr>
+          <tr><td>Judul Asesmen</td><td>: <b>${document.getElementById('cbtPlay_Judul').innerText}</b></td></tr>
+        </table>
+        <hr class="border-dark mb-4">
+        <h6 class="fw-bold mb-3">Rincian Jawaban:</h6>
+    `;
+
+    // Evaluasi per soal
     for(let i=0; i<playSoalArr.length; i++) { 
-      let kunci = String(playSoalArr[i].kunci).trim().toUpperCase(); 
+      let s = playSoalArr[i];
+      let kunci = String(s.kunci).trim().toUpperCase(); 
       let jawab = String(playAnswers[i] || "").trim().toUpperCase(); 
-      if(jawab === kunci) jmlBenar++; else jmlSalah++; 
+      let isBenar = (jawab === kunci);
+      
+      if(isBenar) jmlBenar++; else jmlSalah++; 
+      
+      let statusTeks = isBenar ? '<span class="text-success fw-bold">Benar</span>' : '<span class="text-danger fw-bold">Salah</span>';
+      
+      htmlEvaluasi += `
+        <div class="mb-3 border-bottom pb-2" style="page-break-inside: avoid;">
+          <p class="mb-1 fw-bold">${i+1}. ${s.pertanyaan}</p>
+          <ul class="list-unstyled ms-3 mb-2 small">
+            <li>a. ${s.opsiA}</li>
+            <li>b. ${s.opsiB}</li>
+            <li>c. ${s.opsiC}</li>
+            <li>d. ${s.opsiD}</li>
+          </ul>
+          <div class="bg-light p-2 rounded small border d-flex justify-content-between">
+            <span>Jawaban Anda: <b>${jawab || 'Tidak Dijawab'}</b> (Kunci: ${kunci})</span>
+            <span>Status: ${statusTeks}</span>
+          </div>
+        </div>
+      `;
     }
     
     let skorAkhir = Math.round((jmlBenar / playSoalArr.length) * 100);
+    let statusKompetensi = skorAkhir >= 70 ? 'Tercapai' : 'Belum Tercapai';
+
+    htmlEvaluasi += `
+        <table class="table table-bordered mt-4 border-dark">
+          <tr>
+            <td><b>Aspek pengetahuan seluruh unit kompetensi yang diujikan</b></td>
+            <td class="text-center fw-bold">${statusKompetensi}</td>
+          </tr>
+          <tr>
+            <td><b>Nilai Akhir (SCORE)</b></td>
+            <td class="text-center fw-bold fs-5">${skorAkhir}/100</td>
+          </tr>
+        </table>
+        
+        <div class="row mt-5 text-center">
+          <div class="col-6">
+            <p class="mb-5">Asesi:</p>
+            <p class="fw-bold text-decoration-underline mb-0">${userAktif.nama}</p>
+          </div>
+          <div class="col-6">
+            <p class="mb-5">Asesor / Guru:</p>
+            <p class="fw-bold text-decoration-underline mb-0">Pengajar ${document.getElementById('cbtPlay_Mapel').innerText}</p>
+          </div>
+        </div>
+      </div>
+    `;
+    
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'simpanNilaiCBT', idTopik: mainCbtId, nis: nisUserAktifLog, nama: userAktif.nama, benar: jmlBenar, salah: jmlSalah, skor: skorAkhir }) })
     .then(r => r.json())
     .then(d => {
@@ -2477,10 +2421,30 @@
       document.getElementById('cbtResult_Skor').innerText = skorAkhir; 
       document.getElementById('cbtResult_Benar').innerText = jmlBenar; 
       document.getElementById('cbtResult_Salah').innerText = jmlSalah; 
+      
+      const areaEvaluasi = document.getElementById('areaEvaluasiDetail');
+      areaEvaluasi.innerHTML = htmlEvaluasi;
+      areaEvaluasi.style.display = 'block';
+
       document.getElementById('cbtPlay_AreaHasil').style.display = 'block';
       tarikDataDatabase(); 
     })
     .catch(e => { alert("Gagal kirim nilai. Lapor guru. Skor kamu: " + skorAkhir); tutupLayarCBT(); });
+  }
+
+  function downloadHasilPDF() {
+    const element = document.getElementById('dokumenCetakPDF');
+    const namaFile = `Evaluasi_${document.getElementById('cbtPlay_Judul').innerText.replace(/\s+/g, '_')}_${userAktif.nama.replace(/\s+/g, '_')}.pdf`;
+    
+    const opt = {
+      margin:       0.5,
+      filename:     namaFile,
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true },
+      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    
+    html2pdf().set(opt).from(element).save();
   }
 
   function tutupLayarCBT() {
