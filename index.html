@@ -7,7 +7,6 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -95,7 +94,7 @@
     .result-box { text-align: center; padding: 40px 20px; }
     .score-circle { width: 150px; height: 150px; border-radius: 50%; background: #2ecc71; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px auto; font-size: 3rem; font-weight: bold; box-shadow: 0 10px 20px rgba(46, 204, 113, 0.4); border: 8px solid #a8e6cf; }
     
-    /* TWEAKS UNTUK MOBILE RESPONSIVE */
+    /* TWEAKS UNTUK MOBILE RESPONSIVE (TAMPILAN HP) */
     .toggle-btn { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-right: 15px; padding: 0; outline: none; }
     .sidebar-backdrop { display: none; position: fixed; top: 70px; left: 0; width: 100vw; height: calc(100vh - 70px); background: rgba(0,0,0,0.5); z-index: 1035; backdrop-filter: blur(2px); }
     .sidebar-backdrop.show { display: block; }
@@ -117,6 +116,7 @@
       
       .cbt-options-grid { grid-template-columns: 1fr; } 
     }
+
     /* Perbaikan agar Pop-up Modal PDF tampil di paling depan */
     .modal { z-index: 99999999 !important; }
     .modal-backdrop { z-index: 99999998 !important; }
@@ -223,7 +223,7 @@
           </button>
         </div>
         <small class="text-danger mt-1 d-block fw-semibold" style="font-size: 0.8rem;">
-          <i class="fas fa-info-circle"></i> Password minimal 8 karakter.
+          <i class="fas fa-info-circle"></i> Password minimal 8 karakter (huruf/angka).
         </small>
       </div>
 
@@ -257,9 +257,9 @@
       <li class="guru-only"><a id="nav_Absensi" onclick="pilihMenu('Absensi', 'Input Absensi Siswa')"><i class="fas fa-calendar-check"></i> Input Absensi</a></li>
       
       <!-- MENU UPLOAD FILE LAMA -->
-      <li class="guru-only"><a id="nav_Manajemen_Quiz" onclick="pilihMenu('Manajemen_Quiz', 'Manajemen Penugasan (Upload File)')"><i class="fas fa-tasks"></i> Penugasan Upload File</a></li>
-      <li class="guru-only"><a id="nav_Nilai" onclick="pilihMenu('Nilai', 'Pusat Penilaian Tugas (Upload File)')"><i class="fas fa-star"></i> Input Nilai (File)</a></li>
-      <li class="siswa-only"><a id="nav_Tugas" onclick="pilihMenu('Tugas', 'Daftar Tugas & Upload Jawaban')"><i class="fas fa-file-upload"></i> Upload Tugas File</a></li>
+      <li class="guru-only"><a id="nav_Manajemen_Quiz" onclick="pilihMenu('Manajemen_Quiz', 'Manajemen Quiz & Tugas (Upload File)')"><i class="fas fa-tasks"></i> Penugasan Upload File</a></li>
+      <li class="guru-only"><a id="nav_Nilai" onclick="pilihMenu('Nilai', 'Pusat Penilaian Tugas Siswa (Upload File)')"><i class="fas fa-star"></i> Input Nilai Manual</a></li>
+      <li class="siswa-only"><a id="nav_Tugas" onclick="pilihMenu('Tugas', 'Daftar & Upload Tugas File')"><i class="fas fa-file-upload"></i> Upload Tugas File</a></li>
       <li class="siswa-only"><a id="nav_Rekap_Saya" onclick="pilihMenu('Rekap_Saya', 'Rapor Nilai & Rangkuman Absensi')"><i class="fas fa-chart-line"></i> Rekap Akademik Saya</a></li>
       
       <!-- MENU BARU: CBT Pilihan Ganda -->
@@ -282,7 +282,9 @@
         Assalamu'alaikum wr. wb. !! Selamat datang <strong id="welcomeName">User</strong> di Sistem Akademik TKJ MANUSA.
       </div>
       
-      <div id="notifTugasSiswaBox" class="siswa-only" style="display: none;"></div>
+      <div id="notifTugasSiswaBox" class="siswa-only" style="display: none;">
+        <!-- Notifikasi dari script -->
+      </div>
 
       <div class="row">
         <div class="col-md-4 col-sm-6 guru-only">
@@ -300,7 +302,7 @@
         <div class="col-md-4 col-sm-6">
           <div class="info-card clickable-card" onclick="userRole === 'guru' ? pilihMenu('Manajemen_Quiz', 'Manajemen Quiz & Tugas') : pilihMenu('Tugas', 'Daftar & Upload Tugas')">
             <div class="card-body"><i class="fas fa-tasks color-red icon-box"></i><div class="number color-red" id="dash_total_tugas">0</div></div>
-            <div class="footer bg-red">Tugas File Aktif</div>
+            <div class="footer bg-red">Tugas / Quiz Aktif</div>
           </div>
         </div>
       </div>
@@ -655,7 +657,9 @@
 
     <!-- TAMPILAN RUANG KELOMPOK (STUDI KASUS) -->
     <div id="view_Ruang_Kelompok" class="view-section" style="display: none;">
+      <!-- HALAMAN AWAL: DAFTAR TOPIK DISKUSI -->
       <div id="areaDaftarTopikDiskusi">
+        <!-- KHUSUS GURU: FORM BUAT TOPIK -->
         <div class="panel-container guru-only mb-4" style="border-top-color: #e83e8c;">
           <h5 style="color: #e83e8c;" class="border-bottom pb-2 mb-3"><i class="fas fa-layer-group"></i> Buat Topik Studi Kasus Kelompok</h5>
           <form id="formBuatTopikDiskusi" onsubmit="buatTopikDiskusi(event)">
@@ -700,12 +704,16 @@
           </form>
         </div>
 
+        <!-- DAFTAR TOPIK AKTIF -->
         <div class="panel-container" style="border-top-color: #17a2b8;">
           <h5 class="text-info border-bottom pb-2 mb-3"><i class="fas fa-comments"></i> Daftar Ruang Diskusi Aktif</h5>
-          <div id="listTopikDiskusiCard" class="row"></div>
+          <div id="listTopikDiskusiCard" class="row">
+            <!-- Render via JS -->
+          </div>
         </div>
       </div>
 
+      <!-- HALAMAN PILIH KELOMPOK (MUNCUL SETELAH KLIK TOPIK) -->
       <div id="areaPilihKelompok" style="display: none;">
         <div class="panel-container">
           <button class="btn btn-sm btn-secondary mb-3" onclick="kembaliKeDaftarTopik()"><i class="fas fa-arrow-left"></i> Kembali</button>
@@ -717,14 +725,20 @@
               <span class="badge bg-light text-dark border"><i class="fas fa-users"></i> Maks <span id="viewTopikMaks"></span> Siswa / Kelompok</span>
             </div>
           </div>
+          
+          <!-- INFO UNTUK GURU -->
           <div class="alert alert-warning py-2 mb-3 guru-only" style="display: none;">
             <i class="fas fa-user-secret"></i> <b>Mode Guru:</b> Anda dapat memasuki dan memantau kelompok mana saja tanpa mengurangi kuota anggota kelompok.
           </div>
+
           <h6 class="mb-3 text-secondary fw-bold">Pilih Ruang Kelompok Anda:</h6>
-          <div id="gridTombolKelompok" class="d-flex flex-wrap gap-2"></div>
+          <div id="gridTombolKelompok" class="d-flex flex-wrap gap-2">
+            <!-- Render Tombol Kelompok via JS -->
+          </div>
         </div>
       </div>
 
+      <!-- HALAMAN CHAT ROOM KELOMPOK (MUNCUL SETELAH KLIK KELOMPOK) -->
       <div id="areaChatKelompok" style="display: none;">
         <div class="row">
           <div class="col-lg-8 mb-3">
@@ -736,10 +750,17 @@
                 </h5>
                 <button class="btn btn-sm btn-success shadow-sm" onclick="tarikDataDatabase()"><i class="fas fa-sync-alt"></i> Segarkan Chat</button>
               </div>
+              
+              <!-- Indikator Kunci Otomatis (Jika Deadline Lewat) -->
               <div id="alertDiskusiTerkunci" class="alert alert-danger py-2 mb-2 small text-center fw-bold" style="display:none;">
                 <i class="fas fa-lock me-1"></i> WAKTU DISKUSI TELAH HABIS. RUANGAN DIKUNCI (READ-ONLY).
               </div>
-              <div class="chat-box bg-light d-flex flex-column" id="kotakChatKelompok" style="height: 350px;"></div>
+
+              <!-- KOTAK CHAT -->
+              <div class="chat-box bg-light d-flex flex-column" id="kotakChatKelompok" style="height: 350px;">
+                <!-- Pesan render via JS -->
+              </div>
+              
               <form id="formKirimPesanKelompok" onsubmit="kirimPesanKelompok(event)">
                 <div class="input-group">
                   <input type="text" id="msg_kelompok_text" class="form-control border-warning" placeholder="Ketik diskusi/pendapatmu di sini..." required autocomplete="off">
@@ -748,11 +769,16 @@
               </form>
             </div>
           </div>
+          
           <div class="col-lg-4">
+            <!-- PANEL DAFTAR ANGGOTA -->
             <div class="panel-container bg-white shadow-sm mb-3" style="border-top: 4px solid #17a2b8; padding: 15px;">
               <h6 class="border-bottom pb-2 mb-2 text-info fw-bold"><i class="fas fa-users text-info"></i> Anggota Kelompok</h6>
-              <ul class="list-group list-group-flush small" id="listAnggotaKelompokUI"></ul>
+              <ul class="list-group list-group-flush small" id="listAnggotaKelompokUI">
+                <!-- Dirender via JS -->
+              </ul>
             </div>
+
             <div class="panel-container bg-light border-0 shadow-sm" style="border-top: 4px solid #28a745;">
               <h6 class="border-bottom pb-2 mb-3 text-success fw-bold"><i class="fas fa-clipboard-check"></i> Kesimpulan Kelompok</h6>
               <div class="alert alert-warning py-2 mb-2 small">
@@ -771,16 +797,23 @@
 
 
     <!-- ========================================================================= -->
-    <!-- TAMPILAN CBT GURU -->
+    <!-- FITUR BARU: MANAJEMEN CBT (UNTUK GURU) -->
     <!-- ========================================================================= -->
     <div id="view_Guru_CBT" class="view-section" style="display: none;">
+      
+      <!-- NAV TABS UNTUK CBT GURU -->
       <ul class="nav nav-tabs mb-4" id="cbtTabs" role="tablist">
-        <li class="nav-item" role="presentation"><button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#tab-bank-soal" type="button" role="tab"><i class="fas fa-server"></i> Bank Kuis & Soal</button></li>
-        <li class="nav-item" role="presentation"><button class="nav-link fw-bold text-purple" data-bs-toggle="tab" data-bs-target="#tab-rekap-cbt" type="button" role="tab" onclick="renderRekapNilaiCBT()"><i class="fas fa-chart-bar"></i> Rekap & Cetak Nilai</button></li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#tab-bank-soal" type="button" role="tab"><i class="fas fa-server"></i> Bank Kuis & Soal</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link fw-bold text-purple" data-bs-toggle="tab" data-bs-target="#tab-rekap-cbt" type="button" role="tab" onclick="renderRekapNilaiCBT()"><i class="fas fa-chart-bar"></i> Rekap Nilai Siswa</button>
+        </li>
       </ul>
+
       <div class="tab-content" id="cbtTabsContent">
         
-        <!-- TAB 1: MANAJEMEN SOAL -->
+        <!-- TAB 1: MANAJEMEN SOAL (BULK INSERT) -->
         <div class="tab-pane fade show active" id="tab-bank-soal" role="tabpanel">
           <div class="row">
             <div class="col-lg-5 mb-4">
@@ -806,7 +839,8 @@
                     <div class="col-6 mb-3">
                       <label class="form-label text-secondary fw-semibold">Mapel</label>
                       <select id="cbt_mapel" class="form-select" required>
-                        <option value="ASJ">ASJ</option><option value="TLJ">TLJ</option><option value="AIJ">AIJ</option><option value="DG">DG</option><option value="PKK-1">PKK-1</option><option value="TWAN">TWAN</option>
+                        <option value="ASJ">ASJ</option><option value="TLJ">TLJ</option><option value="AIJ">AIJ</option>
+                        <option value="DG">DG</option><option value="PKK-1">PKK-1</option><option value="TWAN">TWAN</option>
                       </select>
                     </div>
                   </div>
@@ -828,16 +862,20 @@
                 </form>
               </div>
 
+              <!-- PANEL TAMBAH SOAL MASSAL (BULK) -->
               <div class="panel-container" id="panelTambahSoalCBT" style="display: none; border-top-color: #2ecc71;">
                 <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                   <h5 class="text-success mb-0"><i class="fas fa-list-ol"></i> Tambah Soal Massal</h5>
                   <button class="btn btn-sm btn-outline-danger" onclick="tutupPanelSoalCBT()"><i class="fas fa-times"></i></button>
                 </div>
                 <div class="alert alert-warning py-2 small mb-3">Menambahkan Soal Untuk: <br><strong id="labelTargetKuisCBT">Judul Kuis</strong></div>
+                
                 <form id="formTambahSoalBulkCBT" onsubmit="simpanSoalCBTBulk(event)">
-                  <div id="containerFormSoalBulk"></div>
+                  <div id="containerFormSoalBulk">
+                    <!-- Form-form soal akan masuk di sini otomatis via JS -->
+                  </div>
                   <button type="button" class="btn btn-outline-primary w-100 fw-bold border-dashed mb-3 py-2" onclick="tambahFormSoalBaru()"><i class="fas fa-plus"></i> Tambah Nomor Soal Lagi</button>
-                  <button type="submit" id="btnSimpanSoalBulk" class="btn btn-success w-100 fw-bold shadow-sm py-2"><i class="fas fa-cloud-upload-alt"></i> Simpan Semua Soal</button>
+                  <button type="submit" id="btnSimpanSoalBulk" class="btn btn-success w-100 fw-bold shadow-sm py-2"><i class="fas fa-cloud-upload-alt"></i> Simpan Semua Soal ke Database</button>
                 </form>
               </div>
             </div>
@@ -845,10 +883,13 @@
             <div class="col-lg-7">
               <div class="panel-container">
                 <h5 class="border-bottom pb-2 mb-3 text-secondary"><i class="fas fa-cubes"></i> Daftar Kuis CBT (Dikelompokkan)</h5>
-                <div class="alert alert-info py-2 small"><i class="fas fa-info-circle"></i> Kuis yang berstatus <b>Draft</b> tidak akan terlihat oleh siswa. Harus klik <b>Publish</b> jika soal siap.</div>
+                <div class="alert alert-info py-2 small"><i class="fas fa-info-circle"></i> Kuis yang berstatus <b>Draft</b> tidak akan terlihat oleh siswa. Anda harus klik tombol <b>Publish</b> jika soal sudah siap.</div>
+                
                 <div class="table-responsive">
                   <table class="table table-hover table-bordered text-center align-middle" style="white-space: nowrap;">
-                    <thead class="table-dark"><tr><th>Informasi Kuis</th><th>Durasi</th><th>Jml Soal</th><th>Aksi</th></tr></thead>
+                    <thead class="table-dark">
+                      <tr><th>Informasi Kuis</th><th>Durasi</th><th>Jml Soal</th><th>Aksi</th></tr>
+                    </thead>
                     <tbody id="tabelListCBTGuru"></tbody>
                   </table>
                 </div>
@@ -857,25 +898,25 @@
           </div>
         </div>
 
-        <!-- TAB 2: REKAP NILAI RAPIH (TAMBAH FITUR DOWNLOAD PDF GURU) -->
+        <!-- TAB 2: REKAP NILAI RAPIH -->
         <div class="tab-pane fade" id="tab-rekap-cbt" role="tabpanel">
           <div class="panel-container shadow-sm" style="border-top-color: #9b59b6;">
-            <h5 class="text-purple border-bottom pb-2 mb-4" style="color: #9b59b6;"><i class="fas fa-clipboard-list"></i> Rekapitulasi & Cetak Hasil Kuis Siswa</h5>
+            <h5 class="text-purple border-bottom pb-2 mb-4" style="color: #9b59b6;"><i class="fas fa-clipboard-list"></i> Rekapitulasi Hasil Kuis CBT Siswa</h5>
             
             <div class="row mb-4 bg-light p-3 rounded mx-0 border">
               <div class="col-md-5 mb-2 mb-md-0">
-                <label class="form-label fw-bold text-secondary small">Filter Kelas</label>
+                <label class="form-label fw-bold text-secondary small">Filter Berdasarkan Kelas</label>
                 <select id="filterRekapKelasCBT" class="form-select border-primary" onchange="renderRekapNilaiCBT()">
-                  <option value="">-- Semua Kelas --</option>
+                  <option value="">-- Tampilkan Semua Kelas --</option>
                   <option value="X TKJ 1">X TKJ 1</option><option value="X TKJ 2">X TKJ 2</option><option value="X TKJ 3">X TKJ 3</option><option value="X TKJ 4">X TKJ 4</option>
                   <option value="XI TKJ 1">XI TKJ 1</option><option value="XI TKJ 2">XI TKJ 2</option><option value="XI TKJ 3">XI TKJ 3</option><option value="XI TKJ 4">XI TKJ 4</option>
                   <option value="XII TKJ 1">XII TKJ 1</option><option value="XII TKJ 2">XII TKJ 2</option><option value="XII TKJ 3">XII TKJ 3</option><option value="XII TKJ 4">XII TKJ 4</option><option value="XII TKJ 5">XII TKJ 5</option>
                 </select>
               </div>
               <div class="col-md-5 mb-2 mb-md-0">
-                <label class="form-label fw-bold text-secondary small">Filter Mapel</label>
+                <label class="form-label fw-bold text-secondary small">Filter Berdasarkan Mapel</label>
                 <select id="filterRekapMapelCBT" class="form-select border-primary" onchange="renderRekapNilaiCBT()">
-                  <option value="">-- Semua Mapel --</option>
+                  <option value="">-- Tampilkan Semua Mapel --</option>
                   <option value="ASJ">ASJ</option><option value="TLJ">TLJ</option><option value="AIJ">AIJ</option>
                   <option value="DG">DG</option><option value="PKK-1">PKK-1</option><option value="TWAN">TWAN</option>
                 </select>
@@ -885,19 +926,26 @@
               </div>
             </div>
 
-            <div id="areaTabelRekapNilaiCBT"></div>
+            <!-- AREA UNTUK MENAMPILKAN TABEL REKAP -->
+            <div id="areaTabelRekapNilaiCBT">
+              <!-- Render via JS -->
+            </div>
           </div>
         </div>
+
       </div>
     </div>
 
+
     <!-- ========================================================================= -->
-    <!-- MENU CBT SISWA -->
+    <!-- FITUR BARU: MENU CBT UNTUK SISWA (DAFTAR KUIS) -->
     <!-- ========================================================================= -->
     <div id="view_Siswa_CBT" class="view-section" style="display: none;">
       <div class="panel-container" style="border-top-color: #2c3e50;">
         <h5 class="text-secondary border-bottom pb-2 mb-3"><i class="fas fa-tasks"></i> Daftar Kuis CBT Kelas Anda</h5>
-        <div class="row" id="gridKuisSiswaCBT"></div>
+        <div class="row" id="gridKuisSiswaCBT">
+          <!-- Render via JS -->
+        </div>
       </div>
     </div>
 
@@ -905,14 +953,15 @@
 </div>
 
 <!-- ========================================================================= -->
-<!-- LAYAR PENGERJAAN KUIS CBT -->
+<!-- LAYAR PENGERJAAN KUIS CBT (FULLSCREEN OVERLAY) -->
 <!-- ========================================================================= -->
 <div id="layarPengerjaanCBT" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ecf0f5; z-index: 99999999; overflow-y: auto;">
   <div class="cbt-container my-4 shadow-lg">
+    <!-- HEADER TIMER -->
     <div class="cbt-header">
       <div>
         <h5 class="mb-0 fw-bold" id="cbtPlay_Judul">Judul Kuis</h5>
-        <small class="text-light opacity-75" id="cbtPlay_Mapel">Mapel</small>
+        <small class="text-light opacity-75" id="cbtPlay_Mapel">Mata Pelajaran</small>
       </div>
       <div class="text-center">
         <div class="small mb-1 fw-bold opacity-75">SISA WAKTU</div>
@@ -920,13 +969,15 @@
       </div>
     </div>
     <div class="cbt-progress-bar"><div class="cbt-progress-fill" id="cbtPlay_Progress"></div></div>
-    
+
+    <!-- BODY SOAL -->
     <div class="cbt-body" id="cbtPlay_AreaSoal">
       <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
-        <span class="badge bg-secondary fs-6" id="cbtPlay_NomorLabel">Soal</span>
+        <span class="badge bg-secondary fs-6" id="cbtPlay_NomorLabel">Soal 1 dari 10</span>
       </div>
       <div class="cbt-question-text" id="cbtPlay_Pertanyaan">Memuat pertanyaan...</div>
       
+      <!-- OPSI JAWABAN -->
       <div class="cbt-options-grid">
         <div class="cbt-option cbt-opt-a" id="btnOptA" onclick="pilihJawabanCBT('A')"><div class="cbt-option-letter">A</div><div id="txtOptA">Pilihan A</div></div>
         <div class="cbt-option cbt-opt-b" id="btnOptB" onclick="pilihJawabanCBT('B')"><div class="cbt-option-letter">B</div><div id="txtOptB">Pilihan B</div></div>
@@ -934,32 +985,23 @@
         <div class="cbt-option cbt-opt-d" id="btnOptD" onclick="pilihJawabanCBT('D')"><div class="cbt-option-letter">D</div><div id="txtOptD">Pilihan D</div></div>
       </div>
     </div>
-    
+
+    <!-- AREA HASIL (Muncul setelah submit) -->
+    <div class="cbt-body result-box" id="cbtPlay_AreaHasil" style="display: none;">
+      <h3 class="fw-bold text-dark mb-4">Ujian CBT Selesai!</h3>
+      <div class="score-circle" id="cbtResult_Skor">100</div>
+      <div class="row mt-4 w-100 px-md-5">
+        <div class="col-6"><div class="p-3 bg-success bg-opacity-10 rounded border border-success"><h4 class="text-success fw-bold mb-0" id="cbtResult_Benar">0</h4><small>Jawaban Benar</small></div></div>
+        <div class="col-6"><div class="p-3 bg-danger bg-opacity-10 rounded border border-danger"><h4 class="text-danger fw-bold mb-0" id="cbtResult_Salah">0</h4><small>Jawaban Salah</small></div></div>
+      </div>
+      <button class="btn btn-primary btn-lg mt-5 fw-bold px-5" onclick="tutupLayarCBT()"><i class="fas fa-home me-2"></i> Kembali ke Dashboard</button>
+    </div>
+
+    <!-- FOOTER NAVIGASI -->
     <div class="cbt-footer" id="cbtPlay_FooterNav">
       <button class="btn btn-outline-secondary fw-bold px-4" id="btnCbtPrev" onclick="navigasiCBT(-1)"><i class="fas fa-chevron-left me-1"></i> Sebelumnya</button>
       <button class="btn btn-primary fw-bold px-4" id="btnCbtNext" onclick="navigasiCBT(1)">Selanjutnya <i class="fas fa-chevron-right ms-1"></i></button>
       <button class="btn btn-success fw-bold px-4 shadow" id="btnCbtSubmit" onclick="konfirmasiSelesaiCBT()" style="display: none;"><i class="fas fa-check-double me-1"></i> Kumpulkan Jawaban</button>
-    </div>
-  </div>
-</div>
-
-<!-- ========================================================================= -->
-<!-- MODAL REVIEW & CETAK PDF (UNTUK SISWA & GURU KAPAN SAJA) -->
-<!-- ========================================================================= -->
-<div class="modal fade" id="modalReviewCBT" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title fw-bold"><i class="fas fa-file-pdf"></i> Detail & Cetak Hasil CBT</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body bg-light" id="areaPreviewCetakCBT" style="max-height: 70vh; overflow-y: auto;">
-        <!-- HTML PDF di-generate secara otomatis via JS di sini -->
-      </div>
-      <div class="modal-footer bg-white border-top">
-        <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Tutup</button>
-        <button type="button" class="btn btn-danger fw-bold shadow-sm" id="btnDownloadReviewPDF"><i class="fas fa-download me-1"></i> Download File PDF</button>
-      </div>
     </div>
   </div>
 </div>
@@ -1025,7 +1067,70 @@
   </div>
 </div>
 
+<!-- ========================================================================= -->
+<!-- MODAL DETAIL & CETAK PDF CBT (BARU) -->
+<!-- ========================================================================= -->
+<div class="modal fade" id="modalDetailCBT" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold"><i class="fas fa-file-pdf"></i> Detail Hasil Jawaban Kuis</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body bg-light">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <table class="table table-sm table-borderless fw-bold mb-0 text-secondary">
+              <tr><td width="120">Nama Siswa</td><td>: <span id="detailCBT_Nama" class="text-dark"></span></td></tr>
+              <tr><td>NIS</td><td>: <span id="detailCBT_NIS" class="text-dark"></span></td></tr>
+              <tr><td>Kuis / Ujian</td><td>: <span id="detailCBT_Judul" class="text-dark"></span></td></tr>
+            </table>
+          </div>
+          <div class="col-md-6 text-md-end text-start mt-3 mt-md-0">
+            <div class="d-inline-block bg-white border border-2 border-primary rounded p-2 text-center mx-1">
+              <small class="d-block text-muted">SKOR</small><h4 class="mb-0 fw-bold text-primary" id="detailCBT_Skor">0</h4>
+            </div>
+            <div class="d-inline-block bg-white border border-2 border-success rounded p-2 text-center mx-1">
+              <small class="d-block text-muted">BENAR</small><h4 class="mb-0 fw-bold text-success" id="detailCBT_Benar">0</h4>
+            </div>
+            <div class="d-inline-block bg-white border border-2 border-danger rounded p-2 text-center mx-1">
+              <small class="d-block text-muted">SALAH</small><h4 class="mb-0 fw-bold text-danger" id="detailCBT_Salah">0</h4>
+            </div>
+          </div>
+        </div>
+        
+        <div class="table-responsive bg-white shadow-sm border rounded">
+          <table class="table table-hover table-bordered align-middle text-center mb-0">
+            <thead class="table-dark">
+              <tr>
+                <th width="50">No</th>
+                <th class="text-start">Pertanyaan</th>
+                <th width="150">Kunci Jawaban</th>
+                <th width="150">Jawaban Siswa</th>
+                <th width="100">Status</th>
+              </tr>
+            </thead>
+            <tbody id="detailCBT_TableBody">
+              <!-- Render via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer bg-white border-top">
+        <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-danger fw-bold shadow-sm" id="btnDownloadPDFCBT"><i class="fas fa-download me-1"></i> Download File PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- TAMBAHAN LIBRARY UNTUK CETAK PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
 <script>
   // =========================================================================
   // GANTI DENGAN URL WEB APP DEPLOYMENT GOOGLE APPS SCRIPT ANDA YANG TERBARU!
@@ -1037,9 +1142,12 @@
   let nisUserAktifLog = '';
   let mapelAktif = '';
   let selectedTugasObj = null;
+
+  // STATE UNTUK RUANG KELOMPOK
   let aktifIdTopik = null;
   let aktifNamaKelompok = null;
 
+  // DATABASE LOKAL + CBT BARS
   let localDB = { 
     siswa: [], materi: [], quiz: [], jawaban: [], absensi: [], forum: [],
     diskusiTopik: [], diskusiPesan: [], diskusiHasil: [], diskusiAnggota: [],
@@ -1074,19 +1182,25 @@
     const inputField = document.getElementById(inputId);
     const icon = buttonEl.querySelector('i');
     if (inputField.type === "password") {
-      inputField.type = "text"; icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash"); 
+      inputField.type = "text"; 
+      icon.classList.remove("fa-eye"); icon.classList.add("fa-eye-slash"); 
     } else {
-      inputField.type = "password"; icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye");
+      inputField.type = "password"; 
+      icon.classList.remove("fa-eye-slash"); icon.classList.add("fa-eye");
     }
   }
 
   function toggleAuthMode(mode) {
     if(mode === 'register') {
-      document.getElementById('loginForm').style.display = 'none'; document.getElementById('registerForm').style.display = 'block';
-      document.getElementById('authTitle').innerText = 'DAFTAR AKUN'; document.getElementById('authDesc').innerText = 'Silakan isi data untuk pendaftaran';
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('registerForm').style.display = 'block';
+      document.getElementById('authTitle').innerText = 'DAFTAR AKUN';
+      document.getElementById('authDesc').innerText = 'Silakan isi data untuk pendaftaran';
     } else {
-      document.getElementById('loginForm').style.display = 'block'; document.getElementById('registerForm').style.display = 'none';
-      document.getElementById('authTitle').innerText = 'SISTEM AKADEMIK'; document.getElementById('authDesc').innerText = 'Silakan masuk ke akun Anda';
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('authTitle').innerText = 'SISTEM AKADEMIK';
+      document.getElementById('authDesc').innerText = 'Silakan masuk ke akun Anda';
     }
     document.getElementById('alertLogin').innerHTML = '';
   }
@@ -1100,47 +1214,71 @@
 
   function prosesRegister(e) {
     e.preventDefault();
-    const btn = document.getElementById('btnRegisterSubmit'); btn.disabled = true; btn.innerText = "Mendaftarkan...";
+    const btn = document.getElementById('btnRegisterSubmit');
+    btn.disabled = true; btn.innerText = "Mendaftarkan...";
+
     const role = document.querySelector('input[name="regRole"]:checked').value;
+    
     const payload = {
-      action: 'register', role: role,
-      nama: document.getElementById('regNama').value, username: document.getElementById('regUsername').value,
+      action: 'register',
+      role: role,
+      nama: document.getElementById('regNama').value,
+      username: document.getElementById('regUsername').value,
       password: document.getElementById('regPassword').value,
       nis: role === 'siswa' ? document.getElementById('regNis').value : '',
       kelas: role === 'siswa' ? document.getElementById('regKelas').value : ''
     };
+    
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
     .then(res => res.json())
     .then(data => {
       btn.disabled = false; btn.innerText = "Daftar Sekarang";
       if(data.status === 'success') {
         document.getElementById('alertLogin').innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-        document.getElementById('registerForm').reset(); setTimeout(() => toggleAuthMode('login'), 1500);
-      } else { document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">${data.message}</div>`; }
+        document.getElementById('registerForm').reset();
+        setTimeout(() => toggleAuthMode('login'), 1500);
+      } else {
+        document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+      }
     })
-    .catch(err => { btn.disabled = false; btn.innerText = "Daftar Sekarang"; document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">Error Server Hubungi Admin!</div>`; });
+    .catch(err => {
+      btn.disabled = false; btn.innerText = "Daftar Sekarang";
+      document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">Error Server Hubungi Admin!</div>`;
+    });
   }
 
   function prosesLogin(e) {
     e.preventDefault();
-    const btn = document.getElementById('btnLoginSubmit'); btn.disabled = true; btn.innerText = "Memvalidasi...";
-    const u = document.getElementById('username').value; const p = document.getElementById('password').value;
+    const btn = document.getElementById('btnLoginSubmit');
+    btn.disabled = true; btn.innerText = "Memvalidasi...";
+
+    const u = document.getElementById('username').value;
+    const p = document.getElementById('password').value;
+    
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'login', username: u, password: p }) })
     .then(res => res.json())
     .then(data => {
       btn.disabled = false; btn.innerText = "Masuk";
       if(data.status === 'success') {
-        userAktif = data.user; userRole = data.user.role; nisUserAktifLog = data.user.nis || '';
+        userAktif = data.user;
+        userRole = data.user.role;
+        nisUserAktifLog = data.user.nis || '';
         localStorage.setItem("manusa_session", JSON.stringify(userAktif));
         masukDashboard();
-      } else { document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">${data.message}</div>`; }
+      } else {
+        document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">${data.message}</div>`;
+      }
     })
-    .catch(err => { btn.disabled = false; btn.innerText = "Masuk"; document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">Koneksi gagal terhubung!</div>`; });
+    .catch(err => {
+      btn.disabled = false; btn.innerText = "Masuk";
+      document.getElementById('alertLogin').innerHTML = `<div class="alert alert-danger">Koneksi gagal terhubung!</div>`;
+    });
   }
 
   function masukDashboard() {
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('dashboardSection').style.display = 'block';
+    
     document.getElementById('userInfoText').innerHTML = `<i class="fas fa-user-circle"></i> ${userAktif.nama} (${userRole.toUpperCase()})`;
     document.getElementById('welcomeName').innerText = userAktif.nama;
     
@@ -1158,9 +1296,11 @@
   }
 
   function logout() {
-    localStorage.removeItem("manusa_session"); userAktif = null; userRole = ''; nisUserAktifLog = '';
+    localStorage.removeItem("manusa_session");
+    userAktif = null; userRole = ''; nisUserAktifLog = '';
     document.getElementById('loginForm').reset();
-    document.getElementById('loginSection').style.display = 'flex'; document.getElementById('dashboardSection').style.display = 'none';
+    document.getElementById('loginSection').style.display = 'flex';
+    document.getElementById('dashboardSection').style.display = 'none';
     toggleAuthMode('login');
   }
 
@@ -1168,10 +1308,12 @@
     document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
     const targetNav = document.getElementById('nav_' + menuId);
     if(targetNav) targetNav.classList.add('active');
+
     document.getElementById('judulHalaman').innerHTML = `${menuId.replace('_',' ')} <small class="text-muted fs-6">${judulMenuText}</small>`;
     
     document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none');
-    let viewId = 'view_' + menuId; if(menuId === 'Nilai') viewId = 'view_Nilai';
+    let viewId = 'view_' + menuId;
+    if(menuId === 'Nilai') viewId = 'view_Nilai';
     const targetView = document.getElementById(viewId);
     if(targetView) targetView.style.display = 'block';
     
@@ -1180,7 +1322,8 @@
     
     if (window.innerWidth <= 768) {
       document.querySelector('.sidebar').classList.remove('show');
-      var backdrop = document.getElementById('sidebarBackdrop'); if (backdrop) backdrop.classList.remove('show');
+      var backdrop = document.getElementById('sidebarBackdrop');
+      if (backdrop) backdrop.classList.remove('show');
     }
   }
 
@@ -1189,30 +1332,49 @@
     document.getElementById('prof_display_role').innerText = userAktif.role.toUpperCase();
     document.getElementById('prof_display_detail').innerText = userRole === 'siswa' ? `NIS: ${userAktif.nis} | Kelas: ${userAktif.kelas}` : 'Pengajar TKJ MANUSA';
     document.getElementById('prof_icon').className = userRole === 'siswa' ? 'fas fa-user-graduate' : 'fas fa-chalkboard-teacher';
-    document.getElementById('prof_username').value = userAktif.username; document.getElementById('prof_nama').value = userAktif.nama;
-    document.getElementById('prof_hp').value = userAktif.hp || ''; document.getElementById('prof_email').value = userAktif.email || '';
-    document.getElementById('prof_alamat').value = userAktif.alamat || ''; document.getElementById('prof_password').value = ''; 
+    
+    document.getElementById('prof_username').value = userAktif.username;
+    document.getElementById('prof_nama').value = userAktif.nama;
+    document.getElementById('prof_hp').value = userAktif.hp || '';
+    document.getElementById('prof_email').value = userAktif.email || '';
+    document.getElementById('prof_alamat').value = userAktif.alamat || '';
+    document.getElementById('prof_password').value = ''; 
   }
 
   function simpanProfil(e) {
     e.preventDefault();
-    const btn = document.getElementById('btnSimpanProfil'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    const btn = document.getElementById('btnSimpanProfil');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
     const payload = {
-      action: 'updateProfil', username: userAktif.username, 
-      nama: document.getElementById('prof_nama').value, hp: document.getElementById('prof_hp').value,
-      email: document.getElementById('prof_email').value, alamat: document.getElementById('prof_alamat').value, password: document.getElementById('prof_password').value
+      action: 'updateProfil',
+      username: userAktif.username, 
+      nama: document.getElementById('prof_nama').value,
+      hp: document.getElementById('prof_hp').value,
+      email: document.getElementById('prof_email').value,
+      alamat: document.getElementById('prof_alamat').value,
+      password: document.getElementById('prof_password').value
     };
+
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
     .then(res => res.json())
     .then(data => {
-      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Perubahan Profil';
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Perubahan Profil';
       if(data.status === 'success') {
         alert("Profil berhasil diperbarui!");
-        userAktif.nama = payload.nama; userAktif.hp = payload.hp; userAktif.email = payload.email; userAktif.alamat = payload.alamat;
-        localStorage.setItem("manusa_session", JSON.stringify(userAktif)); loadDataProfil(); 
+        userAktif.nama = payload.nama;
+        userAktif.hp = payload.hp;
+        userAktif.email = payload.email;
+        userAktif.alamat = payload.alamat;
+        localStorage.setItem("manusa_session", JSON.stringify(userAktif));
+        loadDataProfil(); 
         document.getElementById('welcomeName').innerText = userAktif.nama;
         document.getElementById('userInfoText').innerHTML = `<i class="fas fa-user-circle"></i> ${userAktif.nama} (${userRole.toUpperCase()})`;
-      } else { alert(data.message); }
+      } else {
+        alert(data.message);
+      }
     });
   }
 
@@ -1220,28 +1382,50 @@
     fetch(`${scriptUrl}?readAll=true`)
     .then(res => res.json())
     .then(data => {
-      localDB.siswa = data.siswa || []; localDB.materi = data.materi || []; localDB.quiz = data.quiz || [];
-      localDB.jawaban = data.jawaban || []; localDB.absensi = data.absensi || []; localDB.forum = data.forum || [];
-      localDB.diskusiTopik = data.diskusiTopik || []; localDB.diskusiPesan = data.diskusiPesan || [];
-      localDB.diskusiHasil = data.diskusiHasil || []; localDB.diskusiAnggota = data.diskusiAnggota || [];
-      localDB.cbtTopik = data.cbtTopik || []; localDB.cbtSoal = data.cbtSoal || []; localDB.cbtNilai = data.cbtNilai || [];
+      localDB.siswa = data.siswa || [];
+      localDB.materi = data.materi || [];
+      localDB.quiz = data.quiz || [];
+      localDB.jawaban = data.jawaban || [];
+      localDB.absensi = data.absensi || [];
+      localDB.forum = data.forum || [];
+      
+      localDB.diskusiTopik = data.diskusiTopik || [];
+      localDB.diskusiPesan = data.diskusiPesan || [];
+      localDB.diskusiHasil = data.diskusiHasil || [];
+      localDB.diskusiAnggota = data.diskusiAnggota || [];
+
+      localDB.cbtTopik = data.cbtTopik || [];
+      localDB.cbtSoal = data.cbtSoal || [];
+      localDB.cbtNilai = data.cbtNilai || [];
+      
       refreshUI();
     });
   }
 
+  // =========================================================================
+  // FUNGSI RENDER DASHBOARD LAMA (TUGAS, ABSEN, MAPEL) - TETAP UTUH
+  // =========================================================================
+  
   function renderAbsensi() {
-    const tAbsen = document.getElementById('tabelAbsensiBody'); const btnSimpan = document.getElementById('btnSimpanAbsenMassal'); const alertInfo = document.getElementById('alertInfoAbsensi');
+    const tAbsen = document.getElementById('tabelAbsensiBody');
+    const btnSimpan = document.getElementById('btnSimpanAbsenMassal');
+    const alertInfo = document.getElementById('alertInfoAbsensi');
     if(!tAbsen) return;
+
     const selectedKelas = document.getElementById('filterKelasAbsensi').value;
     if(!selectedKelas) {
       tAbsen.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-5"><i class="fas fa-hand-point-up fs-2 d-block mb-2"></i>Silakan pilih kelas terlebih dahulu.</td></tr>';
       btnSimpan.style.display = 'none'; alertInfo.style.display = 'none'; return;
     }
-    let dataSiswaKelas = localDB.siswa.filter(s => s.kelas === selectedKelas); dataSiswaKelas.sort((a,b) => a.nama.localeCompare(b.nama));
+
+    let dataSiswaKelas = localDB.siswa.filter(s => s.kelas === selectedKelas);
+    dataSiswaKelas.sort((a,b) => a.nama.localeCompare(b.nama));
+
     if(dataSiswaKelas.length === 0) {
       tAbsen.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Belum ada siswa terdaftar di kelas <b>${selectedKelas}</b>.</td></tr>`;
       btnSimpan.style.display = 'none'; alertInfo.style.display = 'none'; return;
     }
+
     btnSimpan.style.display = 'block'; alertInfo.style.display = 'block';
     tAbsen.innerHTML = dataSiswaKelas.map(s => `
       <tr class="baris-absen" data-nis="${s.nis}" data-nama="${s.nama}" data-kelas="${s.kelas}">
@@ -1259,15 +1443,22 @@
   }
 
   function renderPenilaian() {
-    const tKoreksi = document.getElementById('tabelAntreanPenilaian'); if(!tKoreksi) return;
+    const tKoreksi = document.getElementById('tabelAntreanPenilaian');
+    if(!tKoreksi) return;
+
     const selectedMapel = document.getElementById('filterMapelNilai').value;
-    let filteredJawaban = localDB.jawaban; if(selectedMapel !== "ALL") filteredJawaban = filteredJawaban.filter(j => j.mapel === selectedMapel);
+    let filteredJawaban = localDB.jawaban;
+    if(selectedMapel !== "ALL") filteredJawaban = filteredJawaban.filter(j => j.mapel === selectedMapel);
+
     if(filteredJawaban.length === 0) {
       tKoreksi.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-check-circle d-block fs-3 mb-2 text-success"></i>Tidak ada antrean tugas yang perlu dinilai.</td></tr>`; return;
     }
+
     tKoreksi.innerHTML = filteredJawaban.map(j => `
       <tr>
-        <td>${j.nama}</td><td>${j.kelas}</td><td><b>[${j.mapel}]</b> ${j.judulTugas}</td>
+        <td>${j.nama}</td>
+        <td>${j.kelas}</td>
+        <td><b>[${j.mapel}]</b> ${j.judulTugas}</td>
         <td><a href="${j.urlFileJawaban}" target="_blank" class="btn btn-sm btn-link"><i class="fas fa-file-alt"></i> Lihat File</a></td>
         <td><span class="badge bg-success font-monospace fs-6">${j.nilai || 'Belum'}</span></td>
         <td class="small text-muted">${j.catatanGuru || '-'}</td>
@@ -1276,10 +1467,16 @@
   }
 
   function renderRekapSiswa() {
-    const tSiswaPersonal = document.getElementById('tabelNilaiSiswaPersonal'); if(!tSiswaPersonal) return;
+    const tSiswaPersonal = document.getElementById('tabelNilaiSiswaPersonal');
+    if(!tSiswaPersonal) return;
+
     let myJawaban = localDB.jawaban.filter(j => String(j.nis) === String(nisUserAktifLog));
-    if(myJawaban.length === 0) { tSiswaPersonal.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Belum ada tugas yang Anda kerjakan atau dinilai.</td></tr>'; return; }
-    let mapelsUnik = [...new Set(myJawaban.map(j => j.mapel))]; let htmlContent = '';
+    if(myJawaban.length === 0) {
+      tSiswaPersonal.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">Belum ada tugas yang Anda kerjakan atau dinilai.</td></tr>'; return;
+    }
+
+    let mapelsUnik = [...new Set(myJawaban.map(j => j.mapel))];
+    let htmlContent = '';
     mapelsUnik.forEach(mapel => {
       htmlContent += `<tr class="table-secondary"><td colspan="3" class="text-start fw-bold text-success"><i class="fas fa-book me-2"></i> MAPEL: ${mapel}</td></tr>`;
       let nilaiPerMapel = myJawaban.filter(j => j.mapel === mapel);
@@ -1304,11 +1501,14 @@
       tQuizGuru.innerHTML = localDB.quiz.map(q => {
         const isTerlewat = new Date(q.deadline) < new Date();
         const badgeStatus = isTerlewat ? `<br><span class="badge bg-danger mt-1" style="font-size:0.7rem;">Terlewat</span>` : `<br><span class="badge bg-success mt-1" style="font-size:0.7rem;">Aktif</span>`;
+        const textDeadline = formatTanggalIndo(q.deadline);
         return `<tr>
-          <td><span class="badge bg-secondary">${q.mapel}</span></td><td>${q.judul}</td><td><span class="fw-semibold">${formatTanggalIndo(q.deadline)}</span> ${badgeStatus}</td>
+          <td><span class="badge bg-secondary">${q.mapel}</span></td>
+          <td>${q.judul}</td>
+          <td><span class="fw-semibold">${textDeadline}</span> ${badgeStatus}</td>
           <td>${q.urlFileSoal ? `<a href="${q.urlFileSoal}" target="_blank" class="btn btn-xs btn-outline-primary py-0"><i class="fas fa-download"></i> Unduh</a>`: '-'}</td>
           <td>
-            <button class="btn btn-sm btn-success py-0 m-1" onclick="ingatkanTugasWA('${q.judul}', '${q.mapel}', '${formatTanggalIndo(q.deadline)}')" title="Broadcast WA"><i class="fab fa-whatsapp"></i></button>
+            <button class="btn btn-sm btn-success py-0 m-1" onclick="ingatkanTugasWA('${q.judul}', '${q.mapel}', '${textDeadline}')" title="Broadcast WA"><i class="fab fa-whatsapp"></i></button>
             <button class="btn btn-sm ${isTerlewat ? 'btn-warning' : 'btn-outline-warning'} py-0 m-1" onclick="perpanjangDeadline('${q.id}', '${q.judul}')"><i class="fas fa-clock"></i></button>
             <button class="btn btn-sm btn-danger py-0 m-1" onclick="hapusTugas('${q.id}', '${q.judul}')"><i class="fas fa-trash"></i></button>
           </td>
@@ -1348,17 +1548,26 @@
       }
     }
 
-    renderAbsensi(); renderPenilaian(); renderRekapSiswa(); renderForumPesan(); renderRuangDiskusiList(); 
+    renderAbsensi(); 
+    renderPenilaian(); 
+    renderRekapSiswa(); 
+    renderForumPesan();
+    renderRuangDiskusiList(); 
     if(aktifIdTopik && aktifNamaKelompok) renderIsiChatKelompok();
     
-    if(userRole === 'guru') { renderListCBTGuru(); renderRekapNilaiCBT(); }
+    // CALL FITUR BARU CBT
+    if(userRole === 'guru') {
+      renderListCBTGuru();
+      renderRekapNilaiCBT();
+    }
     if(userRole === 'siswa') renderListCBTSiswa();
   }
 
   function dapatkanBase64(file) {
     return new Promise((resolve, reject) => {
       if(!file) resolve("");
-      const reader = new FileReader(); reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
       reader.onload = () => {
         let encoded = reader.result.toString().replace(/^data:(.*,)?/, '');
         if ((encoded.length % 4) > 0) encoded += '='.repeat(4 - (encoded.length % 4));
@@ -1369,19 +1578,26 @@
   }
 
   async function simpanMateriBaru(e) {
-    e.preventDefault(); const btn = document.getElementById('btnUploadMateri'); btn.disabled = true; btn.innerText = "Mengunggah...";
-    const fileEl = document.getElementById('materi_file').files[0]; let base64Data = ""; let nameFile = "";
+    e.preventDefault();
+    const btn = document.getElementById('btnUploadMateri'); btn.disabled = true; btn.innerText = "Mengunggah...";
+    const fileEl = document.getElementById('materi_file').files[0];
+    let base64Data = ""; let nameFile = "";
     if(fileEl) { base64Data = await dapatkanBase64(fileEl); nameFile = fileEl.name; }
 
     const payload = { action: 'tambahMateri', mapel: mapelAktif, judul: document.getElementById('materi_judul').value, deskripsi: document.getElementById('materi_deskripsi').value, fileBase64: base64Data, fileName: nameFile };
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
     .then(res => res.json())
-    .then(data => { btn.disabled = false; btn.innerText = "Bagikan Materi"; document.getElementById('formTambahMateri').reset(); tarikDataDatabase(); });
+    .then(data => { 
+      btn.disabled = false; btn.innerText = "Bagikan Materi"; 
+      document.getElementById('formTambahMateri').reset(); 
+      tarikDataDatabase(); 
+    });
   }
 
   function bukaMateriMapel(code) {
     mapelAktif = code; document.getElementById('txtCodeMapelAktif').innerText = code;
-    document.getElementById('rowDaftarMapel').style.display = 'none'; document.getElementById('areaDetailMateriMapel').style.display = 'block';
+    document.getElementById('rowDaftarMapel').style.display = 'none';
+    document.getElementById('areaDetailMateriMapel').style.display = 'block';
     const mList = document.getElementById('madingMateriList');
     const filteredMateri = localDB.materi.filter(m => m.mapel === code);
     if(filteredMateri.length === 0) {
@@ -1389,69 +1605,139 @@
     } else {
       mList.innerHTML = filteredMateri.map(m => `
         <div class="col-12 mb-3">
-          <div class="card bg-light border-0 shadow-sm"><div class="card-body">
+          <div class="card bg-light border-0 shadow-sm">
+            <div class="card-body">
               <h6 class="fw-bold text-dark mb-1"><i class="fas fa-file-alt text-primary me-2"></i>${m.judul}</h6>
               <p class="small text-secondary mb-2" style="white-space: pre-wrap;">${m.deskripsi || ''}</p>
               ${m.urlFileDrive ? `<a href="${m.urlFileDrive}" target="_blank" class="btn btn-xs btn-outline-secondary fw-bold py-0 text-decoration-none"><i class="fas fa-paperclip"></i> Buka File</a>` : ''}
-          </div></div>
+            </div>
+          </div>
         </div>`).join('');
     }
   }
 
-  function kembaliKeDaftarMapel() { document.getElementById('rowDaftarMapel').style.display = 'flex'; document.getElementById('areaDetailMateriMapel').style.display = 'none'; }
+  function kembaliKeDaftarMapel() { 
+    document.getElementById('rowDaftarMapel').style.display = 'flex'; 
+    document.getElementById('areaDetailMateriMapel').style.display = 'none'; 
+  }
 
   function kirimDataSiswa(e) {
-    e.preventDefault(); const btn = document.getElementById('btnSimpanSiswa'); btn.disabled = true;
-    const payload = { action: 'kirimData', menuAktif: 'Data_Siswa', nis: document.getElementById('siswa_nis').value, nama: document.getElementById('siswa_nama').value, kelas: document.getElementById('siswa_kelas').value, jk: document.getElementById('siswa_jk').value, alamat: document.getElementById('siswa_alamat').value };
+    e.preventDefault(); 
+    const btn = document.getElementById('btnSimpanSiswa'); btn.disabled = true;
+    const payload = { 
+      action: 'kirimData', 
+      menuAktif: 'Data_Siswa', 
+      nis: document.getElementById('siswa_nis').value, 
+      nama: document.getElementById('siswa_nama').value, 
+      kelas: document.getElementById('siswa_kelas').value, 
+      jk: document.getElementById('siswa_jk').value, 
+      alamat: document.getElementById('siswa_alamat').value 
+    };
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
     .then(res => res.json())
-    .then(data => { btn.disabled = false; document.getElementById('formSiswa').reset(); tarikDataDatabase(); });
+    .then(data => { 
+      btn.disabled = false; document.getElementById('formSiswa').reset(); tarikDataDatabase(); 
+    });
   }
 
   function kirimAbsensiMassal(e) {
-    e.preventDefault(); const btn = document.getElementById('btnSimpanAbsenMassal'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    e.preventDefault(); 
+    const btn = document.getElementById('btnSimpanAbsenMassal'); 
+    btn.disabled = true; 
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    
     let dataAbsensi = [];
     document.querySelectorAll('.baris-absen').forEach(baris => {
       const nis = baris.getAttribute('data-nis');
-      dataAbsensi.push({ nis: nis, nama: baris.getAttribute('data-nama'), kelas: baris.getAttribute('data-kelas'), status: document.querySelector(`input[name="status_${nis}"]:checked`).value, keterangan: baris.querySelector('.input-keterangan').value });
+      dataAbsensi.push({ 
+        nis: nis, 
+        nama: baris.getAttribute('data-nama'), 
+        kelas: baris.getAttribute('data-kelas'), 
+        status: document.querySelector(`input[name="status_${nis}"]:checked`).value, 
+        keterangan: baris.querySelector('.input-keterangan').value 
+      });
     });
+    
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimAbsensiMassal', data: dataAbsensi }) })
     .then(res => res.json())
-    .then(data => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini'; if(data.status === 'success') { alert("Presensi kelas berhasil disimpan ke database!"); document.getElementById('formAbsensiMassal').reset(); tarikDataDatabase(); } })
-    .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini'; alert("Koneksi gagal terhubung!"); });
+    .then(data => { 
+      btn.disabled = false; 
+      btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini'; 
+      if(data.status === 'success') { 
+        alert("Presensi kelas berhasil disimpan ke database!"); 
+        document.getElementById('formAbsensiMassal').reset(); 
+        tarikDataDatabase(); 
+      } 
+    })
+    .catch(err => { 
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save me-1"></i> Simpan Absensi Kelas Ini'; 
+      alert("Koneksi gagal terhubung!"); 
+    });
   }
 
   async function simpanQuiz(e) {
     e.preventDefault(); const btn = document.getElementById('btnKirimQuiz'); btn.disabled = true; btn.innerText = "Mengirim...";
-    const fileEl = document.getElementById('quiz_file_soal').files[0]; let base64Data = ""; let nameFile = "";
+    const fileEl = document.getElementById('quiz_file_soal').files[0];
+    let base64Data = ""; let nameFile = "";
     if(fileEl) { base64Data = await dapatkanBase64(fileEl); nameFile = fileEl.name; }
-    const payload = { action: 'simpanQuiz', mapel: document.getElementById('quiz_mapel').value, judul: document.getElementById('quiz_judul').value, deadline: document.getElementById('quiz_deadline').value, fileBase64: base64Data, fileName: nameFile };
+    
+    const payload = { 
+      action: 'simpanQuiz', 
+      mapel: document.getElementById('quiz_mapel').value, 
+      judul: document.getElementById('quiz_judul').value, 
+      deadline: document.getElementById('quiz_deadline').value, 
+      fileBase64: base64Data, fileName: nameFile 
+    };
+    
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
     .then(res => res.json())
-    .then(data => { btn.disabled = false; btn.innerText = "Publikasikan Tugas"; document.getElementById('formBuatQuiz').reset(); tarikDataDatabase(); });
+    .then(data => { 
+      btn.disabled = false; btn.innerText = "Publikasikan Tugas"; 
+      document.getElementById('formBuatQuiz').reset(); 
+      tarikDataDatabase(); 
+    });
   }
 
   function bukaFormPengerjaanTugas(id, judul, mapel) {
     selectedTugasObj = { id: id, judul: judul, mapel: mapel };
-    document.getElementById('txtTugasTerpilih').innerText = judul; document.getElementById('txtMapelTugasTerpilih').innerText = mapel;
-    document.getElementById('panelKirimJawabanSiswa').style.display = 'block'; document.getElementById('panelKirimJawabanSiswa').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('txtTugasTerpilih').innerText = judul; 
+    document.getElementById('txtMapelTugasTerpilih').innerText = mapel;
+    document.getElementById('panelKirimJawabanSiswa').style.display = 'block'; 
+    document.getElementById('panelKirimJawabanSiswa').scrollIntoView({ behavior: 'smooth' });
   }
 
   async function kirimJawabanTugas(e) {
     e.preventDefault(); if(!selectedTugasObj) return;
     const btn = document.getElementById('btnSubmitTugas'); btn.disabled = true; btn.innerText = "Mengunggah Jawaban...";
-    const fileEl = document.getElementById('fileTugas').files[0]; let base64Data = ""; let nameFile = "";
+    const fileEl = document.getElementById('fileTugas').files[0];
+    let base64Data = ""; let nameFile = "";
     if(fileEl) { base64Data = await dapatkanBase64(fileEl); nameFile = fileEl.name; }
-    const payload = { action: 'kirimData', menuAktif: 'Tugas', nis: nisUserAktifLog, nama: userAktif.nama, kelas: userAktif.kelas || 'TKJ', mapel: selectedTugasObj.mapel, judulTugas: selectedTugasObj.judul, fileBase64: base64Data, fileName: nameFile };
+    
+    const payload = { 
+      action: 'kirimData', menuAktif: 'Tugas', 
+      nis: nisUserAktifLog, nama: userAktif.nama, 
+      kelas: userAktif.kelas || 'TKJ', mapel: selectedTugasObj.mapel, 
+      judulTugas: selectedTugasObj.judul, fileBase64: base64Data, fileName: nameFile 
+    };
+    
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
     .then(res => res.json())
-    .then(data => { btn.disabled = false; btn.innerText = "Kirim Hasil Jawaban"; document.getElementById('formKirimTugas').reset(); document.getElementById('panelKirimJawabanSiswa').style.display = 'none'; selectedTugasObj = null; tarikDataDatabase(); alert("Tugas diserahkan!"); });
+    .then(data => { 
+      btn.disabled = false; btn.innerText = "Kirim Hasil Jawaban"; 
+      document.getElementById('formKirimTugas').reset(); 
+      document.getElementById('panelKirimJawabanSiswa').style.display = 'none'; 
+      selectedTugasObj = null; 
+      tarikDataDatabase(); 
+      alert("Tugas diserahkan!"); 
+    });
   }
 
   function beriPenilaianDialog(idSubmis) {
     const nilai = prompt("Masukkan Skor Angka Nilai Siswa (0 - 100):"); if(nilai === null) return;
     const catatan = prompt("Tulis Catatan / Komentar Review Pekerjaan:");
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'beriNilai', idSubmis: idSubmis, nilai: nilai, catatan: catatan }) }).then(res => res.json()).then(data => { tarikDataDatabase(); });
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'beriNilai', idSubmis: idSubmis, nilai: nilai, catatan: catatan }) })
+    .then(res => res.json())
+    .then(data => { tarikDataDatabase(); });
   }
 
   function renderForumPesan() {
@@ -1468,7 +1754,9 @@
   }
 
   function postPesanForum(e) {
-    e.preventDefault(); const input = document.getElementById('msg_forum_text'); const msg = input.value.trim(); if(!msg) return;
+    e.preventDefault(); 
+    const input = document.getElementById('msg_forum_text'); 
+    const msg = input.value.trim(); if(!msg) return;
     const btn = document.getElementById('btnKirimChat'); btn.disabled = true;
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimForum', nama: userAktif.nama, role: userRole, pesan: msg }) })
     .then(res => res.json())
@@ -1477,39 +1765,61 @@
 
   function hapusTugas(idTugas, judulTugas) {
     if(confirm(`YAKIN INGIN MENGHAPUS TUGAS: "${judulTugas}"?`)) {
-      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'hapusQuiz', id: idTugas }) }).then(res => res.json()).then(data => { alert("Tugas dihapus!"); tarikDataDatabase(); }).catch(err => alert("Gagal menghapus tugas."));
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'hapusQuiz', id: idTugas }) })
+      .then(res => res.json())
+      .then(data => { alert("Tugas dihapus!"); tarikDataDatabase(); })
+      .catch(err => alert("Gagal menghapus tugas."));
     }
   }
 
   function perpanjangDeadline(idTugas, judulTugas) {
     const newDeadline = prompt(`PERPANJANG DEADLINE UNTUK: "${judulTugas}"\n\nMasukkan format waktu (Contoh: 2024-12-31T23:59):`, "2024-12-31T23:59");
     if(newDeadline != null && newDeadline !== "") {
-      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'perpanjangQuiz', id: idTugas, deadline: newDeadline }) }).then(res => res.json()).then(data => { alert("Deadline diperpanjang!"); tarikDataDatabase(); }).catch(err => alert("Gagal perpanjang deadline."));
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'perpanjangQuiz', id: idTugas, deadline: newDeadline }) })
+      .then(res => res.json())
+      .then(data => { alert("Deadline diperpanjang!"); tarikDataDatabase(); })
+      .catch(err => alert("Gagal perpanjang deadline."));
     }
   }
 
   function ingatkanTugasWA(judulTugas, mapel, deadline) {
     if(confirm(`Kirim Broadcast WhatsApp pengingat tugas "${judulTugas}" ke SELURUH SISWA TKJ?`)) {
-      const notifArea = document.createElement('div'); notifArea.innerHTML = `<div style="position:fixed; top:20px; right:20px; z-index:9999;" class="alert alert-info border-0 shadow"><i class="fas fa-spinner fa-spin me-2"></i>Mengirim Pesan WA...</div>`; document.body.appendChild(notifArea);
+      const notifArea = document.createElement('div'); 
+      notifArea.innerHTML = `<div style="position:fixed; top:20px; right:20px; z-index:9999;" class="alert alert-info border-0 shadow"><i class="fas fa-spinner fa-spin me-2"></i>Mengirim Pesan WA...</div>`; 
+      document.body.appendChild(notifArea);
+      
       fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'ingatkanTugasWA', judul: judulTugas, mapel: mapel, deadline: deadline }) })
       .then(res => res.json())
-      .then(data => { document.body.removeChild(notifArea); if(data.status === 'success') { alert("Broadcast WA sukses!"); } else { alert("Gagal memproses WA."); } })
+      .then(data => { 
+        document.body.removeChild(notifArea); 
+        if(data.status === 'success') { alert("Broadcast WA sukses!"); } else { alert("Gagal memproses WA."); } 
+      })
       .catch(err => { document.body.removeChild(notifArea); alert("Gagal menghubungi server Apps Script."); });
     }
   }
 
   // =========================================================================
-  // LOGIKA RUANG KELOMPOK (STUDI KASUS)
+  // LOGIKA RUANG KELOMPOK (STUDI KASUS) - TETAP UTUH
   // =========================================================================
   function buatTopikDiskusi(e) {
     e.preventDefault(); const btn = document.getElementById('btnBuatTopik'); btn.disabled = true; btn.innerText = "Memproses...";
     const payload = { action: 'buatTopikDiskusi', kelas: document.getElementById('topik_kelas').value, judul: document.getElementById('topik_judul').value, deskripsi: document.getElementById('topik_deskripsi').value, jmlKelompok: document.getElementById('topik_jml_kelompok').value, maksAnggota: document.getElementById('topik_maks_anggota').value, deadline: document.getElementById('topik_deadline').value };
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(res => res.json()).then(data => { btn.disabled = false; btn.innerText = "Publikasikan Ruang Diskusi"; document.getElementById('formBuatTopikDiskusi').reset(); tarikDataDatabase(); alert("Ruang Diskusi berhasil dibuat untuk kelas " + payload.kelas); }).catch(err => { btn.disabled = false; alert("Gagal koneksi"); });
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
+    .then(res => res.json())
+    .then(data => { 
+      btn.disabled = false; btn.innerText = "Publikasikan Ruang Diskusi"; 
+      document.getElementById('formBuatTopikDiskusi').reset(); 
+      tarikDataDatabase(); 
+      alert("Ruang Diskusi berhasil dibuat untuk kelas " + payload.kelas); 
+    })
+    .catch(err => { btn.disabled = false; alert("Gagal koneksi"); });
   }
 
   function renderRuangDiskusiList() {
     const listBox = document.getElementById('listTopikDiskusiCard'); if(!listBox) return;
-    let filterTopik = localDB.diskusiTopik; if(userRole === 'siswa') filterTopik = localDB.diskusiTopik.filter(t => t.kelas === userAktif.kelas);
+    let filterTopik = localDB.diskusiTopik;
+    if(userRole === 'siswa') filterTopik = localDB.diskusiTopik.filter(t => t.kelas === userAktif.kelas);
+
     if(filterTopik.length === 0) { listBox.innerHTML = `<div class="col-12 text-center py-4 text-muted"><i class="fas fa-box-open fs-2 mb-2 d-block"></i> Belum ada Studi Kasus aktif.</div>`; return; }
     
     listBox.innerHTML = filterTopik.slice().reverse().map(t => {
@@ -1526,12 +1836,14 @@
             <hr class="my-2">
             <div class="d-flex justify-content-between align-items-center">
               <span class="small fw-semibold text-muted"><i class="fas fa-users"></i> ${t.jmlKelompok} Kelompok</span>
-              <button class="btn btn-sm ${isExpired ? 'btn-secondary' : 'btn-info text-white'} fw-bold" onclick="bukaStudiKasus('${t.id}')">Masuk Ruang <i class="fas fa-arrow-right"></i></button>
+              <button class="btn btn-sm ${isExpired ? 'btn-secondary' : 'btn-info text-white'} fw-bold" onclick="bukaStudiKasus('${t.id}')">
+                Masuk Ruang <i class="fas fa-arrow-right"></i>
+              </button>
             </div>
           </div>
         </div>
-      </div>`
-    }).join('');
+      </div>
+    `}).join('');
   }
 
   function bukaStudiKasus(idTopik) {
@@ -1565,38 +1877,69 @@
     gridBtn.innerHTML = btns;
   }
 
-  function kembaliKeDaftarTopik() { aktifIdTopik = null; aktifNamaKelompok = null; document.getElementById('areaChatKelompok').style.display = 'none'; document.getElementById('areaPilihKelompok').style.display = 'none'; document.getElementById('areaDaftarTopikDiskusi').style.display = 'block'; }
+  function kembaliKeDaftarTopik() { 
+    aktifIdTopik = null; aktifNamaKelompok = null; 
+    document.getElementById('areaChatKelompok').style.display = 'none'; 
+    document.getElementById('areaPilihKelompok').style.display = 'none'; 
+    document.getElementById('areaDaftarTopikDiskusi').style.display = 'block'; 
+  }
 
   function gabungKelompokBaru(idTopik, namaKelompok) {
     if(confirm(`Yakin ingin bergabung dengan ${namaKelompok}?`)) {
       document.getElementById('gridTombolKelompok').innerHTML = `<div class="w-100 text-center py-5"><i class="fas fa-spinner fa-spin fs-2 text-primary mb-3 d-block"></i>Mendaftarkan akun...</div>`;
       fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'joinKelompok', idTopik: idTopik, kelompok: namaKelompok, nis: nisUserAktifLog, nama: userAktif.nama })})
       .then(res => res.json())
-      .then(data => { if(data.status === 'success') { localDB.diskusiAnggota.push({ idTopik: idTopik, kelompok: namaKelompok, nis: nisUserAktifLog, nama: userAktif.nama }); masukKelompokTerdaftar(idTopik, namaKelompok); } else { alert(data.message); bukaStudiKasus(idTopik); } })
+      .then(data => {
+        if(data.status === 'success') { 
+          localDB.diskusiAnggota.push({ idTopik: idTopik, kelompok: namaKelompok, nis: nisUserAktifLog, nama: userAktif.nama }); 
+          masukKelompokTerdaftar(idTopik, namaKelompok); 
+        } else { 
+          alert(data.message); bukaStudiKasus(idTopik); 
+        }
+      })
       .catch(err => { alert("Gagal koneksi."); bukaStudiKasus(idTopik); });
     }
   }
 
   function masukKelompokTerdaftar(idTopik, namaKelompok) {
-    aktifIdTopik = idTopik; aktifNamaKelompok = namaKelompok; document.getElementById('areaPilihKelompok').style.display = 'none'; document.getElementById('areaChatKelompok').style.display = 'block'; document.getElementById('labelNamaKelompok').innerText = namaKelompok; document.getElementById('inputKesimpulanKelompok').value = ''; document.getElementById('statusKesimpulanBox').style.display = 'none'; renderIsiChatKelompok();
+    aktifIdTopik = idTopik; aktifNamaKelompok = namaKelompok; 
+    document.getElementById('areaPilihKelompok').style.display = 'none'; 
+    document.getElementById('areaChatKelompok').style.display = 'block'; 
+    document.getElementById('labelNamaKelompok').innerText = namaKelompok; 
+    document.getElementById('inputKesimpulanKelompok').value = ''; 
+    document.getElementById('statusKesimpulanBox').style.display = 'none'; 
+    renderIsiChatKelompok();
   }
 
-  function kembaliKePilihKelompok() { aktifIdTopik = null; aktifNamaKelompok = null; document.getElementById('areaChatKelompok').style.display = 'none'; document.getElementById('areaPilihKelompok').style.display = 'block'; }
+  function kembaliKePilihKelompok() { 
+    aktifIdTopik = null; aktifNamaKelompok = null; 
+    document.getElementById('areaChatKelompok').style.display = 'none'; 
+    document.getElementById('areaPilihKelompok').style.display = 'block'; 
+  }
 
   function renderIsiChatKelompok() {
     if(!aktifIdTopik || !aktifNamaKelompok) return;
-    const topik = localDB.diskusiTopik.find(t => t.id === aktifIdTopik); const box = document.getElementById('kotakChatKelompok');
-    const listUI = document.getElementById('listAnggotaKelompokUI'); const members = localDB.diskusiAnggota.filter(a => a.idTopik === aktifIdTopik && a.kelompok === aktifNamaKelompok);
+    const topik = localDB.diskusiTopik.find(t => t.id === aktifIdTopik); 
+    const box = document.getElementById('kotakChatKelompok');
+    
+    const listUI = document.getElementById('listAnggotaKelompokUI'); 
+    const members = localDB.diskusiAnggota.filter(a => a.idTopik === aktifIdTopik && a.kelompok === aktifNamaKelompok);
     if(members.length === 0) listUI.innerHTML = `<li class="list-group-item text-muted fst-italic py-1 px-0 border-0">Belum ada anggota.</li>`;
     else listUI.innerHTML = members.map(m => `<li class="list-group-item py-1 px-0 border-0 text-dark fw-semibold"><i class="fas fa-user-check text-success me-2"></i>${m.nama}</li>`).join('');
 
     const isExpired = new Date(topik.batasWaktu) < new Date();
-    const inputChat = document.getElementById('msg_kelompok_text'); const btnChat = document.getElementById('btnKirimChatKel'); const inputKesimpulan = document.getElementById('inputKesimpulanKelompok'); const btnKesimpulan = document.getElementById('btnKirimKesimpulan'); const alertLock = document.getElementById('alertDiskusiTerkunci');
+    const inputChat = document.getElementById('msg_kelompok_text'); 
+    const btnChat = document.getElementById('btnKirimChatKel'); 
+    const inputKesimpulan = document.getElementById('inputKesimpulanKelompok'); 
+    const btnKesimpulan = document.getElementById('btnKirimKesimpulan'); 
+    const alertLock = document.getElementById('alertDiskusiTerkunci');
 
     if (isExpired) { 
-      alertLock.style.display = 'block'; inputChat.disabled = true; inputChat.placeholder = "Waktu diskusi telah berakhir."; btnChat.disabled = true; btnKesimpulan.disabled = true; inputKesimpulan.setAttribute('readonly', true); 
+      alertLock.style.display = 'block'; inputChat.disabled = true; inputChat.placeholder = "Waktu diskusi telah berakhir."; 
+      btnChat.disabled = true; btnKesimpulan.disabled = true; inputKesimpulan.setAttribute('readonly', true); 
     } else { 
-      alertLock.style.display = 'none'; inputChat.disabled = false; inputChat.placeholder = "Ketik diskusi/pendapatmu di sini..."; btnChat.disabled = false; btnKesimpulan.disabled = false; if(userRole !== 'guru') inputKesimpulan.removeAttribute('readonly'); 
+      alertLock.style.display = 'none'; inputChat.disabled = false; inputChat.placeholder = "Ketik diskusi/pendapatmu di sini..."; 
+      btnChat.disabled = false; btnKesimpulan.disabled = false; if(userRole !== 'guru') inputKesimpulan.removeAttribute('readonly'); 
     }
 
     const pesanGrupIni = localDB.diskusiPesan.filter(p => p.idTopik === aktifIdTopik && p.kelompok === aktifNamaKelompok);
@@ -1604,101 +1947,209 @@
       box.innerHTML = `<div class="text-center text-muted my-auto pt-5"><i class="fas fa-comments fs-2 d-block mb-2 text-black-50"></i>Belum ada obrolan di kelompok ini. Mulailah berdiskusi!</div>`; 
     } else {
       box.innerHTML = pesanGrupIni.map(p => {
-        let isMe = (p.nama === userAktif.nama); let msgStyle = isMe ? 'align-self-end ms-auto bg-success bg-opacity-10' : (p.role === 'guru' ? 'bg-danger bg-opacity-10 border-start border-danger border-4' : 'bg-white border'); let nameTag = isMe ? 'Anda' : p.nama; if(p.role === 'guru') nameTag += ' (GURU)';
+        let isMe = (p.nama === userAktif.nama); 
+        let msgStyle = isMe ? 'align-self-end ms-auto bg-success bg-opacity-10' : (p.role === 'guru' ? 'bg-danger bg-opacity-10 border-start border-danger border-4' : 'bg-white border'); 
+        let nameTag = isMe ? 'Anda' : p.nama; if(p.role === 'guru') nameTag += ' (GURU)';
         return `<div class="mb-2 p-2 rounded shadow-sm w-75 ${msgStyle}"><div class="fw-bold mb-1" style="font-size: 0.8rem; color: ${isMe ? '#198754' : '#333'}">${nameTag}</div><div class="text-dark" style="font-size: 0.95rem;">${p.pesan}</div></div>`;
       }).join('');
       box.scrollTop = box.scrollHeight;
     }
 
-    const hasilGrupIni = localDB.diskusiHasil.filter(h => h.idTopik === aktifIdTopik && h.kelompok === aktifNamaKelompok); const statusBox = document.getElementById('statusKesimpulanBox');
+    const hasilGrupIni = localDB.diskusiHasil.filter(h => h.idTopik === aktifIdTopik && h.kelompok === aktifNamaKelompok); 
+    const statusBox = document.getElementById('statusKesimpulanBox');
     if(hasilGrupIni.length > 0) {
-      const lastHasil = hasilGrupIni[hasilGrupIni.length - 1]; inputKesimpulan.value = lastHasil.kesimpulan; statusBox.style.display = 'block'; statusBox.innerHTML = `<span class="badge bg-success"><i class="fas fa-check"></i> Disubmit oleh: ${lastHasil.nama}</span>`;
+      const lastHasil = hasilGrupIni[hasilGrupIni.length - 1]; 
+      inputKesimpulan.value = lastHasil.kesimpulan; statusBox.style.display = 'block'; 
+      statusBox.innerHTML = `<span class="badge bg-success"><i class="fas fa-check"></i> Disubmit oleh: ${lastHasil.nama}</span>`;
       if(userRole === 'guru' || isExpired) inputKesimpulan.setAttribute('readonly', true);
     } else {
-      inputKesimpulan.value = ''; statusBox.style.display = 'none'; if(userRole !== 'guru' && !isExpired) inputKesimpulan.removeAttribute('readonly');
+      inputKesimpulan.value = ''; statusBox.style.display = 'none'; 
+      if(userRole !== 'guru' && !isExpired) inputKesimpulan.removeAttribute('readonly');
     }
   }
 
   function kirimPesanKelompok(e) {
     e.preventDefault(); if(!aktifIdTopik || !aktifNamaKelompok) return;
-    const inputMsg = document.getElementById('msg_kelompok_text'); const msg = inputMsg.value.trim(); if(!msg) return; const btn = document.getElementById('btnKirimChatKel'); btn.disabled = true;
+    const inputMsg = document.getElementById('msg_kelompok_text'); 
+    const msg = inputMsg.value.trim(); if(!msg) return; 
+    const btn = document.getElementById('btnKirimChatKel'); btn.disabled = true;
+    
     localDB.diskusiPesan.push({ idTopik: aktifIdTopik, kelompok: aktifNamaKelompok, nis: nisUserAktifLog, nama: userAktif.nama, role: userRole, pesan: msg, waktu: new Date().toISOString() });
     renderIsiChatKelompok(); inputMsg.value = '';
+    
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimPesanKelompok', idTopik: aktifIdTopik, kelompok: aktifNamaKelompok, nis: nisUserAktifLog, nama: userAktif.nama, role: userRole, pesan: msg })})
-    .then(res => res.json()).then(data => { btn.disabled = false; tarikDataDatabase(); }).catch(err => { btn.disabled = false; });
+    .then(res => res.json())
+    .then(data => { btn.disabled = false; tarikDataDatabase(); })
+    .catch(err => { btn.disabled = false; });
   }
 
   function kirimKesimpulanAkhir(e) {
-    e.preventDefault(); if(userRole === 'guru') { alert("Hanya siswa yang berhak mengirim kesimpulan diskusi."); return; } if(!aktifIdTopik || !aktifNamaKelompok) return;
-    const textarea = document.getElementById('inputKesimpulanKelompok'); const kesimpulanText = textarea.value.trim(); if(!kesimpulanText) { alert("Kesimpulan tidak boleh kosong!"); return; }
+    e.preventDefault(); 
+    if(userRole === 'guru') { alert("Hanya siswa yang berhak mengirim kesimpulan diskusi."); return; }
+    if(!aktifIdTopik || !aktifNamaKelompok) return;
+    
+    const textarea = document.getElementById('inputKesimpulanKelompok'); 
+    const kesimpulanText = textarea.value.trim(); if(!kesimpulanText) { alert("Kesimpulan tidak boleh kosong!"); return; }
+    
     const btn = document.getElementById('btnKirimKesimpulan'); btn.disabled = true; btn.innerText = "Menyimpan...";
+    
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'kirimKesimpulan', idTopik: aktifIdTopik, kelompok: aktifNamaKelompok, kesimpulan: kesimpulanText, nama: userAktif.nama })})
-    .then(res => res.json()).then(data => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-square"></i> Kirim / Update Kesimpulan'; alert("Kesimpulan Kelompok berhasil disimpan/diperbarui!"); tarikDataDatabase(); })
+    .then(res => res.json())
+    .then(data => { 
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-square"></i> Kirim / Update Kesimpulan'; 
+      alert("Kesimpulan Kelompok berhasil disimpan/diperbarui!"); tarikDataDatabase(); 
+    })
     .catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check-square"></i> Coba Lagi'; });
   }
+
 
   // =========================================================================
   // LOGIKA BARU: CBT (KUIS INTERAKTIF) MULTIPLE SOAL & REKAP (GURU)
   // =========================================================================
+  
   function buatTopikCBT(e) {
-    e.preventDefault(); const b = document.getElementById('btnBuatCBT'); b.disabled = true; b.innerText = "Menyimpan...";
-    const p = { action: 'buatTopikCBT', mapel: document.getElementById('cbt_mapel').value, judul: document.getElementById('cbt_judul').value, durasi: document.getElementById('cbt_durasi').value, deadline: document.getElementById('cbt_deadline').value, kelas: document.getElementById('cbt_kelas').value };
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(p) }).then(r => r.json()).then(d => { b.disabled = false; b.innerHTML = '<i class="fas fa-save"></i> Simpan Header Kuis CBT'; document.getElementById('formBuatTopikCBT').reset(); alert("Header Kuis Berhasil Dibuat. Status masih DRAFT. Silakan tambah soal."); tarikDataDatabase(); });
+    e.preventDefault(); 
+    const b = document.getElementById('btnBuatCBT'); 
+    b.disabled = true; b.innerText = "Menyimpan...";
+    const p = { 
+      action: 'buatTopikCBT', mapel: document.getElementById('cbt_mapel').value, 
+      judul: document.getElementById('cbt_judul').value, durasi: document.getElementById('cbt_durasi').value, 
+      deadline: document.getElementById('cbt_deadline').value, kelas: document.getElementById('cbt_kelas').value 
+    };
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(p) })
+    .then(r => r.json())
+    .then(d => { 
+      b.disabled = false; b.innerHTML = '<i class="fas fa-save"></i> Simpan Header Kuis CBT'; 
+      document.getElementById('formBuatTopikCBT').reset(); 
+      alert("Header Kuis Berhasil Dibuat. Status masih DRAFT. Silakan tambah soal."); 
+      tarikDataDatabase(); 
+    });
   }
 
   function renderListCBTGuru() {
     const table = document.getElementById('tabelListCBTGuru'); if(!table) return;
     if(localDB.cbtTopik.length === 0) { table.innerHTML = `<tr><td colspan="4" class="text-muted py-4">Belum ada Kuis dibuat.</td></tr>`; return; }
+    
+    // Sortir berdasarkan Kelas lalu Mapel
     let sortedCBT = localDB.cbtTopik.slice().sort((a,b) => {
-        let cmpKelas = (a.kelas || "").localeCompare(b.kelas || ""); if(cmpKelas === 0) return (a.mapel || "").localeCompare(b.mapel || ""); return cmpKelas;
+        let cmpKelas = (a.kelas || "").localeCompare(b.kelas || "");
+        if(cmpKelas === 0) return (a.mapel || "").localeCompare(b.mapel || "");
+        return cmpKelas;
     });
-    let groupedHtml = ""; let lastHeader = "";
+
+    let groupedHtml = "";
+    let lastHeader = "";
+
     sortedCBT.forEach(t => {
       let currentHeader = `${t.kelas || "Umum"} - ${t.mapel}`;
-      if(currentHeader !== lastHeader) { groupedHtml += `<tr class="table-secondary border-dark border-opacity-25"><td colspan="4" class="fw-bold text-start text-dark"><i class="fas fa-folder-open text-primary me-2"></i> KELAS: ${t.kelas || "Umum"} | MAPEL: ${t.mapel}</td></tr>`; lastHeader = currentHeader; }
+      if(currentHeader !== lastHeader) {
+          groupedHtml += `<tr class="table-secondary border-dark border-opacity-25"><td colspan="4" class="fw-bold text-start text-dark"><i class="fas fa-folder-open text-primary me-2"></i> KELAS: ${t.kelas || "Umum"} | MAPEL: ${t.mapel}</td></tr>`;
+          lastHeader = currentHeader;
+      }
+
       let jmlSoal = localDB.cbtSoal.filter(s => s.idTopik === t.id).length;
       let badgeStatus = t.status === 'Published' ? `<span class="badge bg-success shadow-sm mt-1">Published</span>` : `<span class="badge bg-warning text-dark shadow-sm mt-1">Draft</span>`;
       let publishBtn = t.status !== 'Published' ? `<button class="btn btn-sm btn-primary fw-bold py-0 m-1" onclick="publishKuisCBT('${t.id}')" title="Tampilkan soal ke siswa"><i class="fas fa-upload"></i> Publish</button>` : '';
+
       groupedHtml += `<tr>
-        <td class="text-start fw-semibold text-dark">${t.judul}<br>${badgeStatus}</td><td><i class="fas fa-stopwatch text-warning"></i> ${t.durasi} Min</td><td><span class="badge bg-dark">${jmlSoal} Soal</span></td>
+        <td class="text-start fw-semibold text-dark">${t.judul}<br>${badgeStatus}</td>
+        <td><i class="fas fa-stopwatch text-warning"></i> ${t.durasi} Min</td>
+        <td><span class="badge bg-dark">${jmlSoal} Soal</span></td>
         <td>
           ${publishBtn}
-          <button class="btn btn-sm btn-success fw-bold py-0 m-1" onclick="bukaPanelTambahSoal('${t.id}', '${t.judul}')" title="Tambah Soal"><i class="fas fa-plus"></i> Soal</button>
+          <button class="btn btn-sm btn-success fw-bold py-0 m-1" onclick="bukaPanelTambahSoal('${t.id}', '${t.judul.replace(/'/g, "\\'")}')" title="Tambah Soal"><i class="fas fa-plus"></i> Soal</button>
           <button class="btn btn-sm btn-info text-white fw-bold py-0 m-1" onclick="bukaModalEditCBT('${t.id}')" title="Edit Pengaturan Kuis"><i class="fas fa-edit"></i></button>
-          <button class="btn btn-sm btn-danger py-0 m-1" onclick="hapusKuisCBT('${t.id}', '${t.judul}')" title="Hapus Kuis"><i class="fas fa-trash"></i></button>
+          <button class="btn btn-sm btn-danger py-0 m-1" onclick="hapusKuisCBT('${t.id}', '${t.judul.replace(/'/g, "\\'")}')" title="Hapus Kuis"><i class="fas fa-trash"></i></button>
         </td>
       </tr>`;
     });
     table.innerHTML = groupedHtml;
   }
 
+  // --- LOGIKA EDIT KUIS CBT ---
   let modalEditCBTInstance = null;
+
   function bukaModalEditCBT(idTopik) {
-    const topik = localDB.cbtTopik.find(t => t.id === idTopik); if (!topik) return;
-    document.getElementById('edit_cbt_id').value = topik.id; document.getElementById('edit_cbt_kelas').value = topik.kelas || ""; document.getElementById('edit_cbt_mapel').value = topik.mapel; document.getElementById('edit_cbt_judul').value = topik.judul; document.getElementById('edit_cbt_durasi').value = topik.durasi;
+    const topik = localDB.cbtTopik.find(t => t.id === idTopik);
+    if (!topik) return;
+    
+    document.getElementById('edit_cbt_id').value = topik.id;
+    document.getElementById('edit_cbt_kelas').value = topik.kelas || "";
+    document.getElementById('edit_cbt_mapel').value = topik.mapel;
+    document.getElementById('edit_cbt_judul').value = topik.judul;
+    document.getElementById('edit_cbt_durasi').value = topik.durasi;
+    
     if (topik.deadline) {
-      let d = new Date(topik.deadline); let month = ("0" + (d.getMonth() + 1)).slice(-2); let day = ("0" + d.getDate()).slice(-2); let hours = ("0" + d.getHours()).slice(-2); let minutes = ("0" + d.getMinutes()).slice(-2); let localDatetimeString = d.getFullYear() + "-" + month + "-" + day + "T" + hours + ":" + minutes;
+      let d = new Date(topik.deadline);
+      let month = ("0" + (d.getMonth() + 1)).slice(-2);
+      let day = ("0" + d.getDate()).slice(-2);
+      let hours = ("0" + d.getHours()).slice(-2);
+      let minutes = ("0" + d.getMinutes()).slice(-2);
+      let localDatetimeString = d.getFullYear() + "-" + month + "-" + day + "T" + hours + ":" + minutes;
       document.getElementById('edit_cbt_deadline').value = localDatetimeString;
-    } else { document.getElementById('edit_cbt_deadline').value = ""; }
-    if (!modalEditCBTInstance) { modalEditCBTInstance = new bootstrap.Modal(document.getElementById('modalEditCBT')); }
+    } else {
+      document.getElementById('edit_cbt_deadline').value = "";
+    }
+    
+    if (!modalEditCBTInstance) {
+      modalEditCBTInstance = new bootstrap.Modal(document.getElementById('modalEditCBT'));
+    }
     modalEditCBTInstance.show();
   }
 
   function simpanEditCBT(e) {
-    e.preventDefault(); const btn = document.getElementById('btnSimpanEditCBT'); btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-    const payload = { action: 'editTopikCBT', idTopik: document.getElementById('edit_cbt_id').value, kelas: document.getElementById('edit_cbt_kelas').value, mapel: document.getElementById('edit_cbt_mapel').value, judul: document.getElementById('edit_cbt_judul').value, durasi: document.getElementById('edit_cbt_durasi').value, deadline: document.getElementById('edit_cbt_deadline').value };
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) }).then(r => r.json()).then(d => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan'; if(modalEditCBTInstance) modalEditCBTInstance.hide(); alert(d.message); tarikDataDatabase(); }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Coba Lagi'; alert("Gagal terhubung ke server!"); });
+    e.preventDefault();
+    const btn = document.getElementById('btnSimpanEditCBT');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    
+    const payload = {
+      action: 'editTopikCBT',
+      idTopik: document.getElementById('edit_cbt_id').value,
+      kelas: document.getElementById('edit_cbt_kelas').value,
+      mapel: document.getElementById('edit_cbt_mapel').value,
+      judul: document.getElementById('edit_cbt_judul').value,
+      durasi: document.getElementById('edit_cbt_durasi').value,
+      deadline: document.getElementById('edit_cbt_deadline').value
+    };
+
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payload) })
+    .then(r => r.json())
+    .then(d => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Simpan Perubahan';
+      if(modalEditCBTInstance) modalEditCBTInstance.hide();
+      alert(d.message);
+      tarikDataDatabase();
+    })
+    .catch(err => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-save"></i> Coba Lagi';
+      alert("Gagal terhubung ke server!");
+    });
   }
 
-  let aktifEditIdCBT = null; let cbtSoalNumberCount = 0;
-  function bukaPanelTambahSoal(id, judul) { aktifEditIdCBT = id; document.getElementById('panelTambahSoalCBT').style.display = 'block'; document.getElementById('labelTargetKuisCBT').innerText = judul; document.getElementById('containerFormSoalBulk').innerHTML = ""; cbtSoalNumberCount = 0; tambahFormSoalBaru(); document.getElementById('panelTambahSoalCBT').scrollIntoView({ behavior: 'smooth' }); }
+  // --- LOGIKA FORM BULK SOAL CBT ---
+  let aktifEditIdCBT = null;
+  let cbtSoalNumberCount = 0;
+
+  function bukaPanelTambahSoal(id, judul) {
+    aktifEditIdCBT = id;
+    document.getElementById('panelTambahSoalCBT').style.display = 'block';
+    document.getElementById('labelTargetKuisCBT').innerText = judul;
+    document.getElementById('containerFormSoalBulk').innerHTML = ""; 
+    cbtSoalNumberCount = 0;
+    tambahFormSoalBaru(); 
+    document.getElementById('panelTambahSoalCBT').scrollIntoView({ behavior: 'smooth' });
+  }
+
   function tutupPanelSoalCBT() { document.getElementById('panelTambahSoalCBT').style.display = 'none'; aktifEditIdCBT = null; }
-  
+
   function tambahFormSoalBaru() {
     cbtSoalNumberCount++;
     const formHtml = `
       <div class="card mb-3 soal-item shadow-sm border-0 border-start border-primary border-4" id="boxSoalBulk_${cbtSoalNumberCount}">
-        <div class="card-header bg-light d-flex justify-content-between py-2"><span class="fw-bold text-primary">Soal #${cbtSoalNumberCount}</span><button type="button" class="btn btn-sm btn-outline-danger py-0" onclick="document.getElementById('boxSoalBulk_${cbtSoalNumberCount}').remove()"><i class="fas fa-times"></i> Hapus</button></div>
+        <div class="card-header bg-light d-flex justify-content-between py-2">
+          <span class="fw-bold text-primary">Soal #${cbtSoalNumberCount}</span>
+          <button type="button" class="btn btn-sm btn-outline-danger py-0" onclick="document.getElementById('boxSoalBulk_${cbtSoalNumberCount}').remove()"><i class="fas fa-times"></i> Hapus</button>
+        </div>
         <div class="card-body">
           <textarea class="form-control mb-2 in-tanya" rows="2" placeholder="Tuliskan pertanyaan di sini..." required></textarea>
           <div class="input-group input-group-sm mb-2"><span class="input-group-text bg-danger text-white fw-bold">A</span><input type="text" class="form-control in-a" required></div>
@@ -1707,47 +2158,104 @@
           <div class="input-group input-group-sm mb-2"><span class="input-group-text bg-success text-white fw-bold">D</span><input type="text" class="form-control in-d" required></div>
           <select class="form-select form-select-sm mt-3 in-kunci" required><option value="" disabled selected>-- Tentukan Kunci Jawaban --</option><option value="A">Jawaban A</option><option value="B">Jawaban B</option><option value="C">Jawaban C</option><option value="D">Jawaban D</option></select>
         </div>
-      </div>`;
+      </div>
+    `;
     document.getElementById('containerFormSoalBulk').insertAdjacentHTML('beforeend', formHtml);
   }
 
   function simpanSoalCBTBulk(e) {
     e.preventDefault(); if(!aktifEditIdCBT) return;
-    let arrayDataSoal = []; const itemSoals = document.querySelectorAll('.soal-item');
+    
+    let arrayDataSoal = [];
+    const itemSoals = document.querySelectorAll('.soal-item');
     if(itemSoals.length === 0) { alert("Tambahkan minimal 1 soal terlebih dahulu!"); return; }
-    itemSoals.forEach(box => { arrayDataSoal.push({ pertanyaan: box.querySelector('.in-tanya').value, opsiA: box.querySelector('.in-a').value, opsiB: box.querySelector('.in-b').value, opsiC: box.querySelector('.in-c').value, opsiD: box.querySelector('.in-d').value, kunci: box.querySelector('.in-kunci').value }); });
+
+    itemSoals.forEach(box => {
+      arrayDataSoal.push({
+        pertanyaan: box.querySelector('.in-tanya').value,
+        opsiA: box.querySelector('.in-a').value,
+        opsiB: box.querySelector('.in-b').value,
+        opsiC: box.querySelector('.in-c').value,
+        opsiD: box.querySelector('.in-d').value,
+        kunci: box.querySelector('.in-kunci').value
+      });
+    });
+
     const btn = document.getElementById('btnSimpanSoalBulk'); btn.disabled = true; btn.innerText = "Mengirim...";
     const p = { action: 'simpanSoalCBTBulk', idTopik: aktifEditIdCBT, soalArray: arrayDataSoal };
-    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(p) }).then(r => r.json()).then(d => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Simpan Semua Soal'; alert(d.message); tutupPanelSoalCBT(); tarikDataDatabase(); }).catch(err => { btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Coba Lagi'; alert("Gagal koneksi server!"); });
+    
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(p) })
+    .then(r => r.json())
+    .then(d => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Simpan Semua Soal ke Database';
+      alert(d.message); 
+      tutupPanelSoalCBT(); 
+      tarikDataDatabase();
+    })
+    .catch(err => {
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Coba Lagi';
+      alert("Gagal koneksi server!");
+    });
   }
 
-  function publishKuisCBT(id) { if(confirm("Yakin ingin mempublikasikan Kuis ini?\nSiswa di kelas terkait akan bisa melihat dan mengerjakannya mulai sekarang.")) { fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'publishCBT', idTopik: id }) }).then(r => r.json()).then(d => { alert(d.message); tarikDataDatabase(); }); } }
-  function hapusKuisCBT(id, judul) { if(confirm(`YAKIN HAPUS SELURUH KUIS: "${judul}"?\n(Soal dan nilai yang sudah ada mungkin tidak dapat diakses lagi)`)) { fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'hapusCBT', idTopik: id }) }).then(r => r.json()).then(d => { alert(d.message); tarikDataDatabase(); }); } }
+  function publishKuisCBT(id) {
+    if(confirm("Yakin ingin mempublikasikan Kuis ini?\nSiswa di kelas terkait akan bisa melihat dan mengerjakannya mulai sekarang.")) {
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'publishCBT', idTopik: id }) })
+      .then(r => r.json())
+      .then(d => { alert(d.message); tarikDataDatabase(); });
+    }
+  }
 
-  // --- REKAP CBT GURU DENGAN TOMBOL PDF DETAIL ---
+  function hapusKuisCBT(id, judul) {
+    if(confirm(`YAKIN HAPUS SELURUH KUIS: "${judul}"?\n(Soal dan nilai yang sudah ada mungkin tidak dapat diakses lagi)`)) {
+      fetch(scriptUrl, { method: 'POST', body: JSON.stringify({ action: 'hapusCBT', idTopik: id }) })
+      .then(r => r.json())
+      .then(d => { alert(d.message); tarikDataDatabase(); });
+    }
+  }
+
+  // --- REKAP CBT (RAPIH, KELOMPOK MAPEL) ---
   function renderRekapNilaiCBT() {
-    const fKelas = document.getElementById('filterRekapKelasCBT').value; const fMapel = document.getElementById('filterRekapMapelCBT').value; const area = document.getElementById('areaTabelRekapNilaiCBT');
+    const fKelas = document.getElementById('filterRekapKelasCBT').value;
+    const fMapel = document.getElementById('filterRekapMapelCBT').value;
+    const area = document.getElementById('areaTabelRekapNilaiCBT');
+
+    // Filter Topik CBT
     let filteredKuis = localDB.cbtTopik;
-    if(fKelas !== "") filteredKuis = filteredKuis.filter(t => t.kelas === fKelas); if(fMapel !== "") filteredKuis = filteredKuis.filter(t => t.mapel === fMapel);
-    if(filteredKuis.length === 0) { area.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-search fs-1 mb-3 text-black-50 opacity-50 d-block"></i>Tidak ada data Kuis yang cocok dengan filter.</div>`; return; }
+    if(fKelas !== "") filteredKuis = filteredKuis.filter(t => t.kelas === fKelas);
+    if(fMapel !== "") filteredKuis = filteredKuis.filter(t => t.mapel === fMapel);
+
+    if(filteredKuis.length === 0) {
+      area.innerHTML = `<div class="text-center text-muted py-5"><i class="fas fa-search fs-1 mb-3 text-black-50 opacity-50 d-block"></i>Tidak ada data Kuis yang cocok dengan filter.</div>`; return;
+    }
 
     let htmlRekap = '';
     filteredKuis.forEach(kuis => {
       const dataNilaiKuisIni = localDB.cbtNilai.filter(n => n.idTopik === kuis.id).sort((a,b) => b.skor - a.skor);
-      htmlRekap += `<div class="mb-4"><div class="d-flex bg-dark text-white p-2 rounded-top align-items-center"><h6 class="mb-0 fw-bold px-2 flex-grow-1">${kuis.judul} <span class="badge bg-warning text-dark ms-2">[${kuis.kelas || 'Umum'} - ${kuis.mapel}]</span></h6><span class="badge bg-secondary">${dataNilaiKuisIni.length} Siswa Mengerjakan</span></div>`;
+      
+      htmlRekap += `
+        <div class="mb-4">
+          <div class="d-flex bg-dark text-white p-2 rounded-top align-items-center">
+            <h6 class="mb-0 fw-bold px-2 flex-grow-1">${kuis.judul} <span class="badge bg-warning text-dark ms-2">[${kuis.kelas || 'Umum'} - ${kuis.mapel}]</span></h6>
+            <span class="badge bg-secondary">${dataNilaiKuisIni.length} Siswa Mengerjakan</span>
+          </div>
+      `;
+
       if(dataNilaiKuisIni.length === 0) {
         htmlRekap += `<div class="border border-top-0 p-3 text-center text-muted rounded-bottom bg-white small">Belum ada siswa yang mengerjakan / mengumpulkan kuis ini.</div></div>`;
       } else {
         htmlRekap += `
           <div class="table-responsive bg-white border border-top-0 rounded-bottom">
             <table class="table table-sm table-hover text-center align-middle m-0" style="white-space: nowrap;">
-              <thead class="table-light"><tr><th>NIS</th><th class="text-start">Nama Siswa</th><th>Benar</th><th>Salah</th><th>Skor Akhir</th><th>Aksi Cetak</th></tr></thead>
+              <thead class="table-light"><tr><th>NIS</th><th class="text-start">Nama Siswa</th><th>Benar</th><th>Salah</th><th>Skor Akhir</th><th>Aksi</th></tr></thead>
               <tbody>
                 ${dataNilaiKuisIni.map(n => `<tr>
-                    <td class="text-muted">${n.nis}</td><td class="text-start fw-semibold">${n.nama}</td>
-                    <td class="text-success">${n.benar}</td><td class="text-danger">${n.salah}</td>
+                    <td class="text-muted">${n.nis}</td>
+                    <td class="text-start fw-semibold">${n.nama}</td>
+                    <td class="text-success">${n.benar}</td>
+                    <td class="text-danger">${n.salah}</td>
                     <td><span class="badge ${n.skor >= 70 ? 'bg-success' : 'bg-danger'} fs-6">${n.skor}</span></td>
-                    <td><button class="btn btn-sm btn-danger fw-bold shadow-sm" onclick="bukaReviewCBT('${kuis.id}', '${n.nis}')"><i class="fas fa-file-pdf"></i> PDF Detail</button></td>
+                    <td><button class="btn btn-sm btn-primary py-0 fw-bold" onclick="bukaDetailCBT('${n.nis}', '${kuis.id}', '${kuis.judul.replace(/'/g, "\\'")}')"><i class="fas fa-file-pdf"></i> Detail</button></td>
                   </tr>`).join('')}
               </tbody>
             </table>
@@ -1755,17 +2263,131 @@
         </div>`;
       }
     });
+
     area.innerHTML = htmlRekap;
+  }
+
+  // =========================================================================
+  // LOGIKA BARU: CETAK PDF & DETAIL JAWABAN (GURU & SISWA)
+  // =========================================================================
+  
+  function bukaDetailCBT(nisTarget, idTopik, judulTopik) {
+    const dataSiswa = localDB.siswa.find(s => String(s.nis) === String(nisTarget)) || {nama: "Siswa"};
+    const dataNilai = localDB.cbtNilai.find(n => n.idTopik === idTopik && String(n.nis) === String(nisTarget));
+    
+    if(!dataNilai) { alert("Data nilai tidak ditemukan."); return; }
+
+    document.getElementById('detailCBT_Nama').innerText = dataNilai.nama || dataSiswa.nama;
+    document.getElementById('detailCBT_NIS').innerText = nisTarget;
+    document.getElementById('detailCBT_Judul').innerText = judulTopik;
+    document.getElementById('detailCBT_Skor').innerText = dataNilai.skor;
+    document.getElementById('detailCBT_Benar').innerText = dataNilai.benar;
+    document.getElementById('detailCBT_Salah').innerText = dataNilai.salah;
+
+    const tbody = document.getElementById('detailCBT_TableBody');
+    tbody.innerHTML = '';
+    
+    let detailArr = [];
+    try { detailArr = JSON.parse(dataNilai.detail || "[]"); } catch(e) {}
+
+    if(detailArr.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4"><i>Rincian jawaban tidak tersedia untuk kuis ini (Format data lama).</i></td></tr>';
+      document.getElementById('btnDownloadPDFCBT').style.display = 'none';
+    } else {
+      document.getElementById('btnDownloadPDFCBT').style.display = 'inline-block';
+      document.getElementById('btnDownloadPDFCBT').onclick = () => downloadPDFCBT(dataNilai.nama || dataSiswa.nama, nisTarget, judulTopik, dataNilai.skor, dataNilai.benar, dataNilai.salah, detailArr);
+      
+      tbody.innerHTML = detailArr.map(d => `
+        <tr>
+          <td>${d.no}</td>
+          <td class="text-start text-wrap" style="max-width: 200px;">${d.pertanyaan}</td>
+          <td class="fw-bold">${d.kunci}</td>
+          <td class="fw-bold ${d.status === 'Benar' ? 'text-success' : 'text-danger'}">${d.jawab}</td>
+          <td><span class="badge ${d.status === 'Benar' ? 'bg-success' : 'bg-danger'}">${d.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    var modalDetail = new bootstrap.Modal(document.getElementById('modalDetailCBT'));
+    modalDetail.show();
+  }
+
+  function downloadPDFCBT(namaSiswa, nisSiswa, judulKuis, skor, benar, salah, detailArr) {
+    window.jsPDF = window.jspdf.jsPDF;
+    const doc = new jsPDF();
+    
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("HASIL UJIAN CBT INTERAKTIF", 105, 20, { align: "center" });
+    
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Nama Siswa : ${namaSiswa}`, 14, 35);
+    doc.text(`NIS : ${nisSiswa}`, 14, 42);
+    doc.text(`Mata Pelajaran / Kuis : ${judulKuis}`, 14, 49);
+    
+    doc.setFont("helvetica", "bold");
+    doc.text(`SKOR AKHIR : ${skor}`, 14, 60);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Jawaban Benar : ${benar}   |   Jawaban Salah : ${salah}`, 14, 67);
+
+    const tableColumn = ["No", "Pertanyaan", "Kunci Jawaban", "Jawaban Siswa", "Status"];
+    const tableRows = [];
+
+    detailArr.forEach(item => {
+      tableRows.push([
+        item.no, 
+        item.pertanyaan, 
+        item.kunci, 
+        item.jawab, 
+        item.status
+      ]);
+    });
+
+    doc.autoTable({
+      startY: 75,
+      head: [tableColumn],
+      body: tableRows,
+      theme: 'grid',
+      headStyles: { fillColor: [44, 62, 80], textColor: 255 },
+      styles: { fontSize: 10, cellPadding: 3 },
+      columnStyles: {
+        0: { cellWidth: 10, halign: 'center' },
+        1: { cellWidth: 100 },
+        2: { cellWidth: 25, halign: 'center' },
+        3: { cellWidth: 25, halign: 'center' },
+        4: { cellWidth: 20, halign: 'center' }
+      },
+      didParseCell: function(data) {
+        if (data.section === 'body' && data.column.index === 4) {
+          if (data.cell.raw === 'Benar') {
+            data.cell.styles.textColor = [40, 167, 69]; // Green
+            data.cell.styles.fontStyle = 'bold';
+          } else if (data.cell.raw === 'Salah') {
+            data.cell.styles.textColor = [220, 53, 69]; // Red
+            data.cell.styles.fontStyle = 'bold';
+          }
+        }
+      }
+    });
+
+    doc.save(`Hasil_CBT_${namaSiswa.replace(/\s+/g, '_')}_${judulKuis.replace(/\s+/g, '_')}.pdf`);
   }
 
 
   // =========================================================================
-  // LOGIKA BARU: CBT (UNTUK SISWA)
+  // LOGIKA BARU: ENGINE KUIS CBT (UNTUK SISWA)
   // =========================================================================
+  
   function renderListCBTSiswa() {
     const grid = document.getElementById('gridKuisSiswaCBT'); if(!grid) return;
+    
     const kuisTersedia = localDB.cbtTopik.filter(t => t.status === 'Published' && (t.kelas === userAktif.kelas || !t.kelas || t.kelas === ""));
-    if(kuisTersedia.length === 0) { grid.innerHTML = `<div class="col-12 text-center text-muted py-5"><i class="fas fa-bed d-block fs-1 mb-3 opacity-25"></i>Belum ada Kuis CBT yang tersedia untuk kelas Anda saat ini.</div>`; return; }
+
+    if(kuisTersedia.length === 0) { 
+      grid.innerHTML = `<div class="col-12 text-center text-muted py-5"><i class="fas fa-bed d-block fs-1 mb-3 opacity-25"></i>Belum ada Kuis CBT yang tersedia untuk kelas Anda saat ini.</div>`; 
+      return; 
+    }
 
     grid.innerHTML = kuisTersedia.slice().reverse().map(t => {
       const sudahKerjakan = localDB.cbtNilai.find(n => n.idTopik === t.id && String(n.nis) === String(nisUserAktifLog));
@@ -1774,7 +2396,8 @@
       
       let actionBtn = "";
       if (sudahKerjakan) {
-        actionBtn = `<button class="btn btn-outline-success w-100 fw-bold shadow-sm py-2" onclick="bukaReviewCBT('${t.id}', '${nisUserAktifLog}')"><i class="fas fa-file-pdf me-1"></i> Skor Anda: ${sudahKerjakan.skor} <br><small>(Klik Untuk Lihat & Cetak Hasil)</small></button>`;
+        // PERUBAHAN: Menampilkan tombol LIHAT DETAIL & PDF jika sudah mengerjakan
+        actionBtn = `<button class="btn btn-success w-100 fw-bold shadow-sm" onclick="bukaDetailCBT('${nisUserAktifLog}', '${t.id}', '${t.judul.replace(/'/g, "\\'")}')"><i class="fas fa-file-pdf me-1"></i> Skor: ${sudahKerjakan.skor} (Lihat PDF)</button>`;
       } else if (isExpired) {
         actionBtn = `<button class="btn btn-secondary w-100 fw-bold" disabled><i class="fas fa-lock me-1"></i> Ditutup (Waktu Habis)</button>`;
       } else if (jmlSoal === 0) {
@@ -1803,6 +2426,7 @@
     const kuis = localDB.cbtTopik.find(t => t.id === idTopik);
     const soalKuisIni = localDB.cbtSoal.filter(s => s.idTopik === idTopik);
     if(soalKuisIni.length === 0) { alert("Belum ada soal!"); return; }
+
     if(!confirm(`PERHATIAN!\n\nKuis: ${kuis.judul}.\nWaktu: ${kuis.durasi} Menit.\n\nJika waktu habis, kuis otomatis dikumpulkan. Siap memulai?`)) return;
 
     mainCbtId = kuis.id; playSoalArr = soalKuisIni; playIndex = 0; playAnswers = {}; playSecondsRemain = parseInt(kuis.durasi) * 60;
@@ -1811,12 +2435,15 @@
     const layarCbt = document.getElementById('layarPengerjaanCBT'); layarCbt.style.display = 'block';
     
     document.getElementById('cbtPlay_Judul').innerText = kuis.judul; document.getElementById('cbtPlay_Mapel').innerText = kuis.mapel;
-    document.getElementById('cbtPlay_AreaSoal').style.display = 'flex'; document.getElementById('cbtPlay_FooterNav').style.display = 'flex';
+    document.getElementById('cbtPlay_AreaSoal').style.display = 'flex'; document.getElementById('cbtPlay_FooterNav').style.display = 'flex'; document.getElementById('cbtPlay_AreaHasil').style.display = 'none';
 
     renderSoalCBT(); startTimerCBT();
   }
 
-  function formatTime(sec) { const h = Math.floor(sec/3600); const m = Math.floor((sec%3600)/60); const s = sec%60; return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; }
+  function formatTime(sec) { 
+    const h = Math.floor(sec/3600); const m = Math.floor((sec%3600)/60); const s = sec%60; 
+    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`; 
+  }
 
   function startTimerCBT() {
     const elTimer = document.getElementById('cbtPlay_Timer'); elTimer.innerText = formatTime(playSecondsRemain);
@@ -1827,7 +2454,8 @@
         clearInterval(playTimer); elTimer.innerText = "00:00:00"; 
         alert("WAKTU HABIS! Mengumpulkan jawaban otomatis."); prosesHitungNilai(); 
       } else { 
-        elTimer.innerText = formatTime(playSecondsRemain); if(playSecondsRemain <= 60) elTimer.style.color = '#e74c3c'; 
+        elTimer.innerText = formatTime(playSecondsRemain); 
+        if(playSecondsRemain <= 60) elTimer.style.color = '#e74c3c'; 
       }
     }, 1000);
   }
@@ -1836,8 +2464,10 @@
     const s = playSoalArr[playIndex];
     document.getElementById('cbtPlay_NomorLabel').innerText = `Soal ${playIndex + 1} dari ${playSoalArr.length}`;
     document.getElementById('cbtPlay_Pertanyaan').innerText = s.pertanyaan;
-    document.getElementById('txtOptA').innerText = s.opsiA; document.getElementById('txtOptB').innerText = s.opsiB; 
-    document.getElementById('txtOptC').innerText = s.opsiC; document.getElementById('txtOptD').innerText = s.opsiD;
+    document.getElementById('txtOptA').innerText = s.opsiA; 
+    document.getElementById('txtOptB').innerText = s.opsiB; 
+    document.getElementById('txtOptC').innerText = s.opsiC; 
+    document.getElementById('txtOptD').innerText = s.opsiD;
     
     ['A','B','C','D'].forEach(huruf => document.getElementById('btnOpt' + huruf).classList.remove('selected'));
     if(playAnswers[playIndex]) document.getElementById('btnOpt' + playAnswers[playIndex]).classList.add('selected');
@@ -1852,8 +2482,17 @@
     }
   }
 
-  function pilihJawabanCBT(huruf) { playAnswers[playIndex] = huruf; renderSoalCBT(); if(playIndex < playSoalArr.length - 1) setTimeout(() => navigasiCBT(1), 400); }
-  function navigasiCBT(arah) { playIndex += arah; if(playIndex < 0) playIndex = 0; if(playIndex >= playSoalArr.length) playIndex = playSoalArr.length - 1; renderSoalCBT(); }
+  function pilihJawabanCBT(huruf) { 
+    playAnswers[playIndex] = huruf; renderSoalCBT(); 
+    if(playIndex < playSoalArr.length - 1) setTimeout(() => navigasiCBT(1), 400); 
+  }
+  
+  function navigasiCBT(arah) { 
+    playIndex += arah; 
+    if(playIndex < 0) playIndex = 0; 
+    if(playIndex >= playSoalArr.length) playIndex = playSoalArr.length - 1; 
+    renderSoalCBT(); 
+  }
 
   function konfirmasiSelesaiCBT() {
     let belumDijawab = 0; for(let i=0; i<playSoalArr.length; i++) { if(!playAnswers[i]) belumDijawab++; }
@@ -1862,109 +2501,66 @@
   }
 
   function prosesHitungNilai() {
-    document.getElementById('btnCbtSubmit').disabled = true; document.getElementById('btnCbtSubmit').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan Nilai...'; 
+    document.getElementById('btnCbtSubmit').disabled = true; 
+    document.getElementById('btnCbtSubmit').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...'; 
     document.getElementById('cbtPlay_AreaSoal').style.pointerEvents = 'none';
     
     let jmlBenar = 0; let jmlSalah = 0;
-    let detailJawabanArr = [];
-    
+    let detailJawaban = [];
+
     for(let i=0; i<playSoalArr.length; i++) { 
-      let s = playSoalArr[i]; let kunci = String(s.kunci).trim().toUpperCase(); let jawab = String(playAnswers[i] || "").trim().toUpperCase(); let isBenar = (jawab === kunci);
-      if(isBenar) jmlBenar++; else jmlSalah++; 
-      detailJawabanArr.push({ pertanyaan: s.pertanyaan, opsiA: s.opsiA, opsiB: s.opsiB, opsiC: s.opsiC, opsiD: s.opsiD, kunci: kunci, jawab: jawab, isBenar: isBenar });
+      let kunci = String(playSoalArr[i].kunci).trim().toUpperCase(); 
+      let jawab = String(playAnswers[i] || "").trim().toUpperCase(); 
+      let status = (jawab === kunci) ? "Benar" : "Salah";
+      if(jawab === kunci) jmlBenar++; else jmlSalah++; 
+      
+      // Merekam data untuk Fitur Cetak PDF & Lihat Detail
+      detailJawaban.push({
+        no: i + 1,
+        pertanyaan: playSoalArr[i].pertanyaan,
+        jawab: jawab || "-",
+        kunci: kunci,
+        status: status
+      });
     }
     
     let skorAkhir = Math.round((jmlBenar / playSoalArr.length) * 100);
-    
-    fetch(scriptUrl, { 
-      method: 'POST', 
-      body: JSON.stringify({ action: 'simpanNilaiCBT', idTopik: mainCbtId, nis: nisUserAktifLog, nama: userAktif.nama, benar: jmlBenar, salah: jmlSalah, skor: skorAkhir, detail: JSON.stringify(detailJawabanArr) }) 
-    })
+
+    const payloadKirimNilai = { 
+      action: 'simpanNilaiCBT', 
+      idTopik: mainCbtId, 
+      nis: nisUserAktifLog, 
+      nama: userAktif.nama, 
+      benar: jmlBenar, 
+      salah: jmlSalah, 
+      skor: skorAkhir,
+      detail: JSON.stringify(detailJawaban) // Data baru
+    };
+
+    fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payloadKirimNilai) })
     .then(r => r.json())
     .then(d => {
-      tutupLayarCBT();
-      tarikDataDatabase();
-      setTimeout(() => { bukaReviewCBT(mainCbtId, nisUserAktifLog); }, 1500);
+      document.getElementById('cbtPlay_AreaSoal').style.display = 'none'; 
+      document.getElementById('cbtPlay_FooterNav').style.display = 'none';
+      document.getElementById('cbtResult_Skor').innerText = skorAkhir; 
+      document.getElementById('cbtResult_Benar').innerText = jmlBenar; 
+      document.getElementById('cbtResult_Salah').innerText = jmlSalah; 
+      document.getElementById('cbtPlay_AreaHasil').style.display = 'block';
+      tarikDataDatabase(); 
     })
-    .catch(e => { alert("Koneksi gagal. Skor kamu: " + skorAkhir); tutupLayarCBT(); });
+    .catch(e => { alert("Gagal kirim nilai. Lapor guru. Skor kamu: " + skorAkhir); tutupLayarCBT(); });
   }
 
   function tutupLayarCBT() {
-    document.getElementById('layarPengerjaanCBT').style.display = 'none'; document.getElementById('dashboardSection').style.display = 'block';
+    document.getElementById('layarPengerjaanCBT').style.display = 'none'; 
+    document.getElementById('dashboardSection').style.display = 'block';
     mainCbtId = null; playSoalArr = []; playAnswers = {}; 
-    document.getElementById('cbtPlay_AreaSoal').style.pointerEvents = 'auto'; document.getElementById('btnCbtSubmit').disabled = false; document.getElementById('btnCbtSubmit').innerHTML = '<i class="fas fa-check-double me-1"></i> Kumpulkan Jawaban'; document.getElementById('cbtPlay_Timer').style.color = '#fff'; 
+    document.getElementById('cbtPlay_AreaSoal').style.pointerEvents = 'auto'; 
+    document.getElementById('btnCbtSubmit').disabled = false; 
+    document.getElementById('btnCbtSubmit').innerHTML = '<i class="fas fa-check-double me-1"></i> Kumpulkan Jawaban'; 
+    document.getElementById('cbtPlay_Timer').style.color = '#fff'; 
     pilihMenu('Siswa_CBT', 'Kerjakan Kuis Interaktif (CBT)');
   }
-
-  // --- LOGIKA BUKA PREVIEW REVIEW JAWABAN (PDF) ---
-  let modalReviewCBTInstance = null;
-
-  function bukaReviewCBT(idTopik, nisSiswa) {
-    const kuis = localDB.cbtTopik.find(t => t.id === idTopik);
-    const nilai = localDB.cbtNilai.find(n => n.idTopik === idTopik && String(n.nis) === String(nisSiswa));
-
-    if(!kuis || !nilai) { alert("Data hasil pengerjaan CBT tidak ditemukan!"); return; }
-
-    let detailArr = []; try { detailArr = JSON.parse(nilai.detail || "[]"); } catch(e) {}
-
-    let htmlEvaluasi = `
-      <div id="dokumenReviewPDF" style="font-family: Arial, sans-serif; padding: 20px; font-size: 14px; background: white; color: black; border: 1px solid #ccc;">
-        <h4 class="text-center fw-bold mb-4">FR.IA.05C. DPT - LEMBAR JAWABAN PILIHAN GANDA</h4>
-        <table class="table table-sm table-borderless mb-4" style="width: 100%;">
-          <tr><td style="width: 150px;">Nama Asesi</td><td>: <b>${nilai.nama}</b> (NIS: ${nilai.nis})</td></tr>
-          <tr><td>Tanggal Ujian</td><td>: <b>${formatTanggalIndo(nilai.timestamp)}</b></td></tr>
-          <tr><td>Judul Asesmen</td><td>: <b>${kuis.judul}</b></td></tr>
-        </table>
-        <hr class="border-dark mb-4">
-        <h6 class="fw-bold mb-3">Rincian Jawaban:</h6>
-    `;
-
-    if(detailArr.length === 0) {
-      htmlEvaluasi += `<div class="alert alert-warning border-0 fw-bold text-center py-4"><i class="fas fa-exclamation-triangle fs-3 d-block mb-2 text-warning"></i>Maaf, rincian detail jawaban tidak tersedia karena kuis dikerjakan sebelum fitur rekam detail aktif.<br>Namun, total skor siswa tetap tercatat.</div>`;
-    } else {
-      detailArr.forEach((s, i) => {
-        let statusTeks = s.isBenar ? '<span class="text-success fw-bold">Benar</span>' : '<span class="text-danger fw-bold">Salah</span>';
-        htmlEvaluasi += `
-          <div class="mb-3 border-bottom pb-2" style="page-break-inside: avoid;">
-            <p class="mb-1 fw-bold">${i+1}. ${s.pertanyaan}</p>
-            <ul class="list-unstyled ms-3 mb-2 small">
-              <li>a. ${s.opsiA}</li><li>b. ${s.opsiB}</li><li>c. ${s.opsiC}</li><li>d. ${s.opsiD}</li>
-            </ul>
-            <div class="bg-light p-2 rounded small border border-secondary d-flex justify-content-between">
-              <span>Jawaban Siswa: <b class="${s.isBenar ? 'text-success' : 'text-danger'}">${s.jawab || 'Tidak Dijawab'}</b> (Kunci Jawaban: ${s.kunci})</span>
-              <span>Status: ${statusTeks}</span>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    let statusKompetensi = nilai.skor >= 70 ? 'Tercapai' : 'Belum Tercapai';
-    htmlEvaluasi += `
-        <table class="table table-bordered mt-4 border-dark">
-          <tr><td><b>Aspek pengetahuan seluruh unit kompetensi yang diujikan</b></td><td class="text-center fw-bold">${statusKompetensi}</td></tr>
-          <tr><td><b>Nilai Akhir (SCORE)</b></td><td class="text-center fw-bold fs-5">${nilai.skor}/100</td></tr>
-        </table>
-        <div class="row mt-5 text-center">
-          <div class="col-6"><p class="mb-5">Asesi / Peserta Ujian:</p><p class="fw-bold text-decoration-underline mb-0">${nilai.nama}</p></div>
-          <div class="col-6"><p class="mb-5">Asesor / Guru Mapel:</p><p class="fw-bold text-decoration-underline mb-0">Pengajar ${kuis.mapel}</p></div>
-        </div>
-      </div>
-    `;
-
-    document.getElementById('areaPreviewCetakCBT').innerHTML = htmlEvaluasi;
-
-    document.getElementById('btnDownloadReviewPDF').onclick = function() {
-        const element = document.getElementById('dokumenReviewPDF');
-        const namaFile = `Evaluasi_${kuis.judul.replace(/\s+/g, '_')}_${nilai.nama.replace(/\s+/g, '_')}.pdf`;
-        const opt = { margin: 0.5, filename: namaFile, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
-        html2pdf().set(opt).from(element).save();
-    };
-
-    if(!modalReviewCBTInstance) modalReviewCBTInstance = new bootstrap.Modal(document.getElementById('modalReviewCBT'));
-    modalReviewCBTInstance.show();
-  }
-
 </script>
 
 </body>
