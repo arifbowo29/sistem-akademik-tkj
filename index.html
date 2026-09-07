@@ -2295,7 +2295,7 @@
       document.getElementById('btnDownloadPDFCBT').style.display = 'none';
     } else {
       document.getElementById('btnDownloadPDFCBT').style.display = 'inline-block';
-      document.getElementById('btnDownloadPDFCBT').onclick = () => downloadPDFCBT(dataNilai.nama || dataSiswa.nama, nisTarget, judulTopik, dataNilai.skor, dataNilai.benar, dataNilai.salah, detailArr);
+      document.getElementById('btnDownloadPDFCBT').onclick = () => downloadPDFCBT(dataNilai.nama || dataSiswa.nama, nisTarget, idTopik, judulTopik, dataNilai.skor, dataNilai.benar, dataNilai.salah, detailArr);
       
       tbody.innerHTML = detailArr.map(d => `
         <tr>
@@ -2312,66 +2312,114 @@
     modalDetail.show();
   }
 
-  function downloadPDFCBT(namaSiswa, nisSiswa, judulKuis, skor, benar, salah, detailArr) {
+  function downloadPDFCBT(namaSiswa, nisSiswa, idTopik, judulKuis, skor, benar, salah, detailArr) {
     window.jsPDF = window.jspdf.jsPDF;
     const doc = new jsPDF();
     
-    doc.setFontSize(16);
-    doc.setFont("helvetica", "bold");
-    doc.text("HASIL UJIAN CBT INTERAKTIF", 105, 20, { align: "center" });
-    
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Nama Siswa : ${namaSiswa}`, 14, 35);
-    doc.text(`NIS : ${nisSiswa}`, 14, 42);
-    doc.text(`Mata Pelajaran / Kuis : ${judulKuis}`, 14, 49);
-    
-    doc.setFont("helvetica", "bold");
-    doc.text(`SKOR AKHIR : ${skor}`, 14, 60);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Jawaban Benar : ${benar}   |   Jawaban Salah : ${salah}`, 14, 67);
+    // Cari detail topik untuk mengisi data KOP Surat
+    const topik = localDB.cbtTopik.find(t => t.id === idTopik) || {};
+    const mapel = topik.mapel || "-";
+    const durasi = topik.durasi || "30";
 
-    const tableColumn = ["No", "Pertanyaan", "Kunci Jawaban", "Jawaban Siswa", "Status"];
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("FR.IA.05C. DPT - LEMBAR JAWABAN PILIHAN GANDA", 105, 15, { align: "center" });
+    
+    // Tabel Kop Identitas Asesmen
+    doc.autoTable({
+        startY: 20,
+        theme: 'grid',
+        styles: { fontSize: 9, cellPadding: 2, textColor: [0,0,0], lineColor: [0,0,0] },
+        body: [
+            [{ content: 'Skema Sertifikasi\n(KKNI/Okupasi/Klaster)', rowSpan: 2, styles: { fontStyle: 'bold', valign: 'middle' } }, 'Judul', ':', mapel],
+            ['Nomor', ':', idTopik],
+            [{ content: 'TUK', styles: { fontStyle: 'bold' } }, '', ':', 'Sewaktu/Tempat Kerja/Mandiri*'],
+            [{ content: 'Nama Asesor', styles: { fontStyle: 'bold' } }, '', ':', 'Guru / Asesor'],
+            [{ content: 'Nama Asesi', styles: { fontStyle: 'bold' } }, '', ':', namaSiswa],
+            [{ content: 'Tanggal', styles: { fontStyle: 'bold' } }, '', ':', new Date().toLocaleDateString('id-ID')],
+            [{ content: 'Waktu', styles: { fontStyle: 'bold' } }, '', ':', durasi + ' Menit']
+        ],
+        columnStyles: {
+            0: { cellWidth: 45 },
+            1: { cellWidth: 25 },
+            2: { cellWidth: 5 },
+            3: { cellWidth: 'auto' }
+        }
+    });
+
+    let y = doc.lastAutoTable.finalY + 8;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.text("Kode Unit     : " + idTopik, 14, y);
+    doc.text("Judul Unit    : " + judulKuis, 14, y + 5);
+    doc.text("Unit Kompetensi 1", 14, y + 12);
+    doc.setFont("helvetica", "normal");
+    doc.text("Jawab semua pertanyaan berikut:", 14, y + 17);
+
+    const tableColumn = ["No.", "Soal", "Status", "Jawaban"];
     const tableRows = [];
 
     detailArr.forEach(item => {
-      tableRows.push([
-        item.no, 
-        item.pertanyaan, 
-        item.kunci, 
-        item.jawab, 
-        item.status
-      ]);
+        let opsiText = `a. ${item.opsiA || ''}\nb. ${item.opsiB || ''}\nc. ${item.opsiC || ''}\nd. ${item.opsiD || ''}`;
+        let soalContent = `${item.pertanyaan}\n\n${opsiText}\n\nJawaban Anda : ${item.jawab}`;
+        
+        tableRows.push([
+            item.no + ".",
+            soalContent,
+            item.status,
+            item.kunci
+        ]);
     });
 
     doc.autoTable({
-      startY: 75,
-      head: [tableColumn],
-      body: tableRows,
-      theme: 'grid',
-      headStyles: { fillColor: [44, 62, 80], textColor: 255 },
-      styles: { fontSize: 10, cellPadding: 3 },
-      columnStyles: {
-        0: { cellWidth: 10, halign: 'center' },
-        1: { cellWidth: 100 },
-        2: { cellWidth: 25, halign: 'center' },
-        3: { cellWidth: 25, halign: 'center' },
-        4: { cellWidth: 20, halign: 'center' }
-      },
-      didParseCell: function(data) {
-        if (data.section === 'body' && data.column.index === 4) {
-          if (data.cell.raw === 'Benar') {
-            data.cell.styles.textColor = [40, 167, 69]; // Green
-            data.cell.styles.fontStyle = 'bold';
-          } else if (data.cell.raw === 'Salah') {
-            data.cell.styles.textColor = [220, 53, 69]; // Red
-            data.cell.styles.fontStyle = 'bold';
-          }
+        startY: y + 22,
+        head: [tableColumn],
+        body: tableRows,
+        theme: 'grid',
+        styles: { fontSize: 9, cellPadding: 3, textColor: [0,0,0], lineColor: [0,0,0] },
+        headStyles: { fillColor: [220, 220, 220], textColor: [0,0,0], fontStyle: 'bold', halign: 'center' },
+        columnStyles: {
+            0: { cellWidth: 10, halign: 'center' },
+            1: { cellWidth: 120 },
+            2: { cellWidth: 20, halign: 'center', fontStyle: 'bold' },
+            3: { cellWidth: 25, halign: 'center', fontStyle: 'bold' }
+        },
+        didParseCell: function(data) {
+            if (data.section === 'body' && data.column.index === 2) {
+                if (data.cell.raw === 'Benar') {
+                    data.cell.styles.textColor = [40, 167, 69];
+                } else if (data.cell.raw === 'Salah') {
+                    data.cell.styles.textColor = [220, 53, 69];
+                }
+            }
         }
-      }
     });
 
-    doc.save(`Hasil_CBT_${namaSiswa.replace(/\s+/g, '_')}_${judulKuis.replace(/\s+/g, '_')}.pdf`);
+    let finalY = doc.lastAutoTable.finalY + 10;
+    
+    // Page break untuk footer jika kepanjangan
+    if (finalY > 240) {
+        doc.addPage();
+        finalY = 20;
+    }
+
+    // Tabel Penutup / Footer
+    doc.autoTable({
+        startY: finalY,
+        theme: 'grid',
+        styles: { fontSize: 10, cellPadding: 2, textColor: [0,0,0], lineColor: [0,0,0] },
+        body: [
+            [{ content: 'Aspek pengetahuan seluruh unit kompetensi yang diujikan (tercapai / belum tercapai) *', colSpan: 2 }],
+            [{ content: 'Umpan balik untuk asesi:\n\n\nTuliskan unit/elemen/KUK jika belum tercapai:', colSpan: 2 }],
+            [
+                'Asesi:\nNama: ' + namaSiswa + '\n\n\n\nTanda tangan/Tanggal: \n\n' + new Date().toLocaleDateString('id-ID'),
+                'Asesor:\nNama: Guru / Asesor\nNo. Reg:\n\n\nTanda tangan/Tanggal: \n\n' + new Date().toLocaleDateString('id-ID')
+            ],
+            [{ content: 'SCORE\n' + skor + '/100', colSpan: 2, styles: { halign: 'center', fontStyle: 'bold', fontSize: 14 } }]
+        ]
+    });
+
+    doc.save(`FR.IA.05C_${namaSiswa.replace(/\s+/g, '_')}_${judulKuis.replace(/\s+/g, '_')}.pdf`);
   }
 
 
@@ -2514,10 +2562,14 @@
       let status = (jawab === kunci) ? "Benar" : "Salah";
       if(jawab === kunci) jmlBenar++; else jmlSalah++; 
       
-      // Merekam data untuk Fitur Cetak PDF & Lihat Detail
+      // Merekam data dan Pilihan Ganda (Opsi A-D) untuk Fitur Cetak PDF & Lihat Detail
       detailJawaban.push({
         no: i + 1,
         pertanyaan: playSoalArr[i].pertanyaan,
+        opsiA: playSoalArr[i].opsiA,
+        opsiB: playSoalArr[i].opsiB,
+        opsiC: playSoalArr[i].opsiC,
+        opsiD: playSoalArr[i].opsiD,
         jawab: jawab || "-",
         kunci: kunci,
         status: status
@@ -2534,7 +2586,7 @@
       benar: jmlBenar, 
       salah: jmlSalah, 
       skor: skorAkhir,
-      detail: JSON.stringify(detailJawaban) // Data baru
+      detail: JSON.stringify(detailJawaban)
     };
 
     fetch(scriptUrl, { method: 'POST', body: JSON.stringify(payloadKirimNilai) })
