@@ -2176,13 +2176,20 @@
     if(itemSoals.length === 0) { alert("Tambahkan minimal 1 soal terlebih dahulu!"); return; }
 
     itemSoals.forEach(box => {
+      let vTanya = box.querySelector('.in-tanya').value;
+      let vA = box.querySelector('.in-a').value;
+      let vB = box.querySelector('.in-b').value;
+      let vC = box.querySelector('.in-c').value;
+      let vD = box.querySelector('.in-d').value;
+      let vKunci = box.querySelector('.in-kunci').value;
+
       arrayDataSoal.push({
-        pertanyaan: box.querySelector('.in-tanya').value,
-        opsiA: box.querySelector('.in-a').value,
-        opsiB: box.querySelector('.in-b').value,
-        opsiC: box.querySelector('.in-c').value,
-        opsiD: box.querySelector('.in-d').value,
-        kunci: box.querySelector('.in-kunci').value
+        pertanyaan: vTanya,
+        opsiA: vA, a: vA, pilA: vA, opsi_a: vA, pilihanA: vA,
+        opsiB: vB, b: vB, pilB: vB, opsi_b: vB, pilihanB: vB,
+        opsiC: vC, c: vC, pilC: vC, opsi_c: vC, pilihanC: vC,
+        opsiD: vD, d: vD, pilD: vD, opsi_d: vD, pilihanD: vD,
+        kunci: vKunci
       });
     });
 
@@ -2366,7 +2373,12 @@
     const tableRows = [];
 
     detailArr.forEach(item => {
-        let opsiText = `A. ${item.opsiA || '-'}\nB. ${item.opsiB || '-'}\nC. ${item.opsiC || '-'}\nD. ${item.opsiD || '-'}`;
+        let getA = item.opsiA || item.a || item.pilA || item.opsi_a || '-';
+        let getB = item.opsiB || item.b || item.pilB || item.opsi_b || '-';
+        let getC = item.opsiC || item.c || item.pilC || item.opsi_c || '-';
+        let getD = item.opsiD || item.d || item.pilD || item.opsi_d || '-';
+        
+        let opsiText = `A. ${getA}\nB. ${getB}\nC. ${getC}\nD. ${getD}`;
         let soalContent = `${item.pertanyaan}\n\n${opsiText}`;
         
         tableRows.push([
@@ -2529,10 +2541,11 @@
     const s = playSoalArr[playIndex];
     document.getElementById('cbtPlay_NomorLabel').innerText = `Soal ${playIndex + 1} dari ${playSoalArr.length}`;
     document.getElementById('cbtPlay_Pertanyaan').innerText = s.pertanyaan;
-    document.getElementById('txtOptA').innerText = s.opsiA; 
-    document.getElementById('txtOptB').innerText = s.opsiB; 
-    document.getElementById('txtOptC').innerText = s.opsiC; 
-    document.getElementById('txtOptD').innerText = s.opsiD;
+    
+    document.getElementById('txtOptA').innerText = s.opsiA || s.a || s.pilA || s.opsi_a || s.pilihanA || "-"; 
+    document.getElementById('txtOptB').innerText = s.opsiB || s.b || s.pilB || s.opsi_b || s.pilihanB || "-"; 
+    document.getElementById('txtOptC').innerText = s.opsiC || s.c || s.pilC || s.opsi_c || s.pilihanC || "-"; 
+    document.getElementById('txtOptD').innerText = s.opsiD || s.d || s.pilD || s.opsi_d || s.pilihanD || "-";
     
     ['A','B','C','D'].forEach(huruf => document.getElementById('btnOpt' + huruf).classList.remove('selected'));
     if(playAnswers[playIndex]) document.getElementById('btnOpt' + playAnswers[playIndex]).classList.add('selected');
@@ -2579,14 +2592,18 @@
       let status = (jawab === kunci) ? "Benar" : "Salah";
       if(jawab === kunci) jmlBenar++; else jmlSalah++; 
       
-      // Merekam data dan Pilihan Ganda (Opsi A-D) untuk Fitur Cetak PDF & Lihat Detail
+      let getA = playSoalArr[i].opsiA || playSoalArr[i].a || playSoalArr[i].pilA || playSoalArr[i].opsi_a || "-";
+      let getB = playSoalArr[i].opsiB || playSoalArr[i].b || playSoalArr[i].pilB || playSoalArr[i].opsi_b || "-";
+      let getC = playSoalArr[i].opsiC || playSoalArr[i].c || playSoalArr[i].pilC || playSoalArr[i].opsi_c || "-";
+      let getD = playSoalArr[i].opsiD || playSoalArr[i].d || playSoalArr[i].pilD || playSoalArr[i].opsi_d || "-";
+
       detailJawaban.push({
         no: i + 1,
         pertanyaan: playSoalArr[i].pertanyaan,
-        opsiA: playSoalArr[i].opsiA,
-        opsiB: playSoalArr[i].opsiB,
-        opsiC: playSoalArr[i].opsiC,
-        opsiD: playSoalArr[i].opsiD,
+        opsiA: getA, a: getA,
+        opsiB: getB, b: getB,
+        opsiC: getC, c: getC,
+        opsiD: getD, d: getD,
         jawab: jawab || "-",
         kunci: kunci,
         status: status
