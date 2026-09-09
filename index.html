@@ -994,7 +994,16 @@
         <div class="col-6"><div class="p-3 bg-success bg-opacity-10 rounded border border-success"><h4 class="text-success fw-bold mb-0" id="cbtResult_Benar">0</h4><small>Jawaban Benar</small></div></div>
         <div class="col-6"><div class="p-3 bg-danger bg-opacity-10 rounded border border-danger"><h4 class="text-danger fw-bold mb-0" id="cbtResult_Salah">0</h4><small>Jawaban Salah</small></div></div>
       </div>
-      <button class="btn btn-primary btn-lg mt-5 fw-bold px-5" onclick="tutupLayarCBT()"><i class="fas fa-home me-2"></i> Kembali ke Dashboard</button>
+      
+      <!-- TOMBOL EVALUASI LANGSUNG DI LAYAR HASIL -->
+      <div class="mt-5 d-flex justify-content-center gap-3 flex-wrap">
+        <button class="btn btn-info btn-lg fw-bold px-4 text-white shadow-sm" id="btnLihatEvaluasiSelesai">
+          <i class="fas fa-list-check me-2"></i> Lihat Evaluasi & PDF
+        </button>
+        <button class="btn btn-primary btn-lg fw-bold px-4 shadow-sm" onclick="tutupLayarCBT()">
+          <i class="fas fa-home me-2"></i> Kembali ke Dashboard
+        </button>
+      </div>
     </div>
 
     <!-- FOOTER NAVIGASI -->
@@ -1074,7 +1083,7 @@
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header bg-primary text-white">
-        <h5 class="modal-title fw-bold"><i class="fas fa-file-pdf"></i> Detail Hasil Jawaban Kuis</h5>
+        <h5 class="modal-title fw-bold"><i class="fas fa-list-check"></i> Detail Evaluasi Jawaban</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body bg-light">
@@ -1118,7 +1127,7 @@
       </div>
       <div class="modal-footer bg-white border-top">
         <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Tutup</button>
-        <button type="button" class="btn btn-danger fw-bold shadow-sm" id="btnDownloadPDFCBT"><i class="fas fa-download me-1"></i> Download File PDF</button>
+        <button type="button" class="btn btn-danger fw-bold shadow-sm" id="btnDownloadPDFCBT"><i class="fas fa-file-pdf me-1"></i> Cetak Dokumen PDF</button>
       </div>
     </div>
   </div>
@@ -1401,10 +1410,6 @@
       refreshUI();
     });
   }
-
-  // =========================================================================
-  // FUNGSI RENDER DASHBOARD LAMA (TUGAS, ABSEN, MAPEL) - TETAP UTUH
-  // =========================================================================
   
   function renderAbsensi() {
     const tAbsen = document.getElementById('tabelAbsensiBody');
@@ -1799,7 +1804,7 @@
   }
 
   // =========================================================================
-  // LOGIKA RUANG KELOMPOK (STUDI KASUS) - TETAP UTUH
+  // LOGIKA RUANG KELOMPOK (STUDI KASUS)
   // =========================================================================
   function buatTopikDiskusi(e) {
     e.preventDefault(); const btn = document.getElementById('btnBuatTopik'); btn.disabled = true; btn.innerText = "Memproses...";
@@ -2255,7 +2260,7 @@
                     <td class="text-success">${n.benar}</td>
                     <td class="text-danger">${n.salah}</td>
                     <td><span class="badge ${n.skor >= 70 ? 'bg-success' : 'bg-danger'} fs-6">${n.skor}</span></td>
-                    <td><button class="btn btn-sm btn-primary py-0 fw-bold" onclick="bukaDetailCBT('${n.nis}', '${kuis.id}', '${kuis.judul.replace(/'/g, "\\'")}')"><i class="fas fa-file-pdf"></i> Detail</button></td>
+                    <td><button class="btn btn-sm btn-info text-white py-0 fw-bold" onclick="bukaDetailCBT('${n.nis}', '${kuis.id}', '${kuis.judul.replace(/'/g, "\\'")}')"><i class="fas fa-file-pdf"></i> Cetak Evaluasi (PDF)</button></td>
                   </tr>`).join('')}
               </tbody>
             </table>
@@ -2301,7 +2306,7 @@
         <tr>
           <td>${d.no}</td>
           <td class="text-start text-wrap" style="max-width: 200px;">${d.pertanyaan}</td>
-          <td class="fw-bold">${d.kunci}</td>
+          <td class="fw-bold text-success">${d.kunci}</td>
           <td class="fw-bold ${d.status === 'Benar' ? 'text-success' : 'text-danger'}">${d.jawab}</td>
           <td><span class="badge ${d.status === 'Benar' ? 'bg-success' : 'bg-danger'}">${d.status}</span></td>
         </tr>
@@ -2320,6 +2325,7 @@
     const topik = localDB.cbtTopik.find(t => t.id === idTopik) || {};
     const mapel = topik.mapel || "-";
     const durasi = topik.durasi || "30";
+    const kelasSiswa = topik.kelas || "Umum";
 
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
@@ -2331,10 +2337,10 @@
         theme: 'grid',
         styles: { fontSize: 9, cellPadding: 2, textColor: [0,0,0], lineColor: [0,0,0] },
         body: [
-            [{ content: 'Skema Sertifikasi\n(KKNI/Okupasi/Klaster)', rowSpan: 2, styles: { fontStyle: 'bold', valign: 'middle' } }, 'Judul', ':', mapel],
+            [{ content: 'Skema Sertifikasi\n(KKNI/Okupasi/Klaster)', rowSpan: 2, styles: { fontStyle: 'bold', valign: 'middle' } }, 'Judul', ':', mapel + ' (' + kelasSiswa + ')'],
             ['Nomor', ':', idTopik],
             [{ content: 'TUK', styles: { fontStyle: 'bold' } }, '', ':', 'Sewaktu/Tempat Kerja/Mandiri*'],
-            [{ content: 'Nama Asesor', styles: { fontStyle: 'bold' } }, '', ':', 'Guru / Asesor'],
+            [{ content: 'Nama Asesor', styles: { fontStyle: 'bold' } }, '', ':', 'Guru Pengampu / Asesor'],
             [{ content: 'Nama Asesi', styles: { fontStyle: 'bold' } }, '', ':', namaSiswa],
             [{ content: 'Tanggal', styles: { fontStyle: 'bold' } }, '', ':', new Date().toLocaleDateString('id-ID')],
             [{ content: 'Waktu', styles: { fontStyle: 'bold' } }, '', ':', durasi + ' Menit']
@@ -2356,6 +2362,7 @@
     doc.setFont("helvetica", "normal");
     doc.text("Jawab semua pertanyaan berikut:", 14, y + 17);
 
+    // Kustomisasi persis PDF aslinya: 4 Kolom [No., Soal, Status, Jawaban]
     const tableColumn = ["No.", "Soal", "Status", "Jawaban"];
     const tableRows = [];
 
@@ -2403,7 +2410,7 @@
         finalY = 20;
     }
 
-    // Tabel Penutup / Footer
+    // Tabel Penutup / Footer sama persis contoh PDF
     doc.autoTable({
         startY: finalY,
         theme: 'grid',
@@ -2413,7 +2420,7 @@
             [{ content: 'Umpan balik untuk asesi:\n\n\nTuliskan unit/elemen/KUK jika belum tercapai:', colSpan: 2 }],
             [
                 'Asesi:\nNama: ' + namaSiswa + '\n\n\n\nTanda tangan/Tanggal: \n\n' + new Date().toLocaleDateString('id-ID'),
-                'Asesor:\nNama: Guru / Asesor\nNo. Reg:\n\n\nTanda tangan/Tanggal: \n\n' + new Date().toLocaleDateString('id-ID')
+                'Asesor:\nNama: Guru Pengampu / Asesor\nNo. Reg:\n\n\nTanda tangan/Tanggal: \n\n' + new Date().toLocaleDateString('id-ID')
             ],
             [{ content: 'SCORE\n' + skor + '/100', colSpan: 2, styles: { halign: 'center', fontStyle: 'bold', fontSize: 14 } }]
         ]
@@ -2444,8 +2451,7 @@
       
       let actionBtn = "";
       if (sudahKerjakan) {
-        // PERUBAHAN: Menampilkan tombol LIHAT DETAIL & PDF jika sudah mengerjakan
-        actionBtn = `<button class="btn btn-success w-100 fw-bold shadow-sm" onclick="bukaDetailCBT('${nisUserAktifLog}', '${t.id}', '${t.judul.replace(/'/g, "\\'")}')"><i class="fas fa-file-pdf me-1"></i> Skor: ${sudahKerjakan.skor} (Lihat PDF)</button>`;
+        actionBtn = `<button class="btn btn-success w-100 fw-bold shadow-sm" onclick="bukaDetailCBT('${nisUserAktifLog}', '${t.id}', '${t.judul.replace(/'/g, "\\'")}')"><i class="fas fa-file-pdf me-1"></i> Skor: ${sudahKerjakan.skor} (Lihat Evaluasi & PDF)</button>`;
       } else if (isExpired) {
         actionBtn = `<button class="btn btn-secondary w-100 fw-bold" disabled><i class="fas fa-lock me-1"></i> Ditutup (Waktu Habis)</button>`;
       } else if (jmlSoal === 0) {
@@ -2598,6 +2604,16 @@
       document.getElementById('cbtResult_Benar').innerText = jmlBenar; 
       document.getElementById('cbtResult_Salah').innerText = jmlSalah; 
       document.getElementById('cbtPlay_AreaHasil').style.display = 'block';
+
+      // LOGIKA TOMBOL DETAIL (MUNCUL SETELAH UJIAN SELESAI)
+      document.getElementById('btnLihatEvaluasiSelesai').onclick = () => {
+         let idT = mainCbtId;
+         let judulT = document.getElementById('cbtPlay_Judul').innerText.replace(/'/g, "\\'");
+         tutupLayarCBT();
+         // Jeda sejenak untuk membiarkan layar selesai tertutup lalu men-trigger popup
+         setTimeout(() => { bukaDetailCBT(nisUserAktifLog, idT, judulT); }, 500);
+      };
+
       tarikDataDatabase(); 
     })
     .catch(e => { alert("Gagal kirim nilai. Lapor guru. Skor kamu: " + skorAkhir); tutupLayarCBT(); });
