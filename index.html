@@ -2360,21 +2360,23 @@
     doc.text("Judul Unit    : " + judulKuis, 14, y + 5);
     doc.text("Unit Kompetensi 1", 14, y + 12);
     doc.setFont("helvetica", "normal");
-    doc.text("Jawab semua pertanyaan berikut:", 14, y + 17);
+    doc.text("Berikut adalah rincian evaluasi hasil jawaban Anda:", 14, y + 17);
 
-    // Kustomisasi persis PDF aslinya: 4 Kolom [No., Soal, Status, Jawaban]
-    const tableColumn = ["No.", "Soal", "Status", "Jawaban"];
+    // Tabel Rincian Evaluasi Soal
+    const tableColumn = ["No.", "Detail Pertanyaan & Pilihan Ganda", "Jawaban\nSiswa", "Kunci\nJawaban", "Status"];
     const tableRows = [];
 
     detailArr.forEach(item => {
-        let opsiText = `a. ${item.opsiA || ''}\nb. ${item.opsiB || ''}\nc. ${item.opsiC || ''}\nd. ${item.opsiD || ''}`;
-        let soalContent = `${item.pertanyaan}\n\n${opsiText}\n\nJawaban Anda : ${item.jawab}`;
+        // Menyusun opsi A, B, C, D ke bawah
+        let opsiText = `A. ${item.opsiA || '-'}\nB. ${item.opsiB || '-'}\nC. ${item.opsiC || '-'}\nD. ${item.opsiD || '-'}`;
+        let soalContent = `${item.pertanyaan}\n\n${opsiText}`;
         
         tableRows.push([
             item.no + ".",
             soalContent,
-            item.status,
-            item.kunci
+            item.jawab,
+            item.kunci,
+            item.status
         ]);
     });
 
@@ -2387,15 +2389,24 @@
         headStyles: { fillColor: [220, 220, 220], textColor: [0,0,0], fontStyle: 'bold', halign: 'center' },
         columnStyles: {
             0: { cellWidth: 10, halign: 'center' },
-            1: { cellWidth: 120 },
-            2: { cellWidth: 20, halign: 'center', fontStyle: 'bold' },
-            3: { cellWidth: 25, halign: 'center', fontStyle: 'bold' }
+            1: { cellWidth: 110 },
+            2: { cellWidth: 20, halign: 'center', fontStyle: 'bold' }, // Jawaban Siswa
+            3: { cellWidth: 20, halign: 'center', fontStyle: 'bold' }, // Kunci
+            4: { cellWidth: 20, halign: 'center', fontStyle: 'bold' }  // Status
         },
         didParseCell: function(data) {
-            if (data.section === 'body' && data.column.index === 2) {
+            // Memberikan warna teks Merah/Hijau khusus di kolom Status (Index ke-4)
+            if (data.section === 'body' && data.column.index === 4) {
                 if (data.cell.raw === 'Benar') {
                     data.cell.styles.textColor = [40, 167, 69];
                 } else if (data.cell.raw === 'Salah') {
+                    data.cell.styles.textColor = [220, 53, 69];
+                }
+            }
+            // Memberikan warna merah pada jawaban siswa (Index ke-2) jika jawabannya salah
+            if (data.section === 'body' && data.column.index === 2) {
+                let statusJawaban = data.row.raw[4]; // Ambil nilai dari kolom status
+                if (statusJawaban === 'Salah') {
                     data.cell.styles.textColor = [220, 53, 69];
                 }
             }
@@ -2404,13 +2415,13 @@
 
     let finalY = doc.lastAutoTable.finalY + 10;
     
-    // Page break untuk footer jika kepanjangan
+    // Page break untuk footer jika kertas tidak muat
     if (finalY > 240) {
         doc.addPage();
         finalY = 20;
     }
 
-    // Tabel Penutup / Footer sama persis contoh PDF
+    // Tabel Penutup / Footer
     doc.autoTable({
         startY: finalY,
         theme: 'grid',
@@ -2426,7 +2437,7 @@
         ]
     });
 
-    doc.save(`FR.IA.05C_${namaSiswa.replace(/\s+/g, '_')}_${judulKuis.replace(/\s+/g, '_')}.pdf`);
+    doc.save(`Evaluasi_CBT_${namaSiswa.replace(/\s+/g, '_')}_${judulKuis.replace(/\s+/g, '_')}.pdf`);
   }
 
 
