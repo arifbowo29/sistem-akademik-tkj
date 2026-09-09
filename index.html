@@ -2321,53 +2321,51 @@
     window.jsPDF = window.jspdf.jsPDF;
     const doc = new jsPDF();
     
-    // Cari detail topik untuk mengisi data KOP Surat
+    // Cari detail topik
     const topik = localDB.cbtTopik.find(t => t.id === idTopik) || {};
     const mapel = topik.mapel || "-";
-    const durasi = topik.durasi || "30";
     const kelasSiswa = topik.kelas || "Umum";
 
-    doc.setFontSize(12);
+    // 1. JUDUL KOP (LEMBAR JAWABAN SISWA)
+    doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
-    doc.text("FR.IA.05C. DPT - LEMBAR JAWABAN PILIHAN GANDA", 105, 15, { align: "center" });
+    doc.text("LEMBAR JAWABAN SISWA", 105, 20, { align: "center" });
     
-    // Tabel Kop Identitas Asesmen
+    // 2. TABEL IDENTITAS (Lebih simple tanpa border tebal)
     doc.autoTable({
-        startY: 20,
-        theme: 'grid',
-        styles: { fontSize: 9, cellPadding: 2, textColor: [0,0,0], lineColor: [0,0,0] },
+        startY: 28,
+        theme: 'plain', // Tanpa border agar lebih bersih
+        styles: { fontSize: 10, cellPadding: 1, textColor: [0,0,0] },
         body: [
-            [{ content: 'Skema Sertifikasi\n(KKNI/Okupasi/Klaster)', rowSpan: 2, styles: { fontStyle: 'bold', valign: 'middle' } }, 'Judul', ':', mapel + ' (' + kelasSiswa + ')'],
-            ['Nomor', ':', idTopik],
-            [{ content: 'TUK', styles: { fontStyle: 'bold' } }, '', ':', 'Sewaktu/Tempat Kerja/Mandiri*'],
-            [{ content: 'Nama Asesor', styles: { fontStyle: 'bold' } }, '', ':', 'Guru Pengampu / Asesor'],
-            [{ content: 'Nama Asesi', styles: { fontStyle: 'bold' } }, '', ':', namaSiswa],
-            [{ content: 'Tanggal', styles: { fontStyle: 'bold' } }, '', ':', new Date().toLocaleDateString('id-ID')],
-            [{ content: 'Waktu', styles: { fontStyle: 'bold' } }, '', ':', durasi + ' Menit']
+            [{ content: 'Nama Siswa', styles: { fontStyle: 'bold' } }, ':', namaSiswa],
+            [{ content: 'Nama Guru', styles: { fontStyle: 'bold' } }, ':', ''], // Dikosongi sesuai permintaan
+            [{ content: 'Mata Pelajaran', styles: { fontStyle: 'bold' } }, ':', mapel + ' (' + kelasSiswa + ')'],
+            [{ content: 'Tanggal Mengerjakan', styles: { fontStyle: 'bold' } }, ':', new Date().toLocaleDateString('id-ID')],
+            [{ content: 'Judul Kuis', styles: { fontStyle: 'bold' } }, ':', judulKuis]
         ],
         columnStyles: {
-            0: { cellWidth: 45 },
-            1: { cellWidth: 25 },
-            2: { cellWidth: 5 },
-            3: { cellWidth: 'auto' }
+            0: { cellWidth: 40 },
+            1: { cellWidth: 5 },
+            2: { cellWidth: 'auto' }
         }
     });
 
-    let y = doc.lastAutoTable.finalY + 8;
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(10);
-    doc.text("Kode Unit     : " + idTopik, 14, y);
-    doc.text("Judul Unit    : " + judulKuis, 14, y + 5);
-    doc.text("Unit Kompetensi 1", 14, y + 12);
+    // Garis pemisah horizontal agar rapi
+    let y = doc.lastAutoTable.finalY + 5;
+    doc.setLineWidth(0.5);
+    doc.setDrawColor(150, 150, 150);
+    doc.line(14, y, 196, y);
+    
+    y += 8;
     doc.setFont("helvetica", "normal");
-    doc.text("Berikut adalah rincian evaluasi hasil jawaban Anda:", 14, y + 17);
+    doc.setFontSize(10);
+    doc.text("Berikut adalah rincian evaluasi hasil jawaban Anda:", 14, y);
 
-    // Tabel Rincian Evaluasi Soal
-    const tableColumn = ["No.", "Detail Pertanyaan & Pilihan Ganda", "Jawaban\nSiswa", "Kunci\nJawaban", "Status"];
+    // 3. TABEL RINCIAN SOAL DAN JAWABAN
+    const tableColumn = ["No.", "Detail Pertanyaan & Pilihan Ganda", "Jawaban\nSiswa", "Kunci", "Status"];
     const tableRows = [];
 
     detailArr.forEach(item => {
-        // Menyusun opsi A, B, C, D ke bawah
         let opsiText = `A. ${item.opsiA || '-'}\nB. ${item.opsiB || '-'}\nC. ${item.opsiC || '-'}\nD. ${item.opsiD || '-'}`;
         let soalContent = `${item.pertanyaan}\n\n${opsiText}`;
         
@@ -2381,21 +2379,21 @@
     });
 
     doc.autoTable({
-        startY: y + 22,
+        startY: y + 5,
         head: [tableColumn],
         body: tableRows,
         theme: 'grid',
-        styles: { fontSize: 9, cellPadding: 3, textColor: [0,0,0], lineColor: [0,0,0] },
-        headStyles: { fillColor: [220, 220, 220], textColor: [0,0,0], fontStyle: 'bold', halign: 'center' },
+        styles: { fontSize: 9, cellPadding: 3, textColor: [0,0,0], lineColor: [200, 200, 200] },
+        headStyles: { fillColor: [240, 240, 240], textColor: [0,0,0], fontStyle: 'bold', halign: 'center' },
         columnStyles: {
             0: { cellWidth: 10, halign: 'center' },
-            1: { cellWidth: 110 },
-            2: { cellWidth: 20, halign: 'center', fontStyle: 'bold' }, // Jawaban Siswa
-            3: { cellWidth: 20, halign: 'center', fontStyle: 'bold' }, // Kunci
-            4: { cellWidth: 20, halign: 'center', fontStyle: 'bold' }  // Status
+            1: { cellWidth: 115 },
+            2: { cellWidth: 20, halign: 'center', fontStyle: 'bold' },
+            3: { cellWidth: 15, halign: 'center', fontStyle: 'bold' },
+            4: { cellWidth: 20, halign: 'center', fontStyle: 'bold' }
         },
         didParseCell: function(data) {
-            // Memberikan warna teks Merah/Hijau khusus di kolom Status (Index ke-4)
+            // Indikator Warna
             if (data.section === 'body' && data.column.index === 4) {
                 if (data.cell.raw === 'Benar') {
                     data.cell.styles.textColor = [40, 167, 69];
@@ -2403,9 +2401,8 @@
                     data.cell.styles.textColor = [220, 53, 69];
                 }
             }
-            // Memberikan warna merah pada jawaban siswa (Index ke-2) jika jawabannya salah
             if (data.section === 'body' && data.column.index === 2) {
-                let statusJawaban = data.row.raw[4]; // Ambil nilai dari kolom status
+                let statusJawaban = data.row.raw[4];
                 if (statusJawaban === 'Salah') {
                     data.cell.styles.textColor = [220, 53, 69];
                 }
@@ -2413,31 +2410,34 @@
         }
     });
 
-    let finalY = doc.lastAutoTable.finalY + 10;
+    let finalY = doc.lastAutoTable.finalY + 15;
     
-    // Page break untuk footer jika kertas tidak muat
-    if (finalY > 240) {
+    // Page break untuk footer jika kertas di halaman pertama sudah penuh
+    if (finalY > 230) {
         doc.addPage();
         finalY = 20;
     }
 
-    // Tabel Penutup / Footer
+    // 4. FOOTER TANDA TANGAN (Guru Mapel, Skor, Siswa)
     doc.autoTable({
         startY: finalY,
-        theme: 'grid',
-        styles: { fontSize: 10, cellPadding: 2, textColor: [0,0,0], lineColor: [0,0,0] },
+        theme: 'plain',
+        styles: { fontSize: 10, cellPadding: 2, textColor: [0,0,0], halign: 'center' },
         body: [
-            [{ content: 'Aspek pengetahuan seluruh unit kompetensi yang diujikan (tercapai / belum tercapai) *', colSpan: 2 }],
-            [{ content: 'Umpan balik untuk asesi:\n\n\nTuliskan unit/elemen/KUK jika belum tercapai:', colSpan: 2 }],
             [
-                'Asesi:\nNama: ' + namaSiswa + '\n\n\n\nTanda tangan/Tanggal: \n\n' + new Date().toLocaleDateString('id-ID'),
-                'Asesor:\nNama: Guru Pengampu / Asesor\nNo. Reg:\n\n\nTanda tangan/Tanggal: \n\n' + new Date().toLocaleDateString('id-ID')
-            ],
-            [{ content: 'SCORE\n' + skor + '/100', colSpan: 2, styles: { halign: 'center', fontStyle: 'bold', fontSize: 14 } }]
-        ]
+                { content: 'Mengetahui,\nGuru Mata Pelajaran\n\n\n\n\n(...........................................)', styles: { valign: 'bottom', minCellHeight: 30 } },
+                { content: 'SKOR AKHIR\n\n' + skor, styles: { valign: 'middle', fontStyle: 'bold', fontSize: 16 } },
+                { content: 'Siswa\n\n\n\n\n(' + namaSiswa + ')', styles: { valign: 'bottom', minCellHeight: 30 } }
+            ]
+        ],
+        columnStyles: {
+            0: { cellWidth: 60 },
+            1: { cellWidth: 60 },
+            2: { cellWidth: 60 }
+        }
     });
 
-    doc.save(`Evaluasi_CBT_${namaSiswa.replace(/\s+/g, '_')}_${judulKuis.replace(/\s+/g, '_')}.pdf`);
+    doc.save(`Lembar_Jawaban_${namaSiswa.replace(/\s+/g, '_')}_${judulKuis.replace(/\s+/g, '_')}.pdf`);
   }
 
 
